@@ -1,12 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <title>title</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <meta name="description" content="website description" />
+    <meta name="keywords" content="website keywords, website keywords" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/NetMon/css/style.css" />
+    <script type="text/javascript" src="/NetMon/js/modernizr-1.5.min.js"></script>
   </head>
   <body>
-    @{pageView}
+    <div id="main">
+        @{pageHeader}
+        <div id="site_content">
+            @{pageSidebar}
+            <div id="view">
+                <div class="content">
+                    @{pageView}
+                </div>
+            </div>
+        </div>
+        <div id="footer">
+            @{pageFooter}
+        </div>
+    </div>
+    <p>&nbsp;</p>
+    <script type="text/javascript" src="/NetMon/js/jquery.js"></script>
+    <script type="text/javascript" src="/NetMon/js/jquery.easing-sooper.js"></script>
+    <script type="text/javascript" src="/NetMon/js/jquery.sooperfish.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('ul.sf-menu').sooperfish();
+      });
+    </script>
   </body>
 </html>

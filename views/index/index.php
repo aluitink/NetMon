@@ -1,5 +1,5 @@
 <?php
+$template = new NetMon\Template("index/index.html");
 
-echo "test index";
-
+$template->Show();
 ?>

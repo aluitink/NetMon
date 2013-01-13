@@ -22,7 +22,7 @@ class Template
         foreach($this->tags as $tagName => $value)
         {
             $tagToReplace = "@{".$tagName."}";
-            $this->TemplateContent = str_replace($tagToReplace, $value, $this->TemplateContent);
+            $this->TemplateContent = str_replace($tagToReplace, $value, $this->TemplateContent);            
         }
         return $this->TemplateContent;
     }
@@ -30,6 +30,11 @@ class Template
     public function Show()
     {
         echo $this->Get();
+    }
+    
+    public static function ReadTemplateFile($template)
+    {
+        return file_get_contents(NetMon\Config::TemplatesPath . "/" . $template);
     }
 }
 
