@@ -14,5 +14,7 @@ class Index extends Controller implements Interfaces\IController
     {
         $this->View->Render("index/index");
     }
+    
+    
 }
 ?>
