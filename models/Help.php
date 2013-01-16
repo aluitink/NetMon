@@ -1,8 +1,10 @@
 <?php
-namespace NetMon\Models;
+require 'libs\Model.php';
 
-class Help
+namespace NetMon\Models;
+class Help extends Model
 {
+    public $Message = "Help text.";
     function __construct()
     {
         

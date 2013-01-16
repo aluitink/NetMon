@@ -1,8 +1,10 @@
 <?php
+$template = new NetMon\Template("help/index.html");
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-echo "help view";
+$helpModel = new NetMon\Models\Help();
+$helpModel->Message = "This is a help message";
+
+$template->Set("message", $helpModel->Message);
+
+$template->Show();
 ?>
