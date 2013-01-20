@@ -696,57 +696,6 @@ abstract class BasePluginQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related Device object
-     * using the Monitor table as cross reference
-     *
-     * @param   Device $device the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return   PluginQuery The current query, for fluid interface
-     */
-    public function filterByDevice($device, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->usePluginMonitorQuery()
-            ->filterByDevice($device, $comparison)
-            ->endUse();
-    }
-
-    /**
-     * Filter the query by a related Adapter object
-     * using the Monitor table as cross reference
-     *
-     * @param   Adapter $adapter the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return   PluginQuery The current query, for fluid interface
-     */
-    public function filterByAdapter($adapter, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->usePluginMonitorQuery()
-            ->filterByAdapter($adapter, $comparison)
-            ->endUse();
-    }
-
-    /**
-     * Filter the query by a related SnmpProperty object
-     * using the Monitor table as cross reference
-     *
-     * @param   SnmpProperty $snmpProperty the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return   PluginQuery The current query, for fluid interface
-     */
-    public function filterBySnmpProperty($snmpProperty, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->usePluginMonitorQuery()
-            ->filterBySnmpProperty($snmpProperty, $comparison)
-            ->endUse();
-    }
-
-    /**
      * Exclude object from result
      *
      * @param   Plugin $plugin Object to remove from the list of results

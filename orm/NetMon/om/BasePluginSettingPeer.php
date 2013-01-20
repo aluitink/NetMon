@@ -41,8 +41,8 @@ abstract class BasePluginSettingPeer
     /** the column name for the UserId field */
     const USERID = 'PluginSetting.UserId';
 
-    /** the column name for the Setting field */
-    const SETTING = 'PluginSetting.Setting';
+    /** the column name for the Key field */
+    const KEY = 'PluginSetting.Key';
 
     /** the column name for the Value field */
     const VALUE = 'PluginSetting.Value';
@@ -66,11 +66,11 @@ abstract class BasePluginSettingPeer
      * e.g. PluginSettingPeer::$fieldNames[PluginSettingPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Pluginsettingid', 'Pluginid', 'Userid', 'Setting', 'Value', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('pluginsettingid', 'pluginid', 'userid', 'setting', 'value', ),
-        BasePeer::TYPE_COLNAME => array (PluginSettingPeer::PLUGINSETTINGID, PluginSettingPeer::PLUGINID, PluginSettingPeer::USERID, PluginSettingPeer::SETTING, PluginSettingPeer::VALUE, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('PLUGINSETTINGID', 'PLUGINID', 'USERID', 'SETTING', 'VALUE', ),
-        BasePeer::TYPE_FIELDNAME => array ('PluginSettingId', 'PluginId', 'UserId', 'Setting', 'Value', ),
+        BasePeer::TYPE_PHPNAME => array ('Pluginsettingid', 'Pluginid', 'Userid', 'Key', 'Value', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('pluginsettingid', 'pluginid', 'userid', 'key', 'value', ),
+        BasePeer::TYPE_COLNAME => array (PluginSettingPeer::PLUGINSETTINGID, PluginSettingPeer::PLUGINID, PluginSettingPeer::USERID, PluginSettingPeer::KEY, PluginSettingPeer::VALUE, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('PLUGINSETTINGID', 'PLUGINID', 'USERID', 'KEY', 'VALUE', ),
+        BasePeer::TYPE_FIELDNAME => array ('PluginSettingId', 'PluginId', 'UserId', 'Key', 'Value', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
@@ -81,11 +81,11 @@ abstract class BasePluginSettingPeer
      * e.g. PluginSettingPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Pluginsettingid' => 0, 'Pluginid' => 1, 'Userid' => 2, 'Setting' => 3, 'Value' => 4, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('pluginsettingid' => 0, 'pluginid' => 1, 'userid' => 2, 'setting' => 3, 'value' => 4, ),
-        BasePeer::TYPE_COLNAME => array (PluginSettingPeer::PLUGINSETTINGID => 0, PluginSettingPeer::PLUGINID => 1, PluginSettingPeer::USERID => 2, PluginSettingPeer::SETTING => 3, PluginSettingPeer::VALUE => 4, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('PLUGINSETTINGID' => 0, 'PLUGINID' => 1, 'USERID' => 2, 'SETTING' => 3, 'VALUE' => 4, ),
-        BasePeer::TYPE_FIELDNAME => array ('PluginSettingId' => 0, 'PluginId' => 1, 'UserId' => 2, 'Setting' => 3, 'Value' => 4, ),
+        BasePeer::TYPE_PHPNAME => array ('Pluginsettingid' => 0, 'Pluginid' => 1, 'Userid' => 2, 'Key' => 3, 'Value' => 4, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('pluginsettingid' => 0, 'pluginid' => 1, 'userid' => 2, 'key' => 3, 'value' => 4, ),
+        BasePeer::TYPE_COLNAME => array (PluginSettingPeer::PLUGINSETTINGID => 0, PluginSettingPeer::PLUGINID => 1, PluginSettingPeer::USERID => 2, PluginSettingPeer::KEY => 3, PluginSettingPeer::VALUE => 4, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('PLUGINSETTINGID' => 0, 'PLUGINID' => 1, 'USERID' => 2, 'KEY' => 3, 'VALUE' => 4, ),
+        BasePeer::TYPE_FIELDNAME => array ('PluginSettingId' => 0, 'PluginId' => 1, 'UserId' => 2, 'Key' => 3, 'Value' => 4, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
@@ -163,13 +163,13 @@ abstract class BasePluginSettingPeer
             $criteria->addSelectColumn(PluginSettingPeer::PLUGINSETTINGID);
             $criteria->addSelectColumn(PluginSettingPeer::PLUGINID);
             $criteria->addSelectColumn(PluginSettingPeer::USERID);
-            $criteria->addSelectColumn(PluginSettingPeer::SETTING);
+            $criteria->addSelectColumn(PluginSettingPeer::KEY);
             $criteria->addSelectColumn(PluginSettingPeer::VALUE);
         } else {
             $criteria->addSelectColumn($alias . '.PluginSettingId');
             $criteria->addSelectColumn($alias . '.PluginId');
             $criteria->addSelectColumn($alias . '.UserId');
-            $criteria->addSelectColumn($alias . '.Setting');
+            $criteria->addSelectColumn($alias . '.Key');
             $criteria->addSelectColumn($alias . '.Value');
         }
     }
@@ -526,6 +526,57 @@ abstract class BasePluginSettingPeer
 
 
     /**
+     * Returns the number of rows matching criteria, joining the related User table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinUser(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(PluginSettingPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            PluginSettingPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(PluginSettingPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(PluginSettingPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(PluginSettingPeer::USERID, UserPeer::USERID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
      * Selects a collection of PluginSetting objects pre-filled with their Plugin objects.
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
@@ -593,6 +644,73 @@ abstract class BasePluginSettingPeer
 
 
     /**
+     * Selects a collection of PluginSetting objects pre-filled with their User objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of PluginSetting objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(PluginSettingPeer::DATABASE_NAME);
+        }
+
+        PluginSettingPeer::addSelectColumns($criteria);
+        $startcol = PluginSettingPeer::NUM_HYDRATE_COLUMNS;
+        UserPeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(PluginSettingPeer::USERID, UserPeer::USERID, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = PluginSettingPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = PluginSettingPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $cls = PluginSettingPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                PluginSettingPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = UserPeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = UserPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = UserPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    UserPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (PluginSetting) to $obj2 (User)
+                $obj2->addUserPluginSetting($obj1);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
      * Returns the number of rows matching criteria, joining all related tables
      *
      * @param      Criteria $criteria
@@ -629,6 +747,8 @@ abstract class BasePluginSettingPeer
         }
 
         $criteria->addJoin(PluginSettingPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
+
+        $criteria->addJoin(PluginSettingPeer::USERID, UserPeer::USERID, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -667,7 +787,12 @@ abstract class BasePluginSettingPeer
         PluginPeer::addSelectColumns($criteria);
         $startcol3 = $startcol2 + PluginPeer::NUM_HYDRATE_COLUMNS;
 
+        UserPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + UserPeer::NUM_HYDRATE_COLUMNS;
+
         $criteria->addJoin(PluginSettingPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
+
+        $criteria->addJoin(PluginSettingPeer::USERID, UserPeer::USERID, $join_behavior);
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
@@ -703,6 +828,274 @@ abstract class BasePluginSettingPeer
                 // Add the $obj1 (PluginSetting) to the collection in $obj2 (Plugin)
                 $obj2->addPluginPluginSetting($obj1);
             } // if joined row not null
+
+            // Add objects for joined User rows
+
+            $key3 = UserPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+            if ($key3 !== null) {
+                $obj3 = UserPeer::getInstanceFromPool($key3);
+                if (!$obj3) {
+
+                    $cls = UserPeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    UserPeer::addInstanceToPool($obj3, $key3);
+                } // if obj3 loaded
+
+                // Add the $obj1 (PluginSetting) to the collection in $obj3 (User)
+                $obj3->addUserPluginSetting($obj1);
+            } // if joined row not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related Plugin table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAllExceptPlugin(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(PluginSettingPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            PluginSettingPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(PluginSettingPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(PluginSettingPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(PluginSettingPeer::USERID, UserPeer::USERID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related User table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAllExceptUser(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(PluginSettingPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            PluginSettingPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(PluginSettingPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(PluginSettingPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(PluginSettingPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Selects a collection of PluginSetting objects pre-filled with all related objects except Plugin.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of PluginSetting objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptPlugin(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(PluginSettingPeer::DATABASE_NAME);
+        }
+
+        PluginSettingPeer::addSelectColumns($criteria);
+        $startcol2 = PluginSettingPeer::NUM_HYDRATE_COLUMNS;
+
+        UserPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + UserPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(PluginSettingPeer::USERID, UserPeer::USERID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = PluginSettingPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = PluginSettingPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = PluginSettingPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                PluginSettingPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined User rows
+
+                $key2 = UserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = UserPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = UserPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    UserPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (PluginSetting) to the collection in $obj2 (User)
+                $obj2->addUserPluginSetting($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of PluginSetting objects pre-filled with all related objects except User.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of PluginSetting objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(PluginSettingPeer::DATABASE_NAME);
+        }
+
+        PluginSettingPeer::addSelectColumns($criteria);
+        $startcol2 = PluginSettingPeer::NUM_HYDRATE_COLUMNS;
+
+        PluginPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + PluginPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(PluginSettingPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = PluginSettingPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = PluginSettingPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = PluginSettingPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                PluginSettingPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Plugin rows
+
+                $key2 = PluginPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = PluginPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = PluginPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    PluginPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (PluginSetting) to the collection in $obj2 (Plugin)
+                $obj2->addPluginPluginSetting($obj1);
+
+            } // if joined row is not null
 
             $results[] = $obj1;
         }

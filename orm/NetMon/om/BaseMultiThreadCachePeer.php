@@ -2,50 +2,65 @@
 
 
 /**
- * Base static class for performing query and update operations on the 'InterfaceType' table.
+ * Base static class for performing query and update operations on the 'MultiThreadCache' table.
  *
  *
  *
  * @package propel.generator.NetMon.om
  */
-abstract class BaseInterfaceTypePeer
+abstract class BaseMultiThreadCachePeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'NetMon';
 
     /** the table name for this class */
-    const TABLE_NAME = 'InterfaceType';
+    const TABLE_NAME = 'MultiThreadCache';
 
     /** the related Propel class for this table */
-    const OM_CLASS = 'InterfaceType';
+    const OM_CLASS = 'MultiThreadCache';
 
     /** the related TableMap class for this table */
-    const TM_CLASS = 'InterfaceTypeTableMap';
+    const TM_CLASS = 'MultiThreadCacheTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 2;
+    const NUM_COLUMNS = 7;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 2;
+    const NUM_HYDRATE_COLUMNS = 7;
 
-    /** the column name for the InterfaceTypeId field */
-    const INTERFACETYPEID = 'InterfaceType.InterfaceTypeId';
+    /** the column name for the MultiThreadCacheId field */
+    const MULTITHREADCACHEID = 'MultiThreadCache.MultiThreadCacheId';
 
-    /** the column name for the Type field */
-    const TYPE = 'InterfaceType.Type';
+    /** the column name for the BatchIdentifier field */
+    const BATCHIDENTIFIER = 'MultiThreadCache.BatchIdentifier';
+
+    /** the column name for the TimeLimit field */
+    const TIMELIMIT = 'MultiThreadCache.TimeLimit';
+
+    /** the column name for the Pid field */
+    const PID = 'MultiThreadCache.Pid';
+
+    /** the column name for the Status field */
+    const STATUS = 'MultiThreadCache.Status';
+
+    /** the column name for the Variables field */
+    const VARIABLES = 'MultiThreadCache.Variables';
+
+    /** the column name for the Output field */
+    const OUTPUT = 'MultiThreadCache.Output';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
 
     /**
-     * An identiy map to hold any loaded instances of InterfaceType objects.
+     * An identiy map to hold any loaded instances of MultiThreadCache objects.
      * This must be public so that other peer classes can access this when hydrating from JOIN
      * queries.
-     * @var        array InterfaceType[]
+     * @var        array MultiThreadCache[]
      */
     public static $instances = array();
 
@@ -54,30 +69,30 @@ abstract class BaseInterfaceTypePeer
      * holds an array of fieldnames
      *
      * first dimension keys are the type constants
-     * e.g. InterfaceTypePeer::$fieldNames[InterfaceTypePeer::TYPE_PHPNAME][0] = 'Id'
+     * e.g. MultiThreadCachePeer::$fieldNames[MultiThreadCachePeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Interfacetypeid', 'Type', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('interfacetypeid', 'type', ),
-        BasePeer::TYPE_COLNAME => array (InterfaceTypePeer::INTERFACETYPEID, InterfaceTypePeer::TYPE, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('INTERFACETYPEID', 'TYPE', ),
-        BasePeer::TYPE_FIELDNAME => array ('InterfaceTypeId', 'Type', ),
-        BasePeer::TYPE_NUM => array (0, 1, )
+        BasePeer::TYPE_PHPNAME => array ('Multithreadcacheid', 'Batchidentifier', 'Timelimit', 'Pid', 'Status', 'Variables', 'Output', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('multithreadcacheid', 'batchidentifier', 'timelimit', 'pid', 'status', 'variables', 'output', ),
+        BasePeer::TYPE_COLNAME => array (MultiThreadCachePeer::MULTITHREADCACHEID, MultiThreadCachePeer::BATCHIDENTIFIER, MultiThreadCachePeer::TIMELIMIT, MultiThreadCachePeer::PID, MultiThreadCachePeer::STATUS, MultiThreadCachePeer::VARIABLES, MultiThreadCachePeer::OUTPUT, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('MULTITHREADCACHEID', 'BATCHIDENTIFIER', 'TIMELIMIT', 'PID', 'STATUS', 'VARIABLES', 'OUTPUT', ),
+        BasePeer::TYPE_FIELDNAME => array ('MultiThreadCacheId', 'BatchIdentifier', 'TimeLimit', 'Pid', 'Status', 'Variables', 'Output', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
      * holds an array of keys for quick access to the fieldnames array
      *
      * first dimension keys are the type constants
-     * e.g. InterfaceTypePeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
+     * e.g. MultiThreadCachePeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Interfacetypeid' => 0, 'Type' => 1, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('interfacetypeid' => 0, 'type' => 1, ),
-        BasePeer::TYPE_COLNAME => array (InterfaceTypePeer::INTERFACETYPEID => 0, InterfaceTypePeer::TYPE => 1, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('INTERFACETYPEID' => 0, 'TYPE' => 1, ),
-        BasePeer::TYPE_FIELDNAME => array ('InterfaceTypeId' => 0, 'Type' => 1, ),
-        BasePeer::TYPE_NUM => array (0, 1, )
+        BasePeer::TYPE_PHPNAME => array ('Multithreadcacheid' => 0, 'Batchidentifier' => 1, 'Timelimit' => 2, 'Pid' => 3, 'Status' => 4, 'Variables' => 5, 'Output' => 6, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('multithreadcacheid' => 0, 'batchidentifier' => 1, 'timelimit' => 2, 'pid' => 3, 'status' => 4, 'variables' => 5, 'output' => 6, ),
+        BasePeer::TYPE_COLNAME => array (MultiThreadCachePeer::MULTITHREADCACHEID => 0, MultiThreadCachePeer::BATCHIDENTIFIER => 1, MultiThreadCachePeer::TIMELIMIT => 2, MultiThreadCachePeer::PID => 3, MultiThreadCachePeer::STATUS => 4, MultiThreadCachePeer::VARIABLES => 5, MultiThreadCachePeer::OUTPUT => 6, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('MULTITHREADCACHEID' => 0, 'BATCHIDENTIFIER' => 1, 'TIMELIMIT' => 2, 'PID' => 3, 'STATUS' => 4, 'VARIABLES' => 5, 'OUTPUT' => 6, ),
+        BasePeer::TYPE_FIELDNAME => array ('MultiThreadCacheId' => 0, 'BatchIdentifier' => 1, 'TimeLimit' => 2, 'Pid' => 3, 'Status' => 4, 'Variables' => 5, 'Output' => 6, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -92,10 +107,10 @@ abstract class BaseInterfaceTypePeer
      */
     public static function translateFieldName($name, $fromType, $toType)
     {
-        $toNames = InterfaceTypePeer::getFieldNames($toType);
-        $key = isset(InterfaceTypePeer::$fieldKeys[$fromType][$name]) ? InterfaceTypePeer::$fieldKeys[$fromType][$name] : null;
+        $toNames = MultiThreadCachePeer::getFieldNames($toType);
+        $key = isset(MultiThreadCachePeer::$fieldKeys[$fromType][$name]) ? MultiThreadCachePeer::$fieldKeys[$fromType][$name] : null;
         if ($key === null) {
-            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(InterfaceTypePeer::$fieldKeys[$fromType], true));
+            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(MultiThreadCachePeer::$fieldKeys[$fromType], true));
         }
 
         return $toNames[$key];
@@ -112,11 +127,11 @@ abstract class BaseInterfaceTypePeer
      */
     public static function getFieldNames($type = BasePeer::TYPE_PHPNAME)
     {
-        if (!array_key_exists($type, InterfaceTypePeer::$fieldNames)) {
+        if (!array_key_exists($type, MultiThreadCachePeer::$fieldNames)) {
             throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . $type . ' was given.');
         }
 
-        return InterfaceTypePeer::$fieldNames[$type];
+        return MultiThreadCachePeer::$fieldNames[$type];
     }
 
     /**
@@ -128,12 +143,12 @@ abstract class BaseInterfaceTypePeer
      *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. InterfaceTypePeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. MultiThreadCachePeer::COLUMN_NAME).
      * @return string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(InterfaceTypePeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(MultiThreadCachePeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -151,11 +166,21 @@ abstract class BaseInterfaceTypePeer
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(InterfaceTypePeer::INTERFACETYPEID);
-            $criteria->addSelectColumn(InterfaceTypePeer::TYPE);
+            $criteria->addSelectColumn(MultiThreadCachePeer::MULTITHREADCACHEID);
+            $criteria->addSelectColumn(MultiThreadCachePeer::BATCHIDENTIFIER);
+            $criteria->addSelectColumn(MultiThreadCachePeer::TIMELIMIT);
+            $criteria->addSelectColumn(MultiThreadCachePeer::PID);
+            $criteria->addSelectColumn(MultiThreadCachePeer::STATUS);
+            $criteria->addSelectColumn(MultiThreadCachePeer::VARIABLES);
+            $criteria->addSelectColumn(MultiThreadCachePeer::OUTPUT);
         } else {
-            $criteria->addSelectColumn($alias . '.InterfaceTypeId');
-            $criteria->addSelectColumn($alias . '.Type');
+            $criteria->addSelectColumn($alias . '.MultiThreadCacheId');
+            $criteria->addSelectColumn($alias . '.BatchIdentifier');
+            $criteria->addSelectColumn($alias . '.TimeLimit');
+            $criteria->addSelectColumn($alias . '.Pid');
+            $criteria->addSelectColumn($alias . '.Status');
+            $criteria->addSelectColumn($alias . '.Variables');
+            $criteria->addSelectColumn($alias . '.Output');
         }
     }
 
@@ -175,21 +200,21 @@ abstract class BaseInterfaceTypePeer
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(InterfaceTypePeer::TABLE_NAME);
+        $criteria->setPrimaryTableName(MultiThreadCachePeer::TABLE_NAME);
 
         if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->setDistinct();
         }
 
         if (!$criteria->hasSelectClause()) {
-            InterfaceTypePeer::addSelectColumns($criteria);
+            MultiThreadCachePeer::addSelectColumns($criteria);
         }
 
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-        $criteria->setDbName(InterfaceTypePeer::DATABASE_NAME); // Set the correct dbName
+        $criteria->setDbName(MultiThreadCachePeer::DATABASE_NAME); // Set the correct dbName
 
         if ($con === null) {
-            $con = Propel::getConnection(InterfaceTypePeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(MultiThreadCachePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
         // BasePeer returns a PDOStatement
         $stmt = BasePeer::doCount($criteria, $con);
@@ -208,7 +233,7 @@ abstract class BaseInterfaceTypePeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      PropelPDO $con
-     * @return                 InterfaceType
+     * @return                 MultiThreadCache
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
@@ -216,7 +241,7 @@ abstract class BaseInterfaceTypePeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = InterfaceTypePeer::doSelect($critcopy, $con);
+        $objects = MultiThreadCachePeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -234,7 +259,7 @@ abstract class BaseInterfaceTypePeer
      */
     public static function doSelect(Criteria $criteria, PropelPDO $con = null)
     {
-        return InterfaceTypePeer::populateObjects(InterfaceTypePeer::doSelectStmt($criteria, $con));
+        return MultiThreadCachePeer::populateObjects(MultiThreadCachePeer::doSelectStmt($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
@@ -252,16 +277,16 @@ abstract class BaseInterfaceTypePeer
     public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(InterfaceTypePeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(MultiThreadCachePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         if (!$criteria->hasSelectClause()) {
             $criteria = clone $criteria;
-            InterfaceTypePeer::addSelectColumns($criteria);
+            MultiThreadCachePeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
-        $criteria->setDbName(InterfaceTypePeer::DATABASE_NAME);
+        $criteria->setDbName(MultiThreadCachePeer::DATABASE_NAME);
 
         // BasePeer returns a PDOStatement
         return BasePeer::doSelect($criteria, $con);
@@ -275,16 +300,16 @@ abstract class BaseInterfaceTypePeer
      * to the cache in order to ensure that the same objects are always returned by doSelect*()
      * and retrieveByPK*() calls.
      *
-     * @param      InterfaceType $obj A InterfaceType object.
+     * @param      MultiThreadCache $obj A MultiThreadCache object.
      * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
     public static function addInstanceToPool($obj, $key = null)
     {
         if (Propel::isInstancePoolingEnabled()) {
             if ($key === null) {
-                $key = (string) $obj->getInterfacetypeid();
+                $key = (string) $obj->getMultithreadcacheid();
             } // if key === null
-            InterfaceTypePeer::$instances[$key] = $obj;
+            MultiThreadCachePeer::$instances[$key] = $obj;
         }
     }
 
@@ -296,7 +321,7 @@ abstract class BaseInterfaceTypePeer
      * methods in your stub classes -- you may need to explicitly remove objects
      * from the cache in order to prevent returning objects that no longer exist.
      *
-     * @param      mixed $value A InterfaceType object or a primary key value.
+     * @param      mixed $value A MultiThreadCache object or a primary key value.
      *
      * @return void
      * @throws PropelException - if the value is invalid.
@@ -304,17 +329,17 @@ abstract class BaseInterfaceTypePeer
     public static function removeInstanceFromPool($value)
     {
         if (Propel::isInstancePoolingEnabled() && $value !== null) {
-            if (is_object($value) && $value instanceof InterfaceType) {
-                $key = (string) $value->getInterfacetypeid();
+            if (is_object($value) && $value instanceof MultiThreadCache) {
+                $key = (string) $value->getMultithreadcacheid();
             } elseif (is_scalar($value)) {
                 // assume we've been passed a primary key
                 $key = (string) $value;
             } else {
-                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or InterfaceType object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or MultiThreadCache object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
                 throw $e;
             }
 
-            unset(InterfaceTypePeer::$instances[$key]);
+            unset(MultiThreadCachePeer::$instances[$key]);
         }
     } // removeInstanceFromPool()
 
@@ -325,14 +350,14 @@ abstract class BaseInterfaceTypePeer
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
      * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-     * @return   InterfaceType Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+     * @return   MultiThreadCache Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
      * @see        getPrimaryKeyHash()
      */
     public static function getInstanceFromPool($key)
     {
         if (Propel::isInstancePoolingEnabled()) {
-            if (isset(InterfaceTypePeer::$instances[$key])) {
-                return InterfaceTypePeer::$instances[$key];
+            if (isset(MultiThreadCachePeer::$instances[$key])) {
+                return MultiThreadCachePeer::$instances[$key];
             }
         }
 
@@ -348,16 +373,16 @@ abstract class BaseInterfaceTypePeer
     {
       if ($and_clear_all_references)
       {
-        foreach (InterfaceTypePeer::$instances as $instance)
+        foreach (MultiThreadCachePeer::$instances as $instance)
         {
           $instance->clearAllReferences(true);
         }
       }
-        InterfaceTypePeer::$instances = array();
+        MultiThreadCachePeer::$instances = array();
     }
 
     /**
-     * Method to invalidate the instance pool of all tables related to InterfaceType
+     * Method to invalidate the instance pool of all tables related to MultiThreadCache
      * by a foreign key with ON DELETE CASCADE
      */
     public static function clearRelatedInstancePool()
@@ -411,11 +436,11 @@ abstract class BaseInterfaceTypePeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = InterfaceTypePeer::getOMClass();
+        $cls = MultiThreadCachePeer::getOMClass();
         // populate the object(s)
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key = InterfaceTypePeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj = InterfaceTypePeer::getInstanceFromPool($key))) {
+            $key = MultiThreadCachePeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj = MultiThreadCachePeer::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
@@ -424,7 +449,7 @@ abstract class BaseInterfaceTypePeer
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                InterfaceTypePeer::addInstanceToPool($obj, $key);
+                MultiThreadCachePeer::addInstanceToPool($obj, $key);
             } // if key exists
         }
         $stmt->closeCursor();
@@ -438,21 +463,21 @@ abstract class BaseInterfaceTypePeer
      * @param      int $startcol The 0-based offset for reading from the resultset row.
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
-     * @return array (InterfaceType object, last column rank)
+     * @return array (MultiThreadCache object, last column rank)
      */
     public static function populateObject($row, $startcol = 0)
     {
-        $key = InterfaceTypePeer::getPrimaryKeyHashFromRow($row, $startcol);
-        if (null !== ($obj = InterfaceTypePeer::getInstanceFromPool($key))) {
+        $key = MultiThreadCachePeer::getPrimaryKeyHashFromRow($row, $startcol);
+        if (null !== ($obj = MultiThreadCachePeer::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $startcol, true); // rehydrate
-            $col = $startcol + InterfaceTypePeer::NUM_HYDRATE_COLUMNS;
+            $col = $startcol + MultiThreadCachePeer::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = InterfaceTypePeer::OM_CLASS;
+            $cls = MultiThreadCachePeer::OM_CLASS;
             $obj = new $cls();
             $col = $obj->hydrate($row, $startcol);
-            InterfaceTypePeer::addInstanceToPool($obj, $key);
+            MultiThreadCachePeer::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -467,7 +492,7 @@ abstract class BaseInterfaceTypePeer
      */
     public static function getTableMap()
     {
-        return Propel::getDatabaseMap(InterfaceTypePeer::DATABASE_NAME)->getTable(InterfaceTypePeer::TABLE_NAME);
+        return Propel::getDatabaseMap(MultiThreadCachePeer::DATABASE_NAME)->getTable(MultiThreadCachePeer::TABLE_NAME);
     }
 
     /**
@@ -475,9 +500,9 @@ abstract class BaseInterfaceTypePeer
      */
     public static function buildTableMap()
     {
-      $dbMap = Propel::getDatabaseMap(BaseInterfaceTypePeer::DATABASE_NAME);
-      if (!$dbMap->hasTable(BaseInterfaceTypePeer::TABLE_NAME)) {
-        $dbMap->addTableObject(new InterfaceTypeTableMap());
+      $dbMap = Propel::getDatabaseMap(BaseMultiThreadCachePeer::DATABASE_NAME);
+      if (!$dbMap->hasTable(BaseMultiThreadCachePeer::TABLE_NAME)) {
+        $dbMap->addTableObject(new MultiThreadCacheTableMap());
       }
     }
 
@@ -489,13 +514,13 @@ abstract class BaseInterfaceTypePeer
      */
     public static function getOMClass()
     {
-        return InterfaceTypePeer::OM_CLASS;
+        return MultiThreadCachePeer::OM_CLASS;
     }
 
     /**
-     * Performs an INSERT on the database, given a InterfaceType or Criteria object.
+     * Performs an INSERT on the database, given a MultiThreadCache or Criteria object.
      *
-     * @param      mixed $values Criteria or InterfaceType object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or MultiThreadCache object containing data that is used to create the INSERT statement.
      * @param      PropelPDO $con the PropelPDO connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -504,22 +529,22 @@ abstract class BaseInterfaceTypePeer
     public static function doInsert($values, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(InterfaceTypePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(MultiThreadCachePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from InterfaceType object
+            $criteria = $values->buildCriteria(); // build Criteria from MultiThreadCache object
         }
 
-        if ($criteria->containsKey(InterfaceTypePeer::INTERFACETYPEID) && $criteria->keyContainsValue(InterfaceTypePeer::INTERFACETYPEID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.InterfaceTypePeer::INTERFACETYPEID.')');
+        if ($criteria->containsKey(MultiThreadCachePeer::MULTITHREADCACHEID) && $criteria->keyContainsValue(MultiThreadCachePeer::MULTITHREADCACHEID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.MultiThreadCachePeer::MULTITHREADCACHEID.')');
         }
 
 
         // Set the correct dbName
-        $criteria->setDbName(InterfaceTypePeer::DATABASE_NAME);
+        $criteria->setDbName(MultiThreadCachePeer::DATABASE_NAME);
 
         try {
             // use transaction because $criteria could contain info
@@ -536,9 +561,9 @@ abstract class BaseInterfaceTypePeer
     }
 
     /**
-     * Performs an UPDATE on the database, given a InterfaceType or Criteria object.
+     * Performs an UPDATE on the database, given a MultiThreadCache or Criteria object.
      *
-     * @param      mixed $values Criteria or InterfaceType object containing data that is used to create the UPDATE statement.
+     * @param      mixed $values Criteria or MultiThreadCache object containing data that is used to create the UPDATE statement.
      * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
      * @return int             The number of affected rows (if supported by underlying database driver).
      * @throws PropelException Any exceptions caught during processing will be
@@ -547,35 +572,35 @@ abstract class BaseInterfaceTypePeer
     public static function doUpdate($values, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(InterfaceTypePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(MultiThreadCachePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
-        $selectCriteria = new Criteria(InterfaceTypePeer::DATABASE_NAME);
+        $selectCriteria = new Criteria(MultiThreadCachePeer::DATABASE_NAME);
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(InterfaceTypePeer::INTERFACETYPEID);
-            $value = $criteria->remove(InterfaceTypePeer::INTERFACETYPEID);
+            $comparison = $criteria->getComparison(MultiThreadCachePeer::MULTITHREADCACHEID);
+            $value = $criteria->remove(MultiThreadCachePeer::MULTITHREADCACHEID);
             if ($value) {
-                $selectCriteria->add(InterfaceTypePeer::INTERFACETYPEID, $value, $comparison);
+                $selectCriteria->add(MultiThreadCachePeer::MULTITHREADCACHEID, $value, $comparison);
             } else {
-                $selectCriteria->setPrimaryTableName(InterfaceTypePeer::TABLE_NAME);
+                $selectCriteria->setPrimaryTableName(MultiThreadCachePeer::TABLE_NAME);
             }
 
-        } else { // $values is InterfaceType object
+        } else { // $values is MultiThreadCache object
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
         }
 
         // set the correct dbName
-        $criteria->setDbName(InterfaceTypePeer::DATABASE_NAME);
+        $criteria->setDbName(MultiThreadCachePeer::DATABASE_NAME);
 
         return BasePeer::doUpdate($selectCriteria, $criteria, $con);
     }
 
     /**
-     * Deletes all rows from the InterfaceType table.
+     * Deletes all rows from the MultiThreadCache table.
      *
      * @param      PropelPDO $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).
@@ -584,19 +609,19 @@ abstract class BaseInterfaceTypePeer
     public static function doDeleteAll(PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(InterfaceTypePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(MultiThreadCachePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
         $affectedRows = 0; // initialize var to track total num of affected rows
         try {
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->beginTransaction();
-            $affectedRows += BasePeer::doDeleteAll(InterfaceTypePeer::TABLE_NAME, $con, InterfaceTypePeer::DATABASE_NAME);
+            $affectedRows += BasePeer::doDeleteAll(MultiThreadCachePeer::TABLE_NAME, $con, MultiThreadCachePeer::DATABASE_NAME);
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            InterfaceTypePeer::clearInstancePool();
-            InterfaceTypePeer::clearRelatedInstancePool();
+            MultiThreadCachePeer::clearInstancePool();
+            MultiThreadCachePeer::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -607,9 +632,9 @@ abstract class BaseInterfaceTypePeer
     }
 
     /**
-     * Performs a DELETE on the database, given a InterfaceType or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a MultiThreadCache or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or InterfaceType object or primary key or array of primary keys
+     * @param      mixed $values Criteria or MultiThreadCache object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      PropelPDO $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -620,32 +645,32 @@ abstract class BaseInterfaceTypePeer
      public static function doDelete($values, PropelPDO $con = null)
      {
         if ($con === null) {
-            $con = Propel::getConnection(InterfaceTypePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(MultiThreadCachePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         if ($values instanceof Criteria) {
             // invalidate the cache for all objects of this type, since we have no
             // way of knowing (without running a query) what objects should be invalidated
             // from the cache based on this Criteria.
-            InterfaceTypePeer::clearInstancePool();
+            MultiThreadCachePeer::clearInstancePool();
             // rename for clarity
             $criteria = clone $values;
-        } elseif ($values instanceof InterfaceType) { // it's a model object
+        } elseif ($values instanceof MultiThreadCache) { // it's a model object
             // invalidate the cache for this single object
-            InterfaceTypePeer::removeInstanceFromPool($values);
+            MultiThreadCachePeer::removeInstanceFromPool($values);
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(InterfaceTypePeer::DATABASE_NAME);
-            $criteria->add(InterfaceTypePeer::INTERFACETYPEID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(MultiThreadCachePeer::DATABASE_NAME);
+            $criteria->add(MultiThreadCachePeer::MULTITHREADCACHEID, (array) $values, Criteria::IN);
             // invalidate the cache for this object(s)
             foreach ((array) $values as $singleval) {
-                InterfaceTypePeer::removeInstanceFromPool($singleval);
+                MultiThreadCachePeer::removeInstanceFromPool($singleval);
             }
         }
 
         // Set the correct dbName
-        $criteria->setDbName(InterfaceTypePeer::DATABASE_NAME);
+        $criteria->setDbName(MultiThreadCachePeer::DATABASE_NAME);
 
         $affectedRows = 0; // initialize var to track total num of affected rows
 
@@ -655,7 +680,7 @@ abstract class BaseInterfaceTypePeer
             $con->beginTransaction();
 
             $affectedRows += BasePeer::doDelete($criteria, $con);
-            InterfaceTypePeer::clearRelatedInstancePool();
+            MultiThreadCachePeer::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -666,13 +691,13 @@ abstract class BaseInterfaceTypePeer
     }
 
     /**
-     * Validates all modified columns of given InterfaceType object.
+     * Validates all modified columns of given MultiThreadCache object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      InterfaceType $obj The object to validate.
+     * @param      MultiThreadCache $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return mixed TRUE if all columns are valid or the error message of the first invalid column.
@@ -682,8 +707,8 @@ abstract class BaseInterfaceTypePeer
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(InterfaceTypePeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(InterfaceTypePeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(MultiThreadCachePeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(MultiThreadCachePeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -699,7 +724,7 @@ abstract class BaseInterfaceTypePeer
 
         }
 
-        return BasePeer::doValidate(InterfaceTypePeer::DATABASE_NAME, InterfaceTypePeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(MultiThreadCachePeer::DATABASE_NAME, MultiThreadCachePeer::TABLE_NAME, $columns);
     }
 
     /**
@@ -707,23 +732,23 @@ abstract class BaseInterfaceTypePeer
      *
      * @param      int $pk the primary key.
      * @param      PropelPDO $con the connection to use
-     * @return InterfaceType
+     * @return MultiThreadCache
      */
     public static function retrieveByPK($pk, PropelPDO $con = null)
     {
 
-        if (null !== ($obj = InterfaceTypePeer::getInstanceFromPool((string) $pk))) {
+        if (null !== ($obj = MultiThreadCachePeer::getInstanceFromPool((string) $pk))) {
             return $obj;
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(InterfaceTypePeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(MultiThreadCachePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria = new Criteria(InterfaceTypePeer::DATABASE_NAME);
-        $criteria->add(InterfaceTypePeer::INTERFACETYPEID, $pk);
+        $criteria = new Criteria(MultiThreadCachePeer::DATABASE_NAME);
+        $criteria->add(MultiThreadCachePeer::MULTITHREADCACHEID, $pk);
 
-        $v = InterfaceTypePeer::doSelect($criteria, $con);
+        $v = MultiThreadCachePeer::doSelect($criteria, $con);
 
         return !empty($v) > 0 ? $v[0] : null;
     }
@@ -733,31 +758,31 @@ abstract class BaseInterfaceTypePeer
      *
      * @param      array $pks List of primary keys
      * @param      PropelPDO $con the connection to use
-     * @return InterfaceType[]
+     * @return MultiThreadCache[]
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
     public static function retrieveByPKs($pks, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(InterfaceTypePeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(MultiThreadCachePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         $objs = null;
         if (empty($pks)) {
             $objs = array();
         } else {
-            $criteria = new Criteria(InterfaceTypePeer::DATABASE_NAME);
-            $criteria->add(InterfaceTypePeer::INTERFACETYPEID, $pks, Criteria::IN);
-            $objs = InterfaceTypePeer::doSelect($criteria, $con);
+            $criteria = new Criteria(MultiThreadCachePeer::DATABASE_NAME);
+            $criteria->add(MultiThreadCachePeer::MULTITHREADCACHEID, $pks, Criteria::IN);
+            $objs = MultiThreadCachePeer::doSelect($criteria, $con);
         }
 
         return $objs;
     }
 
-} // BaseInterfaceTypePeer
+} // BaseMultiThreadCachePeer
 
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-BaseInterfaceTypePeer::buildTableMap();
+BaseMultiThreadCachePeer::buildTableMap();
 

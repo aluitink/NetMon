@@ -53,6 +53,7 @@ class UserTableMap extends TableMap
     {
         $this->addRelation('UserGroup', 'UserGroup', RelationMap::ONE_TO_MANY, array('UserId' => 'UserId', ), null, null, 'UserGroups');
         $this->addRelation('UserCustomer', 'CustomerUser', RelationMap::ONE_TO_MANY, array('UserId' => 'UserId', ), null, null, 'UserCustomers');
+        $this->addRelation('UserPluginSetting', 'PluginSetting', RelationMap::ONE_TO_MANY, array('UserId' => 'UserId', ), null, null, 'UserPluginSettings');
         $this->addRelation('Group', 'Group', RelationMap::MANY_TO_MANY, array(), null, null, 'Groups');
         $this->addRelation('Customer', 'Customer', RelationMap::MANY_TO_MANY, array(), null, null, 'Customers');
     } // buildRelations()

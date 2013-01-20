@@ -682,57 +682,6 @@ abstract class BaseSnmpPropertyQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related Device object
-     * using the Monitor table as cross reference
-     *
-     * @param   Device $device the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return   SnmpPropertyQuery The current query, for fluid interface
-     */
-    public function filterByDevice($device, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->useSnmpPropertyMonitorQuery()
-            ->filterByDevice($device, $comparison)
-            ->endUse();
-    }
-
-    /**
-     * Filter the query by a related Plugin object
-     * using the Monitor table as cross reference
-     *
-     * @param   Plugin $plugin the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return   SnmpPropertyQuery The current query, for fluid interface
-     */
-    public function filterByPlugin($plugin, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->useSnmpPropertyMonitorQuery()
-            ->filterByPlugin($plugin, $comparison)
-            ->endUse();
-    }
-
-    /**
-     * Filter the query by a related Adapter object
-     * using the Monitor table as cross reference
-     *
-     * @param   Adapter $adapter the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return   SnmpPropertyQuery The current query, for fluid interface
-     */
-    public function filterByAdapter($adapter, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->useSnmpPropertyMonitorQuery()
-            ->filterByAdapter($adapter, $comparison)
-            ->endUse();
-    }
-
-    /**
      * Exclude object from result
      *
      * @param   SnmpProperty $snmpProperty Object to remove from the list of results

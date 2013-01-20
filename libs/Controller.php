@@ -5,8 +5,11 @@ use NetMon;
 
 class Controller
 {
-    function __construct()
+    protected $RequestMethod;
+    
+    function __construct($method)
     {
+        $this->RequestMethod = $method;
         $this->Logger = new \KLogger(NetMon\Config::LogPath, NetMon\Config::LogLevel);
         $this->View = new NetMon\Views\View();
     }

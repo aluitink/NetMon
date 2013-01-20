@@ -72,6 +72,12 @@ abstract class BaseUser extends BaseObject implements Persistent
     protected $collUserCustomersPartial;
 
     /**
+     * @var        PropelObjectCollection|PluginSetting[] Collection to store aggregation of PluginSetting objects.
+     */
+    protected $collUserPluginSettings;
+    protected $collUserPluginSettingsPartial;
+
+    /**
      * @var        PropelObjectCollection|Group[] Collection to store aggregation of Group objects.
      */
     protected $collGroups;
@@ -124,6 +130,12 @@ abstract class BaseUser extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $userCustomersScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $userPluginSettingsScheduledForDeletion = null;
 
     /**
      * Get the [userid] column value.
@@ -399,6 +411,8 @@ abstract class BaseUser extends BaseObject implements Persistent
 
             $this->collUserCustomers = null;
 
+            $this->collUserPluginSettings = null;
+
             $this->collGroups = null;
             $this->collCustomers = null;
         } // if (deep)
@@ -611,6 +625,24 @@ abstract class BaseUser extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->userPluginSettingsScheduledForDeletion !== null) {
+                if (!$this->userPluginSettingsScheduledForDeletion->isEmpty()) {
+                    foreach ($this->userPluginSettingsScheduledForDeletion as $userPluginSetting) {
+                        // need to save related object because we set the relation to null
+                        $userPluginSetting->save($con);
+                    }
+                    $this->userPluginSettingsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collUserPluginSettings !== null) {
+                foreach ($this->collUserPluginSettings as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -793,6 +825,14 @@ abstract class BaseUser extends BaseObject implements Persistent
                     }
                 }
 
+                if ($this->collUserPluginSettings !== null) {
+                    foreach ($this->collUserPluginSettings as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
 
             $this->alreadyInValidation = false;
         }
@@ -884,6 +924,9 @@ abstract class BaseUser extends BaseObject implements Persistent
             }
             if (null !== $this->collUserCustomers) {
                 $result['UserCustomers'] = $this->collUserCustomers->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collUserPluginSettings) {
+                $result['UserPluginSettings'] = $this->collUserPluginSettings->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1066,6 +1109,12 @@ abstract class BaseUser extends BaseObject implements Persistent
                 }
             }
 
+            foreach ($this->getUserPluginSettings() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addUserPluginSetting($relObj->copy($deepCopy));
+                }
+            }
+
             //unflag object copy
             $this->startCopy = false;
         } // if ($deepCopy)
@@ -1132,6 +1181,9 @@ abstract class BaseUser extends BaseObject implements Persistent
         }
         if ('UserCustomer' == $relationName) {
             $this->initUserCustomers();
+        }
+        if ('UserPluginSetting' == $relationName) {
+            $this->initUserPluginSettings();
         }
     }
 
@@ -1622,6 +1674,249 @@ abstract class BaseUser extends BaseObject implements Persistent
     }
 
     /**
+     * Clears out the collUserPluginSettings collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return User The current object (for fluent API support)
+     * @see        addUserPluginSettings()
+     */
+    public function clearUserPluginSettings()
+    {
+        $this->collUserPluginSettings = null; // important to set this to null since that means it is uninitialized
+        $this->collUserPluginSettingsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collUserPluginSettings collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialUserPluginSettings($v = true)
+    {
+        $this->collUserPluginSettingsPartial = $v;
+    }
+
+    /**
+     * Initializes the collUserPluginSettings collection.
+     *
+     * By default this just sets the collUserPluginSettings collection to an empty array (like clearcollUserPluginSettings());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initUserPluginSettings($overrideExisting = true)
+    {
+        if (null !== $this->collUserPluginSettings && !$overrideExisting) {
+            return;
+        }
+        $this->collUserPluginSettings = new PropelObjectCollection();
+        $this->collUserPluginSettings->setModel('PluginSetting');
+    }
+
+    /**
+     * Gets an array of PluginSetting objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this User is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|PluginSetting[] List of PluginSetting objects
+     * @throws PropelException
+     */
+    public function getUserPluginSettings($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collUserPluginSettingsPartial && !$this->isNew();
+        if (null === $this->collUserPluginSettings || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collUserPluginSettings) {
+                // return empty collection
+                $this->initUserPluginSettings();
+            } else {
+                $collUserPluginSettings = PluginSettingQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collUserPluginSettingsPartial && count($collUserPluginSettings)) {
+                      $this->initUserPluginSettings(false);
+
+                      foreach($collUserPluginSettings as $obj) {
+                        if (false == $this->collUserPluginSettings->contains($obj)) {
+                          $this->collUserPluginSettings->append($obj);
+                        }
+                      }
+
+                      $this->collUserPluginSettingsPartial = true;
+                    }
+
+                    $collUserPluginSettings->getInternalIterator()->rewind();
+                    return $collUserPluginSettings;
+                }
+
+                if($partial && $this->collUserPluginSettings) {
+                    foreach($this->collUserPluginSettings as $obj) {
+                        if($obj->isNew()) {
+                            $collUserPluginSettings[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collUserPluginSettings = $collUserPluginSettings;
+                $this->collUserPluginSettingsPartial = false;
+            }
+        }
+
+        return $this->collUserPluginSettings;
+    }
+
+    /**
+     * Sets a collection of UserPluginSetting objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $userPluginSettings A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return User The current object (for fluent API support)
+     */
+    public function setUserPluginSettings(PropelCollection $userPluginSettings, PropelPDO $con = null)
+    {
+        $userPluginSettingsToDelete = $this->getUserPluginSettings(new Criteria(), $con)->diff($userPluginSettings);
+
+        $this->userPluginSettingsScheduledForDeletion = unserialize(serialize($userPluginSettingsToDelete));
+
+        foreach ($userPluginSettingsToDelete as $userPluginSettingRemoved) {
+            $userPluginSettingRemoved->setUser(null);
+        }
+
+        $this->collUserPluginSettings = null;
+        foreach ($userPluginSettings as $userPluginSetting) {
+            $this->addUserPluginSetting($userPluginSetting);
+        }
+
+        $this->collUserPluginSettings = $userPluginSettings;
+        $this->collUserPluginSettingsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related PluginSetting objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related PluginSetting objects.
+     * @throws PropelException
+     */
+    public function countUserPluginSettings(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collUserPluginSettingsPartial && !$this->isNew();
+        if (null === $this->collUserPluginSettings || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collUserPluginSettings) {
+                return 0;
+            }
+
+            if($partial && !$criteria) {
+                return count($this->getUserPluginSettings());
+            }
+            $query = PluginSettingQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collUserPluginSettings);
+    }
+
+    /**
+     * Method called to associate a PluginSetting object to this object
+     * through the PluginSetting foreign key attribute.
+     *
+     * @param    PluginSetting $l PluginSetting
+     * @return User The current object (for fluent API support)
+     */
+    public function addUserPluginSetting(PluginSetting $l)
+    {
+        if ($this->collUserPluginSettings === null) {
+            $this->initUserPluginSettings();
+            $this->collUserPluginSettingsPartial = true;
+        }
+        if (!in_array($l, $this->collUserPluginSettings->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddUserPluginSetting($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	UserPluginSetting $userPluginSetting The userPluginSetting object to add.
+     */
+    protected function doAddUserPluginSetting($userPluginSetting)
+    {
+        $this->collUserPluginSettings[]= $userPluginSetting;
+        $userPluginSetting->setUser($this);
+    }
+
+    /**
+     * @param	UserPluginSetting $userPluginSetting The userPluginSetting object to remove.
+     * @return User The current object (for fluent API support)
+     */
+    public function removeUserPluginSetting($userPluginSetting)
+    {
+        if ($this->getUserPluginSettings()->contains($userPluginSetting)) {
+            $this->collUserPluginSettings->remove($this->collUserPluginSettings->search($userPluginSetting));
+            if (null === $this->userPluginSettingsScheduledForDeletion) {
+                $this->userPluginSettingsScheduledForDeletion = clone $this->collUserPluginSettings;
+                $this->userPluginSettingsScheduledForDeletion->clear();
+            }
+            $this->userPluginSettingsScheduledForDeletion[]= $userPluginSetting;
+            $userPluginSetting->setUser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related UserPluginSettings from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|PluginSetting[] List of PluginSetting objects
+     */
+    public function getUserPluginSettingsJoinPlugin($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = PluginSettingQuery::create(null, $criteria);
+        $query->joinWith('Plugin', $join_behavior);
+
+        return $this->getUserPluginSettings($query, $con);
+    }
+
+    /**
      * Clears out the collGroups collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
@@ -2017,6 +2312,11 @@ abstract class BaseUser extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collUserPluginSettings) {
+                foreach ($this->collUserPluginSettings as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collGroups) {
                 foreach ($this->collGroups as $o) {
                     $o->clearAllReferences($deep);
@@ -2039,6 +2339,10 @@ abstract class BaseUser extends BaseObject implements Persistent
             $this->collUserCustomers->clearIterator();
         }
         $this->collUserCustomers = null;
+        if ($this->collUserPluginSettings instanceof PropelCollection) {
+            $this->collUserPluginSettings->clearIterator();
+        }
+        $this->collUserPluginSettings = null;
         if ($this->collGroups instanceof PropelCollection) {
             $this->collGroups->clearIterator();
         }

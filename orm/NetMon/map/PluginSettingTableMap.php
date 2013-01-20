@@ -40,8 +40,8 @@ class PluginSettingTableMap extends TableMap
         // columns
         $this->addPrimaryKey('PluginSettingId', 'Pluginsettingid', 'INTEGER', true, null, null);
         $this->addForeignKey('PluginId', 'Pluginid', 'INTEGER', 'Plugin', 'PluginId', true, null, null);
-        $this->addColumn('UserId', 'Userid', 'INTEGER', false, null, null);
-        $this->addColumn('Setting', 'Setting', 'VARCHAR', true, 50, null);
+        $this->addForeignKey('UserId', 'Userid', 'INTEGER', 'User', 'UserId', false, null, null);
+        $this->addColumn('Key', 'Key', 'VARCHAR', true, 50, null);
         $this->addColumn('Value', 'Value', 'VARCHAR', true, 255, null);
         // validators
     } // initialize()
@@ -52,6 +52,7 @@ class PluginSettingTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('Plugin', 'Plugin', RelationMap::MANY_TO_ONE, array('PluginId' => 'PluginId', ), null, null);
+        $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('UserId' => 'UserId', ), null, null);
     } // buildRelations()
 
 } // PluginSettingTableMap

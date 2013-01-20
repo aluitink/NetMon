@@ -1,5 +1,5 @@
 <?php
-$template = new NetMon\Template("index/index.html");
+$template = new NetMon\Template("login/index.html");
 
 $template->Show();
 ?>

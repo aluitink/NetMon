@@ -2,24 +2,24 @@
 
 
 /**
- * Base class that represents a row from the 'InterfaceStatistic' table.
+ * Base class that represents a row from the 'MultiThreadCache' table.
  *
  *
  *
  * @package    propel.generator.NetMon.om
  */
-abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
+abstract class BaseMultiThreadCache extends BaseObject implements Persistent
 {
     /**
      * Peer class name
      */
-    const PEER = 'InterfaceStatisticPeer';
+    const PEER = 'MultiThreadCachePeer';
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        InterfaceStatisticPeer
+     * @var        MultiThreadCachePeer
      */
     protected static $peer;
 
@@ -30,45 +30,46 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
     protected $startCopy = false;
 
     /**
-     * The value for the interfacestatisticid field.
+     * The value for the multithreadcacheid field.
      * @var        int
      */
-    protected $interfacestatisticid;
+    protected $multithreadcacheid;
 
     /**
-     * The value for the interfaceid field.
+     * The value for the batchidentifier field.
+     * @var        string
+     */
+    protected $batchidentifier;
+
+    /**
+     * The value for the timelimit field.
      * @var        int
      */
-    protected $interfaceid;
+    protected $timelimit;
 
     /**
-     * The value for the inoctets field.
+     * The value for the pid field.
      * @var        int
      */
-    protected $inoctets;
+    protected $pid;
 
     /**
-     * The value for the outoctets field.
-     * @var        int
+     * The value for the status field.
+     * @var        boolean
      */
-    protected $outoctets;
+    protected $status;
 
     /**
-     * The value for the inpackets field.
-     * @var        int
+     * The value for the variables field.
+     * @var        string
      */
-    protected $inpackets;
+    protected $variables;
 
     /**
-     * The value for the outpackets field.
-     * @var        int
+     * The value for the output field.
+     * @var        string
      */
-    protected $outpackets;
-
-    /**
-     * @var        Interface
-     */
-    protected $aInterface;
+    protected $output;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -91,194 +92,229 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
     protected $alreadyInClearAllReferencesDeep = false;
 
     /**
-     * Get the [interfacestatisticid] column value.
+     * Get the [multithreadcacheid] column value.
      *
      * @return int
      */
-    public function getInterfacestatisticid()
+    public function getMultithreadcacheid()
     {
-        return $this->interfacestatisticid;
+        return $this->multithreadcacheid;
     }
 
     /**
-     * Get the [interfaceid] column value.
+     * Get the [batchidentifier] column value.
+     *
+     * @return string
+     */
+    public function getBatchidentifier()
+    {
+        return $this->batchidentifier;
+    }
+
+    /**
+     * Get the [timelimit] column value.
      *
      * @return int
      */
-    public function getInterfaceid()
+    public function getTimelimit()
     {
-        return $this->interfaceid;
+        return $this->timelimit;
     }
 
     /**
-     * Get the [inoctets] column value.
+     * Get the [pid] column value.
      *
      * @return int
      */
-    public function getInoctets()
+    public function getPid()
     {
-        return $this->inoctets;
+        return $this->pid;
     }
 
     /**
-     * Get the [outoctets] column value.
+     * Get the [status] column value.
      *
-     * @return int
+     * @return boolean
      */
-    public function getOutoctets()
+    public function getStatus()
     {
-        return $this->outoctets;
+        return $this->status;
     }
 
     /**
-     * Get the [inpackets] column value.
+     * Get the [variables] column value.
      *
-     * @return int
+     * @return string
      */
-    public function getInpackets()
+    public function getVariables()
     {
-        return $this->inpackets;
+        return $this->variables;
     }
 
     /**
-     * Get the [outpackets] column value.
+     * Get the [output] column value.
      *
-     * @return int
+     * @return string
      */
-    public function getOutpackets()
+    public function getOutput()
     {
-        return $this->outpackets;
+        return $this->output;
     }
 
     /**
-     * Set the value of [interfacestatisticid] column.
+     * Set the value of [multithreadcacheid] column.
      *
      * @param int $v new value
-     * @return InterfaceStatistic The current object (for fluent API support)
+     * @return MultiThreadCache The current object (for fluent API support)
      */
-    public function setInterfacestatisticid($v)
+    public function setMultithreadcacheid($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
-        if ($this->interfacestatisticid !== $v) {
-            $this->interfacestatisticid = $v;
-            $this->modifiedColumns[] = InterfaceStatisticPeer::INTERFACESTATISTICID;
+        if ($this->multithreadcacheid !== $v) {
+            $this->multithreadcacheid = $v;
+            $this->modifiedColumns[] = MultiThreadCachePeer::MULTITHREADCACHEID;
         }
 
 
         return $this;
-    } // setInterfacestatisticid()
+    } // setMultithreadcacheid()
 
     /**
-     * Set the value of [interfaceid] column.
+     * Set the value of [batchidentifier] column.
+     *
+     * @param string $v new value
+     * @return MultiThreadCache The current object (for fluent API support)
+     */
+    public function setBatchidentifier($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->batchidentifier !== $v) {
+            $this->batchidentifier = $v;
+            $this->modifiedColumns[] = MultiThreadCachePeer::BATCHIDENTIFIER;
+        }
+
+
+        return $this;
+    } // setBatchidentifier()
+
+    /**
+     * Set the value of [timelimit] column.
      *
      * @param int $v new value
-     * @return InterfaceStatistic The current object (for fluent API support)
+     * @return MultiThreadCache The current object (for fluent API support)
      */
-    public function setInterfaceid($v)
+    public function setTimelimit($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
-        if ($this->interfaceid !== $v) {
-            $this->interfaceid = $v;
-            $this->modifiedColumns[] = InterfaceStatisticPeer::INTERFACEID;
-        }
-
-        if ($this->aInterface !== null && $this->aInterface->getInterfaceid() !== $v) {
-            $this->aInterface = null;
+        if ($this->timelimit !== $v) {
+            $this->timelimit = $v;
+            $this->modifiedColumns[] = MultiThreadCachePeer::TIMELIMIT;
         }
 
 
         return $this;
-    } // setInterfaceid()
+    } // setTimelimit()
 
     /**
-     * Set the value of [inoctets] column.
+     * Set the value of [pid] column.
      *
      * @param int $v new value
-     * @return InterfaceStatistic The current object (for fluent API support)
+     * @return MultiThreadCache The current object (for fluent API support)
      */
-    public function setInoctets($v)
+    public function setPid($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
-        if ($this->inoctets !== $v) {
-            $this->inoctets = $v;
-            $this->modifiedColumns[] = InterfaceStatisticPeer::INOCTETS;
+        if ($this->pid !== $v) {
+            $this->pid = $v;
+            $this->modifiedColumns[] = MultiThreadCachePeer::PID;
         }
 
 
         return $this;
-    } // setInoctets()
+    } // setPid()
 
     /**
-     * Set the value of [outoctets] column.
+     * Sets the value of the [status] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      *
-     * @param int $v new value
-     * @return InterfaceStatistic The current object (for fluent API support)
+     * @param boolean|integer|string $v The new value
+     * @return MultiThreadCache The current object (for fluent API support)
      */
-    public function setOutoctets($v)
+    public function setStatus($v)
     {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
         }
 
-        if ($this->outoctets !== $v) {
-            $this->outoctets = $v;
-            $this->modifiedColumns[] = InterfaceStatisticPeer::OUTOCTETS;
+        if ($this->status !== $v) {
+            $this->status = $v;
+            $this->modifiedColumns[] = MultiThreadCachePeer::STATUS;
         }
 
 
         return $this;
-    } // setOutoctets()
+    } // setStatus()
 
     /**
-     * Set the value of [inpackets] column.
+     * Set the value of [variables] column.
      *
-     * @param int $v new value
-     * @return InterfaceStatistic The current object (for fluent API support)
+     * @param string $v new value
+     * @return MultiThreadCache The current object (for fluent API support)
      */
-    public function setInpackets($v)
+    public function setVariables($v)
     {
         if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
-        if ($this->inpackets !== $v) {
-            $this->inpackets = $v;
-            $this->modifiedColumns[] = InterfaceStatisticPeer::INPACKETS;
+        if ($this->variables !== $v) {
+            $this->variables = $v;
+            $this->modifiedColumns[] = MultiThreadCachePeer::VARIABLES;
         }
 
 
         return $this;
-    } // setInpackets()
+    } // setVariables()
 
     /**
-     * Set the value of [outpackets] column.
+     * Set the value of [output] column.
      *
-     * @param int $v new value
-     * @return InterfaceStatistic The current object (for fluent API support)
+     * @param string $v new value
+     * @return MultiThreadCache The current object (for fluent API support)
      */
-    public function setOutpackets($v)
+    public function setOutput($v)
     {
         if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
-        if ($this->outpackets !== $v) {
-            $this->outpackets = $v;
-            $this->modifiedColumns[] = InterfaceStatisticPeer::OUTPACKETS;
+        if ($this->output !== $v) {
+            $this->output = $v;
+            $this->modifiedColumns[] = MultiThreadCachePeer::OUTPUT;
         }
 
 
         return $this;
-    } // setOutpackets()
+    } // setOutput()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -312,12 +348,13 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
     {
         try {
 
-            $this->interfacestatisticid = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-            $this->interfaceid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->inoctets = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-            $this->outoctets = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
-            $this->inpackets = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
-            $this->outpackets = ($row[$startcol + 5] !== null) ? (int) $row[$startcol + 5] : null;
+            $this->multithreadcacheid = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+            $this->batchidentifier = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+            $this->timelimit = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
+            $this->pid = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
+            $this->status = ($row[$startcol + 4] !== null) ? (boolean) $row[$startcol + 4] : null;
+            $this->variables = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+            $this->output = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -326,10 +363,10 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
             $this->postHydrate($row, $startcol, $rehydrate);
-            return $startcol + 6; // 6 = InterfaceStatisticPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 7; // 7 = MultiThreadCachePeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating InterfaceStatistic object", $e);
+            throw new PropelException("Error populating MultiThreadCache object", $e);
         }
     }
 
@@ -349,9 +386,6 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aInterface !== null && $this->interfaceid !== $this->aInterface->getInterfaceid()) {
-            $this->aInterface = null;
-        }
     } // ensureConsistency
 
     /**
@@ -375,13 +409,13 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(InterfaceStatisticPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(MultiThreadCachePeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $stmt = InterfaceStatisticPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+        $stmt = MultiThreadCachePeer::doSelectStmt($this->buildPkeyCriteria(), $con);
         $row = $stmt->fetch(PDO::FETCH_NUM);
         $stmt->closeCursor();
         if (!$row) {
@@ -391,7 +425,6 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aInterface = null;
         } // if (deep)
     }
 
@@ -412,12 +445,12 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(InterfaceStatisticPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(MultiThreadCachePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
         try {
-            $deleteQuery = InterfaceStatisticQuery::create()
+            $deleteQuery = MultiThreadCacheQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -455,7 +488,7 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(InterfaceStatisticPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(MultiThreadCachePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
@@ -475,7 +508,7 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                InterfaceStatisticPeer::addInstanceToPool($this);
+                MultiThreadCachePeer::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -504,18 +537,6 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
         $affectedRows = 0; // initialize var to track total num of affected rows
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
-
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their coresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aInterface !== null) {
-                if ($this->aInterface->isModified() || $this->aInterface->isNew()) {
-                    $affectedRows += $this->aInterface->save($con);
-                }
-                $this->setInterface($this->aInterface);
-            }
 
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
@@ -548,33 +569,36 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[] = InterfaceStatisticPeer::INTERFACESTATISTICID;
-        if (null !== $this->interfacestatisticid) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . InterfaceStatisticPeer::INTERFACESTATISTICID . ')');
+        $this->modifiedColumns[] = MultiThreadCachePeer::MULTITHREADCACHEID;
+        if (null !== $this->multithreadcacheid) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . MultiThreadCachePeer::MULTITHREADCACHEID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(InterfaceStatisticPeer::INTERFACESTATISTICID)) {
-            $modifiedColumns[':p' . $index++]  = '`InterfaceStatisticId`';
+        if ($this->isColumnModified(MultiThreadCachePeer::MULTITHREADCACHEID)) {
+            $modifiedColumns[':p' . $index++]  = '`MultiThreadCacheId`';
         }
-        if ($this->isColumnModified(InterfaceStatisticPeer::INTERFACEID)) {
-            $modifiedColumns[':p' . $index++]  = '`InterfaceId`';
+        if ($this->isColumnModified(MultiThreadCachePeer::BATCHIDENTIFIER)) {
+            $modifiedColumns[':p' . $index++]  = '`BatchIdentifier`';
         }
-        if ($this->isColumnModified(InterfaceStatisticPeer::INOCTETS)) {
-            $modifiedColumns[':p' . $index++]  = '`InOctets`';
+        if ($this->isColumnModified(MultiThreadCachePeer::TIMELIMIT)) {
+            $modifiedColumns[':p' . $index++]  = '`TimeLimit`';
         }
-        if ($this->isColumnModified(InterfaceStatisticPeer::OUTOCTETS)) {
-            $modifiedColumns[':p' . $index++]  = '`OutOctets`';
+        if ($this->isColumnModified(MultiThreadCachePeer::PID)) {
+            $modifiedColumns[':p' . $index++]  = '`Pid`';
         }
-        if ($this->isColumnModified(InterfaceStatisticPeer::INPACKETS)) {
-            $modifiedColumns[':p' . $index++]  = '`InPackets`';
+        if ($this->isColumnModified(MultiThreadCachePeer::STATUS)) {
+            $modifiedColumns[':p' . $index++]  = '`Status`';
         }
-        if ($this->isColumnModified(InterfaceStatisticPeer::OUTPACKETS)) {
-            $modifiedColumns[':p' . $index++]  = '`OutPackets`';
+        if ($this->isColumnModified(MultiThreadCachePeer::VARIABLES)) {
+            $modifiedColumns[':p' . $index++]  = '`Variables`';
+        }
+        if ($this->isColumnModified(MultiThreadCachePeer::OUTPUT)) {
+            $modifiedColumns[':p' . $index++]  = '`Output`';
         }
 
         $sql = sprintf(
-            'INSERT INTO `InterfaceStatistic` (%s) VALUES (%s)',
+            'INSERT INTO `MultiThreadCache` (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -583,23 +607,26 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case '`InterfaceStatisticId`':
-                        $stmt->bindValue($identifier, $this->interfacestatisticid, PDO::PARAM_INT);
+                    case '`MultiThreadCacheId`':
+                        $stmt->bindValue($identifier, $this->multithreadcacheid, PDO::PARAM_INT);
                         break;
-                    case '`InterfaceId`':
-                        $stmt->bindValue($identifier, $this->interfaceid, PDO::PARAM_INT);
+                    case '`BatchIdentifier`':
+                        $stmt->bindValue($identifier, $this->batchidentifier, PDO::PARAM_STR);
                         break;
-                    case '`InOctets`':
-                        $stmt->bindValue($identifier, $this->inoctets, PDO::PARAM_INT);
+                    case '`TimeLimit`':
+                        $stmt->bindValue($identifier, $this->timelimit, PDO::PARAM_INT);
                         break;
-                    case '`OutOctets`':
-                        $stmt->bindValue($identifier, $this->outoctets, PDO::PARAM_INT);
+                    case '`Pid`':
+                        $stmt->bindValue($identifier, $this->pid, PDO::PARAM_INT);
                         break;
-                    case '`InPackets`':
-                        $stmt->bindValue($identifier, $this->inpackets, PDO::PARAM_INT);
+                    case '`Status`':
+                        $stmt->bindValue($identifier, (int) $this->status, PDO::PARAM_INT);
                         break;
-                    case '`OutPackets`':
-                        $stmt->bindValue($identifier, $this->outpackets, PDO::PARAM_INT);
+                    case '`Variables`':
+                        $stmt->bindValue($identifier, $this->variables, PDO::PARAM_STR);
+                        break;
+                    case '`Output`':
+                        $stmt->bindValue($identifier, $this->output, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -614,7 +641,7 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
         } catch (Exception $e) {
             throw new PropelException('Unable to get autoincrement id.', $e);
         }
-        $this->setInterfacestatisticid($pk);
+        $this->setMultithreadcacheid($pk);
 
         $this->setNew(false);
     }
@@ -695,19 +722,7 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            // We call the validate method on the following object(s) if they
-            // were passed to this object by their coresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aInterface !== null) {
-                if (!$this->aInterface->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aInterface->getValidationFailures());
-                }
-            }
-
-
-            if (($retval = InterfaceStatisticPeer::doValidate($this, $columns)) !== true) {
+            if (($retval = MultiThreadCachePeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -731,7 +746,7 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = InterfaceStatisticPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = MultiThreadCachePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -748,22 +763,25 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                return $this->getInterfacestatisticid();
+                return $this->getMultithreadcacheid();
                 break;
             case 1:
-                return $this->getInterfaceid();
+                return $this->getBatchidentifier();
                 break;
             case 2:
-                return $this->getInoctets();
+                return $this->getTimelimit();
                 break;
             case 3:
-                return $this->getOutoctets();
+                return $this->getPid();
                 break;
             case 4:
-                return $this->getInpackets();
+                return $this->getStatus();
                 break;
             case 5:
-                return $this->getOutpackets();
+                return $this->getVariables();
+                break;
+            case 6:
+                return $this->getOutput();
                 break;
             default:
                 return null;
@@ -782,30 +800,25 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
      *                    Defaults to BasePeer::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to true.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
-        if (isset($alreadyDumpedObjects['InterfaceStatistic'][$this->getPrimaryKey()])) {
+        if (isset($alreadyDumpedObjects['MultiThreadCache'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['InterfaceStatistic'][$this->getPrimaryKey()] = true;
-        $keys = InterfaceStatisticPeer::getFieldNames($keyType);
+        $alreadyDumpedObjects['MultiThreadCache'][$this->getPrimaryKey()] = true;
+        $keys = MultiThreadCachePeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getInterfacestatisticid(),
-            $keys[1] => $this->getInterfaceid(),
-            $keys[2] => $this->getInoctets(),
-            $keys[3] => $this->getOutoctets(),
-            $keys[4] => $this->getInpackets(),
-            $keys[5] => $this->getOutpackets(),
+            $keys[0] => $this->getMultithreadcacheid(),
+            $keys[1] => $this->getBatchidentifier(),
+            $keys[2] => $this->getTimelimit(),
+            $keys[3] => $this->getPid(),
+            $keys[4] => $this->getStatus(),
+            $keys[5] => $this->getVariables(),
+            $keys[6] => $this->getOutput(),
         );
-        if ($includeForeignObjects) {
-            if (null !== $this->aInterface) {
-                $result['Interface'] = $this->aInterface->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-        }
 
         return $result;
     }
@@ -823,7 +836,7 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = InterfaceStatisticPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = MultiThreadCachePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 
         $this->setByPosition($pos, $value);
     }
@@ -840,22 +853,25 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                $this->setInterfacestatisticid($value);
+                $this->setMultithreadcacheid($value);
                 break;
             case 1:
-                $this->setInterfaceid($value);
+                $this->setBatchidentifier($value);
                 break;
             case 2:
-                $this->setInoctets($value);
+                $this->setTimelimit($value);
                 break;
             case 3:
-                $this->setOutoctets($value);
+                $this->setPid($value);
                 break;
             case 4:
-                $this->setInpackets($value);
+                $this->setStatus($value);
                 break;
             case 5:
-                $this->setOutpackets($value);
+                $this->setVariables($value);
+                break;
+            case 6:
+                $this->setOutput($value);
                 break;
         } // switch()
     }
@@ -879,14 +895,15 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = InterfaceStatisticPeer::getFieldNames($keyType);
+        $keys = MultiThreadCachePeer::getFieldNames($keyType);
 
-        if (array_key_exists($keys[0], $arr)) $this->setInterfacestatisticid($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setInterfaceid($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setInoctets($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setOutoctets($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setInpackets($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setOutpackets($arr[$keys[5]]);
+        if (array_key_exists($keys[0], $arr)) $this->setMultithreadcacheid($arr[$keys[0]]);
+        if (array_key_exists($keys[1], $arr)) $this->setBatchidentifier($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setTimelimit($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setPid($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setStatus($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setVariables($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setOutput($arr[$keys[6]]);
     }
 
     /**
@@ -896,14 +913,15 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(InterfaceStatisticPeer::DATABASE_NAME);
+        $criteria = new Criteria(MultiThreadCachePeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(InterfaceStatisticPeer::INTERFACESTATISTICID)) $criteria->add(InterfaceStatisticPeer::INTERFACESTATISTICID, $this->interfacestatisticid);
-        if ($this->isColumnModified(InterfaceStatisticPeer::INTERFACEID)) $criteria->add(InterfaceStatisticPeer::INTERFACEID, $this->interfaceid);
-        if ($this->isColumnModified(InterfaceStatisticPeer::INOCTETS)) $criteria->add(InterfaceStatisticPeer::INOCTETS, $this->inoctets);
-        if ($this->isColumnModified(InterfaceStatisticPeer::OUTOCTETS)) $criteria->add(InterfaceStatisticPeer::OUTOCTETS, $this->outoctets);
-        if ($this->isColumnModified(InterfaceStatisticPeer::INPACKETS)) $criteria->add(InterfaceStatisticPeer::INPACKETS, $this->inpackets);
-        if ($this->isColumnModified(InterfaceStatisticPeer::OUTPACKETS)) $criteria->add(InterfaceStatisticPeer::OUTPACKETS, $this->outpackets);
+        if ($this->isColumnModified(MultiThreadCachePeer::MULTITHREADCACHEID)) $criteria->add(MultiThreadCachePeer::MULTITHREADCACHEID, $this->multithreadcacheid);
+        if ($this->isColumnModified(MultiThreadCachePeer::BATCHIDENTIFIER)) $criteria->add(MultiThreadCachePeer::BATCHIDENTIFIER, $this->batchidentifier);
+        if ($this->isColumnModified(MultiThreadCachePeer::TIMELIMIT)) $criteria->add(MultiThreadCachePeer::TIMELIMIT, $this->timelimit);
+        if ($this->isColumnModified(MultiThreadCachePeer::PID)) $criteria->add(MultiThreadCachePeer::PID, $this->pid);
+        if ($this->isColumnModified(MultiThreadCachePeer::STATUS)) $criteria->add(MultiThreadCachePeer::STATUS, $this->status);
+        if ($this->isColumnModified(MultiThreadCachePeer::VARIABLES)) $criteria->add(MultiThreadCachePeer::VARIABLES, $this->variables);
+        if ($this->isColumnModified(MultiThreadCachePeer::OUTPUT)) $criteria->add(MultiThreadCachePeer::OUTPUT, $this->output);
 
         return $criteria;
     }
@@ -918,8 +936,8 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(InterfaceStatisticPeer::DATABASE_NAME);
-        $criteria->add(InterfaceStatisticPeer::INTERFACESTATISTICID, $this->interfacestatisticid);
+        $criteria = new Criteria(MultiThreadCachePeer::DATABASE_NAME);
+        $criteria->add(MultiThreadCachePeer::MULTITHREADCACHEID, $this->multithreadcacheid);
 
         return $criteria;
     }
@@ -930,18 +948,18 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getInterfacestatisticid();
+        return $this->getMultithreadcacheid();
     }
 
     /**
-     * Generic method to set the primary key (interfacestatisticid column).
+     * Generic method to set the primary key (multithreadcacheid column).
      *
      * @param  int $key Primary key.
      * @return void
      */
     public function setPrimaryKey($key)
     {
-        $this->setInterfacestatisticid($key);
+        $this->setMultithreadcacheid($key);
     }
 
     /**
@@ -951,7 +969,7 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
     public function isPrimaryKeyNull()
     {
 
-        return null === $this->getInterfacestatisticid();
+        return null === $this->getMultithreadcacheid();
     }
 
     /**
@@ -960,33 +978,22 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param object $copyObj An object of InterfaceStatistic (or compatible) type.
+     * @param object $copyObj An object of MultiThreadCache (or compatible) type.
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setInterfaceid($this->getInterfaceid());
-        $copyObj->setInoctets($this->getInoctets());
-        $copyObj->setOutoctets($this->getOutoctets());
-        $copyObj->setInpackets($this->getInpackets());
-        $copyObj->setOutpackets($this->getOutpackets());
-
-        if ($deepCopy && !$this->startCopy) {
-            // important: temporarily setNew(false) because this affects the behavior of
-            // the getter/setter methods for fkey referrer objects.
-            $copyObj->setNew(false);
-            // store object hash to prevent cycle
-            $this->startCopy = true;
-
-            //unflag object copy
-            $this->startCopy = false;
-        } // if ($deepCopy)
-
+        $copyObj->setBatchidentifier($this->getBatchidentifier());
+        $copyObj->setTimelimit($this->getTimelimit());
+        $copyObj->setPid($this->getPid());
+        $copyObj->setStatus($this->getStatus());
+        $copyObj->setVariables($this->getVariables());
+        $copyObj->setOutput($this->getOutput());
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setInterfacestatisticid(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setMultithreadcacheid(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -999,7 +1006,7 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
      * objects.
      *
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return InterfaceStatistic Clone of current object.
+     * @return MultiThreadCache Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1019,67 +1026,15 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return InterfaceStatisticPeer
+     * @return MultiThreadCachePeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new InterfaceStatisticPeer();
+            self::$peer = new MultiThreadCachePeer();
         }
 
         return self::$peer;
-    }
-
-    /**
-     * Declares an association between this object and a Interface object.
-     *
-     * @param             Interface $v
-     * @return InterfaceStatistic The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setInterface(Interface $v = null)
-    {
-        if ($v === null) {
-            $this->setInterfaceid(NULL);
-        } else {
-            $this->setInterfaceid($v->getInterfaceid());
-        }
-
-        $this->aInterface = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Interface object, it will not be re-added.
-        if ($v !== null) {
-            $v->addInterfaceInterfaceStatistic($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Interface object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Interface The associated Interface object.
-     * @throws PropelException
-     */
-    public function getInterface(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aInterface === null && ($this->interfaceid !== null) && $doQuery) {
-            $this->aInterface = InterfaceQuery::create()->findPk($this->interfaceid, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aInterface->addInterfaceInterfaceStatistics($this);
-             */
-        }
-
-        return $this->aInterface;
     }
 
     /**
@@ -1087,12 +1042,13 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
      */
     public function clear()
     {
-        $this->interfacestatisticid = null;
-        $this->interfaceid = null;
-        $this->inoctets = null;
-        $this->outoctets = null;
-        $this->inpackets = null;
-        $this->outpackets = null;
+        $this->multithreadcacheid = null;
+        $this->batchidentifier = null;
+        $this->timelimit = null;
+        $this->pid = null;
+        $this->status = null;
+        $this->variables = null;
+        $this->output = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;
@@ -1115,14 +1071,10 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aInterface instanceof Persistent) {
-              $this->aInterface->clearAllReferences($deep);
-            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aInterface = null;
     }
 
     /**
@@ -1132,7 +1084,7 @@ abstract class BaseInterfaceStatistic extends BaseObject implements Persistent
      */
     public function __toString()
     {
-        return (string) $this->exportTo(InterfaceStatisticPeer::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(MultiThreadCachePeer::DEFAULT_STRING_FORMAT);
     }
 
     /**

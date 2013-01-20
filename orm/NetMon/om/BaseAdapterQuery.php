@@ -1061,57 +1061,6 @@ abstract class BaseAdapterQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related Device object
-     * using the Monitor table as cross reference
-     *
-     * @param   Device $device the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return   AdapterQuery The current query, for fluid interface
-     */
-    public function filterByDevice($device, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->useAdapterMonitorQuery()
-            ->filterByDevice($device, $comparison)
-            ->endUse();
-    }
-
-    /**
-     * Filter the query by a related Plugin object
-     * using the Monitor table as cross reference
-     *
-     * @param   Plugin $plugin the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return   AdapterQuery The current query, for fluid interface
-     */
-    public function filterByPlugin($plugin, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->useAdapterMonitorQuery()
-            ->filterByPlugin($plugin, $comparison)
-            ->endUse();
-    }
-
-    /**
-     * Filter the query by a related SnmpProperty object
-     * using the Monitor table as cross reference
-     *
-     * @param   SnmpProperty $snmpProperty the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return   AdapterQuery The current query, for fluid interface
-     */
-    public function filterBySnmpProperty($snmpProperty, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->useAdapterMonitorQuery()
-            ->filterBySnmpProperty($snmpProperty, $comparison)
-            ->endUse();
-    }
-
-    /**
      * Exclude object from result
      *
      * @param   Adapter $adapter Object to remove from the list of results

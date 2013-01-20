@@ -1072,57 +1072,6 @@ abstract class BaseDeviceQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related Plugin object
-     * using the Monitor table as cross reference
-     *
-     * @param   Plugin $plugin the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return   DeviceQuery The current query, for fluid interface
-     */
-    public function filterByPlugin($plugin, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->useDeviceMonitorQuery()
-            ->filterByPlugin($plugin, $comparison)
-            ->endUse();
-    }
-
-    /**
-     * Filter the query by a related Adapter object
-     * using the Monitor table as cross reference
-     *
-     * @param   Adapter $adapter the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return   DeviceQuery The current query, for fluid interface
-     */
-    public function filterByAdapter($adapter, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->useDeviceMonitorQuery()
-            ->filterByAdapter($adapter, $comparison)
-            ->endUse();
-    }
-
-    /**
-     * Filter the query by a related SnmpProperty object
-     * using the Monitor table as cross reference
-     *
-     * @param   SnmpProperty $snmpProperty the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return   DeviceQuery The current query, for fluid interface
-     */
-    public function filterBySnmpProperty($snmpProperty, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->useDeviceMonitorQuery()
-            ->filterBySnmpProperty($snmpProperty, $comparison)
-            ->endUse();
-    }
-
-    /**
      * Exclude object from result
      *
      * @param   Device $device Object to remove from the list of results

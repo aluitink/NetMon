@@ -37,7 +37,6 @@ class MonitorTableMap extends TableMap
         $this->setClassname('Monitor');
         $this->setPackage('NetMon');
         $this->setUseIdGenerator(true);
-        $this->setIsCrossRef(true);
         // columns
         $this->addPrimaryKey('MonitorId', 'Monitorid', 'INTEGER', true, null, null);
         $this->addForeignPrimaryKey('DeviceId', 'Deviceid', 'INTEGER' , 'Device', 'DeviceId', true, null, null);

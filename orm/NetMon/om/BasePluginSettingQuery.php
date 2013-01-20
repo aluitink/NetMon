@@ -9,13 +9,13 @@
  * @method PluginSettingQuery orderByPluginsettingid($order = Criteria::ASC) Order by the PluginSettingId column
  * @method PluginSettingQuery orderByPluginid($order = Criteria::ASC) Order by the PluginId column
  * @method PluginSettingQuery orderByUserid($order = Criteria::ASC) Order by the UserId column
- * @method PluginSettingQuery orderBySetting($order = Criteria::ASC) Order by the Setting column
+ * @method PluginSettingQuery orderByKey($order = Criteria::ASC) Order by the Key column
  * @method PluginSettingQuery orderByValue($order = Criteria::ASC) Order by the Value column
  *
  * @method PluginSettingQuery groupByPluginsettingid() Group by the PluginSettingId column
  * @method PluginSettingQuery groupByPluginid() Group by the PluginId column
  * @method PluginSettingQuery groupByUserid() Group by the UserId column
- * @method PluginSettingQuery groupBySetting() Group by the Setting column
+ * @method PluginSettingQuery groupByKey() Group by the Key column
  * @method PluginSettingQuery groupByValue() Group by the Value column
  *
  * @method PluginSettingQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -26,18 +26,22 @@
  * @method PluginSettingQuery rightJoinPlugin($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Plugin relation
  * @method PluginSettingQuery innerJoinPlugin($relationAlias = null) Adds a INNER JOIN clause to the query using the Plugin relation
  *
+ * @method PluginSettingQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
+ * @method PluginSettingQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
+ * @method PluginSettingQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
+ *
  * @method PluginSetting findOne(PropelPDO $con = null) Return the first PluginSetting matching the query
  * @method PluginSetting findOneOrCreate(PropelPDO $con = null) Return the first PluginSetting matching the query, or a new PluginSetting object populated from the query conditions when no match is found
  *
  * @method PluginSetting findOneByPluginid(int $PluginId) Return the first PluginSetting filtered by the PluginId column
  * @method PluginSetting findOneByUserid(int $UserId) Return the first PluginSetting filtered by the UserId column
- * @method PluginSetting findOneBySetting(string $Setting) Return the first PluginSetting filtered by the Setting column
+ * @method PluginSetting findOneByKey(string $Key) Return the first PluginSetting filtered by the Key column
  * @method PluginSetting findOneByValue(string $Value) Return the first PluginSetting filtered by the Value column
  *
  * @method array findByPluginsettingid(int $PluginSettingId) Return PluginSetting objects filtered by the PluginSettingId column
  * @method array findByPluginid(int $PluginId) Return PluginSetting objects filtered by the PluginId column
  * @method array findByUserid(int $UserId) Return PluginSetting objects filtered by the UserId column
- * @method array findBySetting(string $Setting) Return PluginSetting objects filtered by the Setting column
+ * @method array findByKey(string $Key) Return PluginSetting objects filtered by the Key column
  * @method array findByValue(string $Value) Return PluginSetting objects filtered by the Value column
  *
  * @package    propel.generator.NetMon.om
@@ -142,7 +146,7 @@ abstract class BasePluginSettingQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `PluginSettingId`, `PluginId`, `UserId`, `Setting`, `Value` FROM `PluginSetting` WHERE `PluginSettingId` = :p0';
+        $sql = 'SELECT `PluginSettingId`, `PluginId`, `UserId`, `Key`, `Value` FROM `PluginSetting` WHERE `PluginSettingId` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -328,6 +332,8 @@ abstract class BasePluginSettingQuery extends ModelCriteria
      * $query->filterByUserid(array('max' => 12)); // WHERE UserId <= 12
      * </code>
      *
+     * @see       filterByUser()
+     *
      * @param     mixed $userid The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
@@ -360,32 +366,32 @@ abstract class BasePluginSettingQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the Setting column
+     * Filter the query on the Key column
      *
      * Example usage:
      * <code>
-     * $query->filterBySetting('fooValue');   // WHERE Setting = 'fooValue'
-     * $query->filterBySetting('%fooValue%'); // WHERE Setting LIKE '%fooValue%'
+     * $query->filterByKey('fooValue');   // WHERE Key = 'fooValue'
+     * $query->filterByKey('%fooValue%'); // WHERE Key LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $setting The value to use as filter.
+     * @param     string $key The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return PluginSettingQuery The current query, for fluid interface
      */
-    public function filterBySetting($setting = null, $comparison = null)
+    public function filterByKey($key = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($setting)) {
+            if (is_array($key)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $setting)) {
-                $setting = str_replace('*', '%', $setting);
+            } elseif (preg_match('/[\%\*]/', $key)) {
+                $key = str_replace('*', '%', $key);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(PluginSettingPeer::SETTING, $setting, $comparison);
+        return $this->addUsingAlias(PluginSettingPeer::KEY, $key, $comparison);
     }
 
     /**
@@ -491,6 +497,82 @@ abstract class BasePluginSettingQuery extends ModelCriteria
         return $this
             ->joinPlugin($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Plugin', 'PluginQuery');
+    }
+
+    /**
+     * Filter the query by a related User object
+     *
+     * @param   User|PropelObjectCollection $user The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 PluginSettingQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByUser($user, $comparison = null)
+    {
+        if ($user instanceof User) {
+            return $this
+                ->addUsingAlias(PluginSettingPeer::USERID, $user->getUserid(), $comparison);
+        } elseif ($user instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(PluginSettingPeer::USERID, $user->toKeyValue('PrimaryKey', 'Userid'), $comparison);
+        } else {
+            throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the User relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return PluginSettingQuery The current query, for fluid interface
+     */
+    public function joinUser($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('User');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'User');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the User relation User object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   UserQuery A secondary query class using the current class as primary query
+     */
+    public function useUserQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinUser($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'User', 'UserQuery');
     }
 
     /**

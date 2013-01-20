@@ -9,9 +9,18 @@ class Config
     
     const PropelModels = "orm";
     const PropelConfig = "orm/NetMon-conf.php";
+    
+    const MultiProcessThreadTimeLimit = 20;
+    const MultiProcessThrottled = 1;
+    const MultiProcessThreadsPerBatch = 10;
+    const MultiProcessThrottlePause = 5;
+    
     const ControllersPath = "controllers";
     const TemplatesPath = "templates";
-    const ModelsPath = "models";
+    const PluginsPath = "libs/plugins";
+    
+    const NmapPath = "/usr/bin/nmap";
+    const RootPassword = "Romance252";
     const LogPath = "/archive/log/website/netmon.log";
     const LogLevel = 1;
 }

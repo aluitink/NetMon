@@ -1,0 +1,303 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 6.01 scan initiated Thu Jan 17 19:34:44 2013 as: nmap -T4 -A -p 1-1000 -oX - 192.168.1.0/24 -->
+<nmaprun scanner="nmap" args="nmap -T4 -A -p 1-1000 -oX - 192.168.1.0/24" start="1358472884" startstr="Thu Jan 17 19:34:44 2013" version="6.01" xmloutputversion="1.04">
+<scaninfo type="syn" protocol="tcp" numservices="1000" services="1-1000"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1358472884" endtime="1358472982"><status state="up" reason="arp-response"/>
+<address addr="192.168.1.1" addrtype="ipv4"/>
+<address addr="58:6D:8F:ED:C6:B6" addrtype="mac" vendor="Cisco-Linksys"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="closed" count="995">
+<extrareasons reason="resets" count="995"/>
+</extraports>
+<port protocol="tcp" portid="53"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="domain" product="dnsmasq" version="2.55" method="probed" conf="10"><cpe>cpe:/a:thekelleys:dnsmasq:2.55</cpe></service></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="lighttpd" version="1.4.28" method="probed" conf="10"/></port>
+<port protocol="tcp" portid="139"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="netbios-ssn" product="Samba smbd" version="3.X" extrainfo="workgroup: WORKGROUP" method="probed" conf="10"/></port>
+<port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="lighttpd" version="1.4.28" tunnel="ssl" method="probed" conf="10"/></port>
+<port protocol="tcp" portid="445"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="netbios-ssn" product="Samba smbd" version="3.X" extrainfo="workgroup: WORKGROUP" method="probed" conf="10"/></port>
+</ports>
+<os><portused state="open" proto="tcp" portid="53"/>
+<portused state="closed" proto="tcp" portid="1"/>
+<portused state="closed" proto="udp" portid="32693"/>
+<osmatch name="Linux 2.6.19 - 2.6.35" accuracy="100" line="33470">
+<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="2.6.X" accuracy="100"><cpe>cpe:/o:linux:kernel:2.6</cpe></osclass>
+</osmatch>
+</os>
+<uptime seconds="8994979" lastboot="Fri Oct  5 18:00:21 2012"/>
+<distance value="1"/>
+<tcpsequence index="207" difficulty="Good luck!" values="3C5E93C0,3BA0571F,3C75042D,3CAD0970,3CBAE3C5,3CAA883E"/>
+<ipidsequence class="All zeros" values="0,0,0,0,0,0"/>
+<tcptssequence class="100HZ" values="359D37E1,359D37EC,359D37F6,359D3800,359D380A,359D3814"/>
+<trace>
+<hop ttl="1" ipaddr="192.168.1.1" rtt="1.27"/>
+</trace>
+<times srtt="1272" rttvar="493" to="100000"/>
+</host>
+<host starttime="1358472884" endtime="1358472999"><status state="up" reason="arp-response"/>
+<address addr="192.168.1.20" addrtype="ipv4"/>
+<address addr="00:0C:29:1C:A6:27" addrtype="mac" vendor="VMware"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="closed" count="998">
+<extrareasons reason="resets" count="998"/>
+</extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ssh" product="OpenSSH" version="5.8p1-hpn13v10" extrainfo="protocol 2.0" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:5.8p1-hpn13v10</cpe></service></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="Apache httpd" method="probed" conf="10"><cpe>cpe:/a:apache:http_server</cpe></service></port>
+</ports>
+<os><portused state="open" proto="tcp" portid="22"/>
+<portused state="closed" proto="tcp" portid="1"/>
+<portused state="closed" proto="udp" portid="37960"/>
+<osfingerprint fingerprint="OS:SCAN(V=6.01%E=4%D=1/17%OT=22%CT=1%CU=37960%PV=Y%DS=1%DC=D%G=Y%M=000C29%T&#xa;OS:M=50F8A728%P=i486-pc-linux-gnu)SEQ(SP=104%GCD=1%ISR=10B%TI=Z%CI=Z%II=I%T&#xa;OS:S=A)OPS(O1=M5B4ST11NW7%O2=M5B4ST11NW7%O3=M5B4NNT11NW7%O4=M5B4ST11NW7%O5=&#xa;OS:M5B4ST11NW7%O6=M5B4ST11)WIN(W1=3890%W2=3890%W3=3890%W4=3890%W5=3890%W6=3&#xa;OS:890)ECN(R=Y%DF=Y%T=41%W=3908%O=M5B4NNSNW7%CC=Y%Q=)T1(R=Y%DF=Y%T=41%S=O%A&#xa;OS:=S+%F=AS%RD=0%Q=)T2(R=N)T3(R=N)T4(R=Y%DF=Y%T=41%W=0%S=A%A=Z%F=R%O=%RD=0%&#xa;OS:Q=)T5(R=Y%DF=Y%T=41%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)T6(R=Y%DF=Y%T=41%W=0%S=&#xa;OS:A%A=Z%F=R%O=%RD=0%Q=)T7(R=Y%DF=Y%T=41%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)U1(R=&#xa;OS:Y%DF=N%T=41%IPL=164%UN=0%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUD=G)IE(R=Y%DFI=N%&#xa;OS:T=41%CD=S)&#xa;"/>
+</os>
+<uptime seconds="1103344" lastboot="Sat Jan  5 01:07:36 2013"/>
+<distance value="1"/>
+<tcpsequence index="260" difficulty="Good luck!" values="3B644783,30E2A4B0,FDD39E40,9F2FF970,3D46383C,EEA799C1"/>
+<ipidsequence class="All zeros" values="0,0,0,0,0,0"/>
+<tcptssequence class="1000HZ" values="41C3A78B,41C3A7F1,41C3A856,41C3A8BC,41C3A922,41C3A988"/>
+<trace>
+<hop ttl="1" ipaddr="192.168.1.20" rtt="1.00"/>
+</trace>
+<times srtt="1000" rttvar="586" to="100000"/>
+</host>
+<host starttime="1358472884" endtime="1358472989"><status state="up" reason="arp-response"/>
+<address addr="192.168.1.25" addrtype="ipv4"/>
+<address addr="00:0C:29:DB:7F:B8" addrtype="mac" vendor="VMware"/>
+<hostnames>
+<hostname name="control-v.hab.ath.cx" type="PTR"/>
+</hostnames>
+<ports><extraports state="filtered" count="999">
+<extrareasons reason="no-responses" count="986"/>
+<extrareasons reason="port-unreaches" count="13"/>
+</extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ssh" product="OpenSSH" version="5.8p1-hpn13v10" extrainfo="protocol 2.0" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:5.8p1-hpn13v10</cpe></service></port>
+</ports>
+<os><portused state="open" proto="tcp" portid="22"/>
+<portused state="closed" proto="udp" portid="32845"/>
+<osmatch name="Linux 2.6.38 - 3.2" accuracy="96" line="39252">
+<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="2.6.X" accuracy="96"><cpe>cpe:/o:linux:kernel:2.6</cpe></osclass>
+<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="3.X" accuracy="96"><cpe>cpe:/o:linux:kernel:3</cpe></osclass>
+</osmatch>
+<osmatch name="Linux 3.0 - 3.1" accuracy="94" line="41380">
+<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="3.X" accuracy="94"><cpe>cpe:/o:linux:kernel:3</cpe></osclass>
+</osmatch>
+<osmatch name="Linux 2.6.32 - 2.6.39" accuracy="94" line="38031">
+<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="2.6.X" accuracy="94"><cpe>cpe:/o:linux:kernel:2.6</cpe></osclass>
+</osmatch>
+<osmatch name="Netgear DG834G WAP or Western Digital WD TV media player" accuracy="93" line="54647">
+<osclass type="WAP" vendor="Netgear" osfamily="embedded" accuracy="93"/>
+<osclass type="media device" vendor="Western Digital" osfamily="embedded" accuracy="93"/>
+</osmatch>
+<osmatch name="Linux 2.6.39" accuracy="92" line="39290">
+<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="2.6.X" accuracy="92"><cpe>cpe:/o:linux:kernel:2.6</cpe></osclass>
+</osmatch>
+<osmatch name="Linux 2.6.32 - 2.6.35" accuracy="91" line="37971">
+<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="2.6.X" accuracy="91"><cpe>cpe:/o:linux:kernel:2.6</cpe></osclass>
+</osmatch>
+<osmatch name="AXIS 210A or 211 Network Camera (Linux 2.6)" accuracy="91" line="6344">
+<osclass type="webcam" vendor="AXIS" osfamily="Linux" osgen="2.6.X" accuracy="91"><cpe>cpe:/o:axis:linux:2.6</cpe></osclass>
+</osmatch>
+<osmatch name="Linux 3.0" accuracy="91" line="41271">
+<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="3.X" accuracy="91"><cpe>cpe:/o:linux:kernel:3</cpe></osclass>
+</osmatch>
+<osmatch name="HP P2000 G3 NAS device" accuracy="90" line="22329">
+<osclass type="storage-misc" vendor="HP" osfamily="embedded" accuracy="90"/>
+</osmatch>
+<osmatch name="Linux 2.6.38 - 3.0" accuracy="89" line="39226">
+<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="2.6.X" accuracy="89"><cpe>cpe:/o:linux:kernel:2.6</cpe></osclass>
+<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="3.X" accuracy="89"><cpe>cpe:/o:linux:kernel:3</cpe></osclass>
+</osmatch>
+</os>
+<uptime seconds="2561519" lastboot="Wed Dec 19 04:04:41 2012"/>
+<distance value="1"/>
+<tcpsequence index="259" difficulty="Good luck!" values="A8036FF6,5F6204F4,FC003066,89790626,6A208A74,9DAB476A"/>
+<ipidsequence class="All zeros" values="0,0,0,0,0,0"/>
+<tcptssequence class="1000HZ" values="98AD7B23,98AD7B88,98AD7BED,98AD7C52,98AD7CB8,98AD7D1D"/>
+<trace>
+<hop ttl="1" ipaddr="192.168.1.25" rtt="1.12" host="control-v.hab.ath.cx"/>
+</trace>
+<times srtt="1115" rttvar="552" to="100000"/>
+</host>
+<host starttime="1358472884" endtime="1358472982"><status state="up" reason="arp-response"/>
+<address addr="192.168.1.100" addrtype="ipv4"/>
+<address addr="00:0C:29:B2:42:0D" addrtype="mac" vendor="VMware"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="closed" count="996">
+<extrareasons reason="resets" count="996"/>
+</extraports>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="128"/><service name="http" product="Microsoft IIS httpd" version="7.5" ostype="Windows" method="probed" conf="10"><cpe>cpe:/a:microsoft:iis:7.5</cpe><cpe>cpe:/o:microsoft:windows</cpe></service></port>
+<port protocol="tcp" portid="135"><state state="open" reason="syn-ack" reason_ttl="128"/><service name="msrpc" product="Microsoft Windows RPC" ostype="Windows" method="probed" conf="10"><cpe>cpe:/o:microsoft:windows</cpe></service></port>
+<port protocol="tcp" portid="139"><state state="open" reason="syn-ack" reason_ttl="128"/><service name="netbios-ssn" method="probed" conf="10"/></port>
+<port protocol="tcp" portid="445"><state state="open" reason="syn-ack" reason_ttl="128"/><service name="netbios-ssn" method="probed" conf="10"/></port>
+</ports>
+<os><portused state="open" proto="tcp" portid="80"/>
+<portused state="closed" proto="tcp" portid="1"/>
+<portused state="closed" proto="udp" portid="38154"/>
+<osmatch name="Microsoft Windows 7 or Windows Server 2008 SP1" accuracy="100" line="46366">
+<osclass type="general purpose" vendor="Microsoft" osfamily="Windows" osgen="7" accuracy="100"><cpe>cpe:/o:microsoft:windows_7</cpe></osclass>
+<osclass type="general purpose" vendor="Microsoft" osfamily="Windows" osgen="2008" accuracy="100"><cpe>cpe:/o:microsoft:windows_server_2008::sp1</cpe></osclass>
+</osmatch>
+</os>
+<uptime seconds="5092042" lastboot="Mon Nov 19 21:09:18 2012"/>
+<distance value="1"/>
+<tcpsequence index="262" difficulty="Good luck!" values="1C92701,F9665668,E03A26CF,30E715AF,D20D62F7,D11262A6"/>
+<ipidsequence class="Incremental" values="428A,428B,428C,428D,428E,428F"/>
+<tcptssequence class="100HZ" values="1E59CF27,1E59CF31,1E59CF3B,1E59CF45,1E59CF50,1E59CF5A"/>
+<trace>
+<hop ttl="1" ipaddr="192.168.1.100" rtt="1.12"/>
+</trace>
+<times srtt="1116" rttvar="405" to="100000"/>
+</host>
+<host starttime="1358472884" endtime="1358472982"><status state="up" reason="arp-response"/>
+<address addr="192.168.1.120" addrtype="ipv4"/>
+<address addr="BC:AE:C5:3E:B6:1A" addrtype="mac" vendor="Asustek Computer"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="filtered" count="994">
+<extrareasons reason="no-responses" count="994"/>
+</extraports>
+<port protocol="tcp" portid="135"><state state="open" reason="syn-ack" reason_ttl="128"/><service name="msrpc" product="Microsoft Windows RPC" ostype="Windows" method="probed" conf="10"><cpe>cpe:/o:microsoft:windows</cpe></service></port>
+<port protocol="tcp" portid="139"><state state="open" reason="syn-ack" reason_ttl="128"/><service name="netbios-ssn" method="probed" conf="10"/></port>
+<port protocol="tcp" portid="445"><state state="open" reason="syn-ack" reason_ttl="128"/><service name="netbios-ssn" method="probed" conf="10"/></port>
+<port protocol="tcp" portid="554"><state state="open" reason="syn-ack" reason_ttl="128"/><service name="rtsp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="902"><state state="open" reason="syn-ack" reason_ttl="128"/><service name="vmware-auth" product="VMware Authentication Daemon" version="1.10" extrainfo="Uses VNC, SOAP" tunnel="ssl" method="probed" conf="10"/></port>
+<port protocol="tcp" portid="912"><state state="open" reason="syn-ack" reason_ttl="128"/><service name="vmware-auth" product="VMware Authentication Daemon" version="1.0" extrainfo="Uses VNC, SOAP" method="probed" conf="10"/></port>
+</ports>
+<os><portused state="open" proto="tcp" portid="135"/>
+<osmatch name="Microsoft Windows 7 Professional" accuracy="100" line="46404">
+<osclass type="general purpose" vendor="Microsoft" osfamily="Windows" osgen="7" accuracy="100"><cpe>cpe:/o:microsoft:windows_7::professional</cpe></osclass>
+</osmatch>
+<osmatch name="Microsoft Windows Vista SP0 or SP1, Windows Server 2008 SP1, or Windows 7" accuracy="100" line="48108">
+<osclass type="general purpose" vendor="Microsoft" osfamily="Windows" osgen="Vista" accuracy="100"><cpe>cpe:/o:microsoft:windows_vista::-</cpe><cpe>cpe:/o:microsoft:windows_vista::sp1</cpe></osclass>
+<osclass type="general purpose" vendor="Microsoft" osfamily="Windows" osgen="2008" accuracy="100"><cpe>cpe:/o:microsoft:windows_server_2008::sp1</cpe></osclass>
+<osclass type="general purpose" vendor="Microsoft" osfamily="Windows" osgen="7" accuracy="100"><cpe>cpe:/o:microsoft:windows_7</cpe></osclass>
+</osmatch>
+<osmatch name="Microsoft Windows Vista SP2 or Windows Server 2008" accuracy="100" line="48330">
+<osclass type="general purpose" vendor="Microsoft" osfamily="Windows" osgen="Vista" accuracy="100"><cpe>cpe:/o:microsoft:windows_vista::sp2</cpe></osclass>
+<osclass type="general purpose" vendor="Microsoft" osfamily="Windows" osgen="2008" accuracy="100"><cpe>cpe:/o:microsoft:windows_server_2008</cpe></osclass>
+</osmatch>
+</os>
+<uptime seconds="6646668" lastboot="Thu Nov  1 22:18:52 2012"/>
+<distance value="1"/>
+<tcpsequence index="260" difficulty="Good luck!" values="3562C3A7,8BBD3814,B61C3C07,526A23F9,5F33AD55,86D7F3F6"/>
+<ipidsequence class="Incremental" values="92,93,94,95,96,97"/>
+<tcptssequence class="100HZ" values="279DFB04,279DFB0E,279DFB18,279DFB22,279DFB2C,279DFB36"/>
+<trace>
+<hop ttl="1" ipaddr="192.168.1.120" rtt="1.31"/>
+</trace>
+<times srtt="1313" rttvar="1066" to="100000"/>
+</host>
+<host starttime="1358473001" endtime="1358473031"><status state="up" reason="localhost-response"/>
+<address addr="192.168.1.200" addrtype="ipv4"/>
+<hostnames>
+<hostname name="customer_a-v.hab.ath.cx" type="PTR"/>
+</hostnames>
+<ports><extraports state="closed" count="996">
+<extrareasons reason="resets" count="996"/>
+</extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ssh" product="OpenSSH" version="5.9p1-hpn13v11" extrainfo="protocol 2.0" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:5.9p1-hpn13v11</cpe></service></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="Apache httpd" method="probed" conf="10"><cpe>cpe:/a:apache:http_server</cpe></service></port>
+<port protocol="tcp" portid="199"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="smux" product="Linux SNMP multiplexer" ostype="Linux" method="probed" conf="10"><cpe>cpe:/o:linux:kernel</cpe></service></port>
+<port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="Apache httpd" tunnel="ssl" method="probed" conf="10"><cpe>cpe:/a:apache:http_server</cpe></service></port>
+</ports>
+<os><portused state="open" proto="tcp" portid="22"/>
+<portused state="closed" proto="tcp" portid="1"/>
+<portused state="closed" proto="udp" portid="39740"/>
+<osfingerprint fingerprint="OS:SCAN(V=6.01%E=4%D=1/17%OT=22%CT=1%CU=39740%PV=Y%DS=0%DC=L%G=Y%TM=50F8A74&#xa;OS:9%P=i486-pc-linux-gnu)SEQ(SP=106%GCD=1%ISR=10B%TI=Z%CI=Z%II=I%TS=A)OPS(O&#xa;OS:1=M400CST11NW6%O2=M400CST11NW6%O3=M400CNNT11NW6%O4=M400CST11NW6%O5=M400C&#xa;OS:ST11NW6%O6=M400CST11)WIN(W1=8000%W2=8000%W3=8000%W4=8000%W5=8000%W6=8000&#xa;OS:)ECN(R=Y%DF=Y%T=41%W=8018%O=M400CNNSNW6%CC=Y%Q=)T1(R=Y%DF=Y%T=41%S=O%A=S&#xa;OS:+%F=AS%RD=0%Q=)T2(R=N)T3(R=N)T4(R=Y%DF=Y%T=41%W=0%S=A%A=Z%F=R%O=%RD=0%Q=&#xa;OS:)T5(R=Y%DF=Y%T=41%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)T6(R=Y%DF=Y%T=41%W=0%S=A%&#xa;OS:A=Z%F=R%O=%RD=0%Q=)T7(R=Y%DF=Y%T=41%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)U1(R=Y%&#xa;OS:DF=N%T=41%IPL=164%UN=0%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUD=G)IE(R=Y%DFI=N%T=&#xa;OS:41%CD=S)&#xa;"/>
+</os>
+<uptime seconds="343157" lastboot="Sun Jan 13 20:17:56 2013"/>
+<distance value="0"/>
+<tcpsequence index="262" difficulty="Good luck!" values="EF876073,6D8953C0,C871BF06,7820F86D,644AA8E3,449BA548"/>
+<ipidsequence class="All zeros" values="0,0,0,0,0,0"/>
+<tcptssequence class="1000HZ" values="14741CF7,14741D5C,14741DC1,14741E26,14741E8B,14741EF0"/>
+<times srtt="62" rttvar="24" to="100000"/>
+</host>
+<host starttime="1358473001" endtime="1358473031"><status state="up" reason="localhost-response"/>
+<address addr="192.168.1.201" addrtype="ipv4"/>
+<hostnames>
+<hostname name="customer_a-1.hab.ath.cx" type="PTR"/>
+</hostnames>
+<ports><extraports state="closed" count="996">
+<extrareasons reason="resets" count="996"/>
+</extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ssh" product="OpenSSH" version="5.9p1-hpn13v11" extrainfo="protocol 2.0" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:5.9p1-hpn13v11</cpe></service></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="Apache httpd" method="probed" conf="10"><cpe>cpe:/a:apache:http_server</cpe></service></port>
+<port protocol="tcp" portid="199"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="smux" product="Linux SNMP multiplexer" ostype="Linux" method="probed" conf="10"><cpe>cpe:/o:linux:kernel</cpe></service></port>
+<port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="Apache httpd" tunnel="ssl" method="probed" conf="10"><cpe>cpe:/a:apache:http_server</cpe></service></port>
+</ports>
+<os><portused state="open" proto="tcp" portid="22"/>
+<portused state="closed" proto="tcp" portid="1"/>
+<portused state="closed" proto="udp" portid="37288"/>
+<osfingerprint fingerprint="OS:SCAN(V=6.01%E=4%D=1/17%OT=22%CT=1%CU=37288%PV=Y%DS=0%DC=L%G=Y%TM=50F8A74&#xa;OS:9%P=i486-pc-linux-gnu)SEQ(SP=102%GCD=1%ISR=105%TI=Z%CI=Z%II=I%TS=A)OPS(O&#xa;OS:1=M400CST11NW6%O2=M400CST11NW6%O3=M400CNNT11NW6%O4=M400CST11NW6%O5=M400C&#xa;OS:ST11NW6%O6=M400CST11)WIN(W1=8000%W2=8000%W3=8000%W4=8000%W5=8000%W6=8000&#xa;OS:)ECN(R=Y%DF=Y%T=41%W=8018%O=M400CNNSNW6%CC=Y%Q=)T1(R=Y%DF=Y%T=41%S=O%A=S&#xa;OS:+%F=AS%RD=0%Q=)T2(R=N)T3(R=N)T4(R=Y%DF=Y%T=41%W=0%S=A%A=Z%F=R%O=%RD=0%Q=&#xa;OS:)T5(R=Y%DF=Y%T=41%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)T6(R=Y%DF=Y%T=41%W=0%S=A%&#xa;OS:A=Z%F=R%O=%RD=0%Q=)T7(R=Y%DF=Y%T=41%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)U1(R=Y%&#xa;OS:DF=N%T=41%IPL=164%UN=0%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUD=G)IE(R=Y%DFI=N%T=&#xa;OS:41%CD=S)&#xa;"/>
+</os>
+<uptime seconds="343157" lastboot="Sun Jan 13 20:17:56 2013"/>
+<distance value="0"/>
+<tcpsequence index="258" difficulty="Good luck!" values="91FEEB7E,D146F8CB,839FA944,7F5BF0F5,5E0F93FF,4DFCF857"/>
+<ipidsequence class="All zeros" values="0,0,0,0,0,0"/>
+<tcptssequence class="1000HZ" values="14741CF7,14741D5C,14741DC1,14741E26,14741E8B,14741EF0"/>
+<times srtt="40" rttvar="0" to="100000"/>
+</host>
+<host starttime="1358473000" endtime="1358473041"><status state="up" reason="arp-response"/>
+<address addr="192.168.1.202" addrtype="ipv4"/>
+<address addr="00:06:5B:39:E7:E5" addrtype="mac" vendor="Dell Computer"/>
+<hostnames>
+<hostname name="customer_a-2.hab.ath.cx" type="PTR"/>
+</hostnames>
+<ports><extraports state="closed" count="998">
+<extrareasons reason="resets" count="998"/>
+</extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ssh" product="OpenSSH" version="5.9p1-hpn13v11" extrainfo="protocol 2.0" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:5.9p1-hpn13v11</cpe></service></port>
+<port protocol="tcp" portid="199"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="smux" product="Linux SNMP multiplexer" ostype="Linux" method="probed" conf="10"><cpe>cpe:/o:linux:kernel</cpe></service></port>
+</ports>
+<os><portused state="open" proto="tcp" portid="22"/>
+<portused state="closed" proto="tcp" portid="1"/>
+<portused state="closed" proto="udp" portid="43532"/>
+<osmatch name="Linux 3.0 - 3.1" accuracy="100" line="41380">
+<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="3.X" accuracy="100"><cpe>cpe:/o:linux:kernel:3</cpe></osclass>
+</osmatch>
+</os>
+<uptime seconds="356704" lastboot="Sun Jan 13 16:32:19 2013"/>
+<distance value="1"/>
+<tcpsequence index="259" difficulty="Good luck!" values="C5BDFFF6,228E5DBB,B4059798,BF38D11,F38ADC26,2E0A9593"/>
+<ipidsequence class="All zeros" values="0,0,0,0,0,0"/>
+<tcptssequence class="1000HZ" values="1542CFAE,1542D014,1542D07A,1542D0E0,1542D145,1542D1AA"/>
+<trace>
+<hop ttl="1" ipaddr="192.168.1.202" rtt="1.10" host="customer_a-2.hab.ath.cx"/>
+</trace>
+<times srtt="1097" rttvar="950" to="100000"/>
+</host>
+<host starttime="1358473000" endtime="1358473041"><status state="up" reason="arp-response"/>
+<address addr="192.168.1.254" addrtype="ipv4"/>
+<address addr="00:1A:70:75:E7:E4" addrtype="mac" vendor="Cisco-Linksys"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="closed" count="997">
+<extrareasons reason="resets" count="997"/>
+</extraports>
+<port protocol="tcp" portid="23"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="telnet" product="DD-WRT telnetd" extrainfo="DD-WRT v24-sp2 micro (c) 2009 NewMedia-NET GmbH" ostype="Linux" devicetype="WAP" method="probed" conf="10"><cpe>cpe:/o:linux:kernel</cpe></service></port>
+<port protocol="tcp" portid="53"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="domain" product="dnsmasq" version="2.45" method="probed" conf="10"><cpe>cpe:/a:thekelleys:dnsmasq:2.45</cpe></service></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="DD-WRT milli_httpd" ostype="Linux" devicetype="WAP" method="probed" conf="10"><cpe>cpe:/o:linux:kernel</cpe></service></port>
+</ports>
+<os><portused state="open" proto="tcp" portid="23"/>
+<portused state="closed" proto="tcp" portid="1"/>
+<portused state="closed" proto="udp" portid="35578"/>
+<osmatch name="DD-WRT v23 - v24-sp2 (Linux 2.4.20 - 2.4.37)" accuracy="100" line="30441">
+<osclass type="WAP" vendor="Linux" osfamily="Linux" osgen="2.4.X" accuracy="100"><cpe>cpe:/o:linux:kernel:2.4</cpe></osclass>
+</osmatch>
+</os>
+<uptime seconds="1026554" lastboot="Sat Jan  5 22:28:09 2013"/>
+<distance value="1"/>
+<tcpsequence index="202" difficulty="Good luck!" values="44ED239F,446220C6,44F745DF,44E199E8,44FEDA12,44E36C16"/>
+<ipidsequence class="All zeros" values="0,0,0,0,0,0"/>
+<tcptssequence class="100HZ" values="61E6423,61E642D,61E6437,61E6441,61E644B,61E6455"/>
+<trace>
+<hop ttl="1" ipaddr="192.168.1.254" rtt="1.69"/>
+</trace>
+<times srtt="1687" rttvar="774" to="100000"/>
+</host>
+<runstats><finished time="1358473043" timestr="Thu Jan 17 19:37:23 2013" elapsed="160.96" summary="Nmap done at Thu Jan 17 19:37:23 2013; 256 IP addresses (9 hosts up) scanned in 160.96 seconds" exit="success"/><hosts up="9" down="247" total="256"/>
+</runstats>
+</nmaprun>

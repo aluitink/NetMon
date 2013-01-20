@@ -30,6 +30,10 @@
  * @method UserQuery rightJoinUserCustomer($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserCustomer relation
  * @method UserQuery innerJoinUserCustomer($relationAlias = null) Adds a INNER JOIN clause to the query using the UserCustomer relation
  *
+ * @method UserQuery leftJoinUserPluginSetting($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserPluginSetting relation
+ * @method UserQuery rightJoinUserPluginSetting($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserPluginSetting relation
+ * @method UserQuery innerJoinUserPluginSetting($relationAlias = null) Adds a INNER JOIN clause to the query using the UserPluginSetting relation
+ *
  * @method User findOne(PropelPDO $con = null) Return the first User matching the query
  * @method User findOneOrCreate(PropelPDO $con = null) Return the first User matching the query, or a new User object populated from the query conditions when no match is found
  *
@@ -537,6 +541,80 @@ abstract class BaseUserQuery extends ModelCriteria
         return $this
             ->joinUserCustomer($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'UserCustomer', 'CustomerUserQuery');
+    }
+
+    /**
+     * Filter the query by a related PluginSetting object
+     *
+     * @param   PluginSetting|PropelObjectCollection $pluginSetting  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 UserQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByUserPluginSetting($pluginSetting, $comparison = null)
+    {
+        if ($pluginSetting instanceof PluginSetting) {
+            return $this
+                ->addUsingAlias(UserPeer::USERID, $pluginSetting->getUserid(), $comparison);
+        } elseif ($pluginSetting instanceof PropelObjectCollection) {
+            return $this
+                ->useUserPluginSettingQuery()
+                ->filterByPrimaryKeys($pluginSetting->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByUserPluginSetting() only accepts arguments of type PluginSetting or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the UserPluginSetting relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return UserQuery The current query, for fluid interface
+     */
+    public function joinUserPluginSetting($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('UserPluginSetting');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'UserPluginSetting');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the UserPluginSetting relation PluginSetting object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   PluginSettingQuery A secondary query class using the current class as primary query
+     */
+    public function useUserPluginSettingQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinUserPluginSetting($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'UserPluginSetting', 'PluginSettingQuery');
     }
 
     /**

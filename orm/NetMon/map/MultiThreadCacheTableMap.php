@@ -3,7 +3,7 @@
 
 
 /**
- * This class defines the structure of the 'InterfaceType' table.
+ * This class defines the structure of the 'MultiThreadCache' table.
  *
  *
  *
@@ -14,13 +14,13 @@
  *
  * @package    propel.generator.NetMon.map
  */
-class InterfaceTypeTableMap extends TableMap
+class MultiThreadCacheTableMap extends TableMap
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'NetMon.map.InterfaceTypeTableMap';
+    const CLASS_NAME = 'NetMon.map.MultiThreadCacheTableMap';
 
     /**
      * Initialize the table attributes, columns and validators
@@ -32,14 +32,19 @@ class InterfaceTypeTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('InterfaceType');
-        $this->setPhpName('InterfaceType');
-        $this->setClassname('InterfaceType');
+        $this->setName('MultiThreadCache');
+        $this->setPhpName('MultiThreadCache');
+        $this->setClassname('MultiThreadCache');
         $this->setPackage('NetMon');
         $this->setUseIdGenerator(true);
         // columns
-        $this->addPrimaryKey('InterfaceTypeId', 'Interfacetypeid', 'INTEGER', true, null, null);
-        $this->addColumn('Type', 'Type', 'VARCHAR', true, 25, null);
+        $this->addPrimaryKey('MultiThreadCacheId', 'Multithreadcacheid', 'INTEGER', true, null, null);
+        $this->addColumn('BatchIdentifier', 'Batchidentifier', 'VARCHAR', true, 10, null);
+        $this->addColumn('TimeLimit', 'Timelimit', 'INTEGER', false, null, null);
+        $this->addColumn('Pid', 'Pid', 'INTEGER', false, null, null);
+        $this->addColumn('Status', 'Status', 'BOOLEAN', false, 1, null);
+        $this->addColumn('Variables', 'Variables', 'VARCHAR', false, 512, null);
+        $this->addColumn('Output', 'Output', 'VARCHAR', false, 512, null);
         // validators
     } // initialize()
 
@@ -48,7 +53,6 @@ class InterfaceTypeTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('InterfaceInterfaceType', 'Interface', RelationMap::ONE_TO_MANY, array('InterfaceTypeId' => 'InterfaceTypeId', ), null, null, 'InterfaceInterfaceTypes');
     } // buildRelations()
 
-} // InterfaceTypeTableMap
+} // MultiThreadCacheTableMap

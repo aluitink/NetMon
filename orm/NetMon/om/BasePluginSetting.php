@@ -48,10 +48,10 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
     protected $userid;
 
     /**
-     * The value for the setting field.
+     * The value for the key field.
      * @var        string
      */
-    protected $setting;
+    protected $key;
 
     /**
      * The value for the value field.
@@ -63,6 +63,11 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
      * @var        Plugin
      */
     protected $aPlugin;
+
+    /**
+     * @var        User
+     */
+    protected $aUser;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -115,13 +120,13 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [setting] column value.
+     * Get the [key] column value.
      *
      * @return string
      */
-    public function getSetting()
+    public function getKey()
     {
-        return $this->setting;
+        return $this->key;
     }
 
     /**
@@ -197,30 +202,34 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
             $this->modifiedColumns[] = PluginSettingPeer::USERID;
         }
 
+        if ($this->aUser !== null && $this->aUser->getUserid() !== $v) {
+            $this->aUser = null;
+        }
+
 
         return $this;
     } // setUserid()
 
     /**
-     * Set the value of [setting] column.
+     * Set the value of [key] column.
      *
      * @param string $v new value
      * @return PluginSetting The current object (for fluent API support)
      */
-    public function setSetting($v)
+    public function setKey($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
         }
 
-        if ($this->setting !== $v) {
-            $this->setting = $v;
-            $this->modifiedColumns[] = PluginSettingPeer::SETTING;
+        if ($this->key !== $v) {
+            $this->key = $v;
+            $this->modifiedColumns[] = PluginSettingPeer::KEY;
         }
 
 
         return $this;
-    } // setSetting()
+    } // setKey()
 
     /**
      * Set the value of [value] column.
@@ -278,7 +287,7 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
             $this->pluginsettingid = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
             $this->pluginid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
             $this->userid = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-            $this->setting = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+            $this->key = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
             $this->value = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
             $this->resetModified();
 
@@ -313,6 +322,9 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
 
         if ($this->aPlugin !== null && $this->pluginid !== $this->aPlugin->getPluginid()) {
             $this->aPlugin = null;
+        }
+        if ($this->aUser !== null && $this->userid !== $this->aUser->getUserid()) {
+            $this->aUser = null;
         }
     } // ensureConsistency
 
@@ -354,6 +366,7 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
         if ($deep) {  // also de-associate any related objects?
 
             $this->aPlugin = null;
+            $this->aUser = null;
         } // if (deep)
     }
 
@@ -479,6 +492,13 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
                 $this->setPlugin($this->aPlugin);
             }
 
+            if ($this->aUser !== null) {
+                if ($this->aUser->isModified() || $this->aUser->isNew()) {
+                    $affectedRows += $this->aUser->save($con);
+                }
+                $this->setUser($this->aUser);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -525,8 +545,8 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
         if ($this->isColumnModified(PluginSettingPeer::USERID)) {
             $modifiedColumns[':p' . $index++]  = '`UserId`';
         }
-        if ($this->isColumnModified(PluginSettingPeer::SETTING)) {
-            $modifiedColumns[':p' . $index++]  = '`Setting`';
+        if ($this->isColumnModified(PluginSettingPeer::KEY)) {
+            $modifiedColumns[':p' . $index++]  = '`Key`';
         }
         if ($this->isColumnModified(PluginSettingPeer::VALUE)) {
             $modifiedColumns[':p' . $index++]  = '`Value`';
@@ -551,8 +571,8 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
                     case '`UserId`':
                         $stmt->bindValue($identifier, $this->userid, PDO::PARAM_INT);
                         break;
-                    case '`Setting`':
-                        $stmt->bindValue($identifier, $this->setting, PDO::PARAM_STR);
+                    case '`Key`':
+                        $stmt->bindValue($identifier, $this->key, PDO::PARAM_STR);
                         break;
                     case '`Value`':
                         $stmt->bindValue($identifier, $this->value, PDO::PARAM_STR);
@@ -662,6 +682,12 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->aUser !== null) {
+                if (!$this->aUser->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
+                }
+            }
+
 
             if (($retval = PluginSettingPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
@@ -713,7 +739,7 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
                 return $this->getUserid();
                 break;
             case 3:
-                return $this->getSetting();
+                return $this->getKey();
                 break;
             case 4:
                 return $this->getValue();
@@ -750,12 +776,15 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
             $keys[0] => $this->getPluginsettingid(),
             $keys[1] => $this->getPluginid(),
             $keys[2] => $this->getUserid(),
-            $keys[3] => $this->getSetting(),
+            $keys[3] => $this->getKey(),
             $keys[4] => $this->getValue(),
         );
         if ($includeForeignObjects) {
             if (null !== $this->aPlugin) {
                 $result['Plugin'] = $this->aPlugin->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aUser) {
+                $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -801,7 +830,7 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
                 $this->setUserid($value);
                 break;
             case 3:
-                $this->setSetting($value);
+                $this->setKey($value);
                 break;
             case 4:
                 $this->setValue($value);
@@ -833,7 +862,7 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
         if (array_key_exists($keys[0], $arr)) $this->setPluginsettingid($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setPluginid($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setUserid($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setSetting($arr[$keys[3]]);
+        if (array_key_exists($keys[3], $arr)) $this->setKey($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setValue($arr[$keys[4]]);
     }
 
@@ -849,7 +878,7 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
         if ($this->isColumnModified(PluginSettingPeer::PLUGINSETTINGID)) $criteria->add(PluginSettingPeer::PLUGINSETTINGID, $this->pluginsettingid);
         if ($this->isColumnModified(PluginSettingPeer::PLUGINID)) $criteria->add(PluginSettingPeer::PLUGINID, $this->pluginid);
         if ($this->isColumnModified(PluginSettingPeer::USERID)) $criteria->add(PluginSettingPeer::USERID, $this->userid);
-        if ($this->isColumnModified(PluginSettingPeer::SETTING)) $criteria->add(PluginSettingPeer::SETTING, $this->setting);
+        if ($this->isColumnModified(PluginSettingPeer::KEY)) $criteria->add(PluginSettingPeer::KEY, $this->key);
         if ($this->isColumnModified(PluginSettingPeer::VALUE)) $criteria->add(PluginSettingPeer::VALUE, $this->value);
 
         return $criteria;
@@ -916,7 +945,7 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
     {
         $copyObj->setPluginid($this->getPluginid());
         $copyObj->setUserid($this->getUserid());
-        $copyObj->setSetting($this->getSetting());
+        $copyObj->setKey($this->getKey());
         $copyObj->setValue($this->getValue());
 
         if ($deepCopy && !$this->startCopy) {
@@ -1029,6 +1058,58 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
     }
 
     /**
+     * Declares an association between this object and a User object.
+     *
+     * @param             User $v
+     * @return PluginSetting The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setUser(User $v = null)
+    {
+        if ($v === null) {
+            $this->setUserid(NULL);
+        } else {
+            $this->setUserid($v->getUserid());
+        }
+
+        $this->aUser = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the User object, it will not be re-added.
+        if ($v !== null) {
+            $v->addUserPluginSetting($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated User object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return User The associated User object.
+     * @throws PropelException
+     */
+    public function getUser(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aUser === null && ($this->userid !== null) && $doQuery) {
+            $this->aUser = UserQuery::create()->findPk($this->userid, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aUser->addUserPluginSettings($this);
+             */
+        }
+
+        return $this->aUser;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -1036,7 +1117,7 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
         $this->pluginsettingid = null;
         $this->pluginid = null;
         $this->userid = null;
-        $this->setting = null;
+        $this->key = null;
         $this->value = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
@@ -1063,11 +1144,15 @@ abstract class BasePluginSetting extends BaseObject implements Persistent
             if ($this->aPlugin instanceof Persistent) {
               $this->aPlugin->clearAllReferences($deep);
             }
+            if ($this->aUser instanceof Persistent) {
+              $this->aUser->clearAllReferences($deep);
+            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
         $this->aPlugin = null;
+        $this->aUser = null;
     }
 
     /**

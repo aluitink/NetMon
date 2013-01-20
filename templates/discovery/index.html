@@ -1,0 +1,30 @@
+<div class="discovery_content">
+<h1>Device Discovery</h1>
+	<div class="form_settings">
+            <p><span>Example</span> 192.168.1.0/24</p>
+	<p><span>Network</span><input class="input_plain" type="text" id="network" value="" /></p>
+	<p style="padding-top: 15px"><span>&nbsp;</span><input id="scan_button" class="submit" type="button" name="scan_button" value="Scan" /></p>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		function doScanPost()
+		{
+			$.post("discovery/scan", 
+				{ network: $("#network").val() },
+				function(data) {
+					$("#discovery_content").html(data);
+				});
+		}
+		$('#network').keydown(function (e){
+			if(e.keyCode == 13){
+				doScanPost();
+			}
+		})
+		$("#login_button").click(function() {
+			doScanPost();
+		});
+	});
+	
+</script>

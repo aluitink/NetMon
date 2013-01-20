@@ -5,9 +5,9 @@ use NetMon\Interfaces as Interfaces;
 
 class Login extends Controller implements Interfaces\IController
 {
-    function __construct()
+    function __construct($method)
     {
-        parent::__construct();
+        parent::__construct($method);
     }
 
     public function DefaultView()

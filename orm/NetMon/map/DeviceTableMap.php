@@ -61,9 +61,6 @@ class DeviceTableMap extends TableMap
         $this->addRelation('DeviceMonitor', 'Monitor', RelationMap::ONE_TO_MANY, array('DeviceId' => 'DeviceId', ), null, null, 'DeviceMonitors');
         $this->addRelation('DeviceSyslog', 'Syslog', RelationMap::ONE_TO_MANY, array('DeviceId' => 'DeviceId', ), null, null, 'DeviceSyslogs');
         $this->addRelation('DeviceTrap', 'Trap', RelationMap::ONE_TO_MANY, array('DeviceId' => 'DeviceId', ), null, null, 'DeviceTraps');
-        $this->addRelation('Plugin', 'Plugin', RelationMap::MANY_TO_MANY, array(), null, null, 'Plugins');
-        $this->addRelation('Adapter', 'Adapter', RelationMap::MANY_TO_MANY, array(), null, null, 'Adapters');
-        $this->addRelation('SnmpProperty', 'SnmpProperty', RelationMap::MANY_TO_MANY, array(), null, null, 'SnmpPropertys');
     } // buildRelations()
 
 } // DeviceTableMap
