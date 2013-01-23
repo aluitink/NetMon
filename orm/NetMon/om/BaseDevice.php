@@ -83,12 +83,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
     protected $aDeviceType;
 
     /**
-     * @var        PropelObjectCollection|Threshold[] Collection to store aggregation of Threshold objects.
-     */
-    protected $collDeviceThresholds;
-    protected $collDeviceThresholdsPartial;
-
-    /**
      * @var        PropelObjectCollection|Adapter[] Collection to store aggregation of Adapter objects.
      */
     protected $collDeviceAdapters;
@@ -99,12 +93,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
      */
     protected $collDevicePolls;
     protected $collDevicePollsPartial;
-
-    /**
-     * @var        PropelObjectCollection|Monitor[] Collection to store aggregation of Monitor objects.
-     */
-    protected $collDeviceMonitors;
-    protected $collDeviceMonitorsPartial;
 
     /**
      * @var        PropelObjectCollection|Syslog[] Collection to store aggregation of Syslog objects.
@@ -142,12 +130,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
      * An array of objects scheduled for deletion.
      * @var		PropelObjectCollection
      */
-    protected $deviceThresholdsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
     protected $deviceAdaptersScheduledForDeletion = null;
 
     /**
@@ -155,12 +137,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $devicePollsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $deviceMonitorsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -620,13 +596,9 @@ abstract class BaseDevice extends BaseObject implements Persistent
         if ($deep) {  // also de-associate any related objects?
 
             $this->aDeviceType = null;
-            $this->collDeviceThresholds = null;
-
             $this->collDeviceAdapters = null;
 
             $this->collDevicePolls = null;
-
-            $this->collDeviceMonitors = null;
 
             $this->collDeviceSyslogs = null;
 
@@ -768,23 +740,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
                 $this->resetModified();
             }
 
-            if ($this->deviceThresholdsScheduledForDeletion !== null) {
-                if (!$this->deviceThresholdsScheduledForDeletion->isEmpty()) {
-                    ThresholdQuery::create()
-                        ->filterByPrimaryKeys($this->deviceThresholdsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->deviceThresholdsScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collDeviceThresholds !== null) {
-                foreach ($this->collDeviceThresholds as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
             if ($this->deviceAdaptersScheduledForDeletion !== null) {
                 if (!$this->deviceAdaptersScheduledForDeletion->isEmpty()) {
                     AdapterQuery::create()
@@ -813,23 +768,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
 
             if ($this->collDevicePolls !== null) {
                 foreach ($this->collDevicePolls as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->deviceMonitorsScheduledForDeletion !== null) {
-                if (!$this->deviceMonitorsScheduledForDeletion->isEmpty()) {
-                    MonitorQuery::create()
-                        ->filterByPrimaryKeys($this->deviceMonitorsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->deviceMonitorsScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collDeviceMonitors !== null) {
-                foreach ($this->collDeviceMonitors as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1067,14 +1005,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
             }
 
 
-                if ($this->collDeviceThresholds !== null) {
-                    foreach ($this->collDeviceThresholds as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
                 if ($this->collDeviceAdapters !== null) {
                     foreach ($this->collDeviceAdapters as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -1085,14 +1015,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
 
                 if ($this->collDevicePolls !== null) {
                     foreach ($this->collDevicePolls as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
-                if ($this->collDeviceMonitors !== null) {
-                    foreach ($this->collDeviceMonitors as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
                             $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
                         }
@@ -1216,17 +1138,11 @@ abstract class BaseDevice extends BaseObject implements Persistent
             if (null !== $this->aDeviceType) {
                 $result['DeviceType'] = $this->aDeviceType->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->collDeviceThresholds) {
-                $result['DeviceThresholds'] = $this->collDeviceThresholds->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
             if (null !== $this->collDeviceAdapters) {
                 $result['DeviceAdapters'] = $this->collDeviceAdapters->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collDevicePolls) {
                 $result['DevicePolls'] = $this->collDevicePolls->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collDeviceMonitors) {
-                $result['DeviceMonitors'] = $this->collDeviceMonitors->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collDeviceSyslogs) {
                 $result['DeviceSyslogs'] = $this->collDeviceSyslogs->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1421,12 +1337,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
             // store object hash to prevent cycle
             $this->startCopy = true;
 
-            foreach ($this->getDeviceThresholds() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addDeviceThreshold($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getDeviceAdapters() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addDeviceAdapter($relObj->copy($deepCopy));
@@ -1436,12 +1346,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
             foreach ($this->getDevicePolls() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addDevicePoll($relObj->copy($deepCopy));
-                }
-            }
-
-            foreach ($this->getDeviceMonitors() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addDeviceMonitor($relObj->copy($deepCopy));
                 }
             }
 
@@ -1570,17 +1474,11 @@ abstract class BaseDevice extends BaseObject implements Persistent
      */
     public function initRelation($relationName)
     {
-        if ('DeviceThreshold' == $relationName) {
-            $this->initDeviceThresholds();
-        }
         if ('DeviceAdapter' == $relationName) {
             $this->initDeviceAdapters();
         }
         if ('DevicePoll' == $relationName) {
             $this->initDevicePolls();
-        }
-        if ('DeviceMonitor' == $relationName) {
-            $this->initDeviceMonitors();
         }
         if ('DeviceSyslog' == $relationName) {
             $this->initDeviceSyslogs();
@@ -1588,324 +1486,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
         if ('DeviceTrap' == $relationName) {
             $this->initDeviceTraps();
         }
-    }
-
-    /**
-     * Clears out the collDeviceThresholds collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return Device The current object (for fluent API support)
-     * @see        addDeviceThresholds()
-     */
-    public function clearDeviceThresholds()
-    {
-        $this->collDeviceThresholds = null; // important to set this to null since that means it is uninitialized
-        $this->collDeviceThresholdsPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collDeviceThresholds collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialDeviceThresholds($v = true)
-    {
-        $this->collDeviceThresholdsPartial = $v;
-    }
-
-    /**
-     * Initializes the collDeviceThresholds collection.
-     *
-     * By default this just sets the collDeviceThresholds collection to an empty array (like clearcollDeviceThresholds());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initDeviceThresholds($overrideExisting = true)
-    {
-        if (null !== $this->collDeviceThresholds && !$overrideExisting) {
-            return;
-        }
-        $this->collDeviceThresholds = new PropelObjectCollection();
-        $this->collDeviceThresholds->setModel('Threshold');
-    }
-
-    /**
-     * Gets an array of Threshold objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this Device is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     * @throws PropelException
-     */
-    public function getDeviceThresholds($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collDeviceThresholdsPartial && !$this->isNew();
-        if (null === $this->collDeviceThresholds || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collDeviceThresholds) {
-                // return empty collection
-                $this->initDeviceThresholds();
-            } else {
-                $collDeviceThresholds = ThresholdQuery::create(null, $criteria)
-                    ->filterByDevice($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collDeviceThresholdsPartial && count($collDeviceThresholds)) {
-                      $this->initDeviceThresholds(false);
-
-                      foreach($collDeviceThresholds as $obj) {
-                        if (false == $this->collDeviceThresholds->contains($obj)) {
-                          $this->collDeviceThresholds->append($obj);
-                        }
-                      }
-
-                      $this->collDeviceThresholdsPartial = true;
-                    }
-
-                    $collDeviceThresholds->getInternalIterator()->rewind();
-                    return $collDeviceThresholds;
-                }
-
-                if($partial && $this->collDeviceThresholds) {
-                    foreach($this->collDeviceThresholds as $obj) {
-                        if($obj->isNew()) {
-                            $collDeviceThresholds[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collDeviceThresholds = $collDeviceThresholds;
-                $this->collDeviceThresholdsPartial = false;
-            }
-        }
-
-        return $this->collDeviceThresholds;
-    }
-
-    /**
-     * Sets a collection of DeviceThreshold objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $deviceThresholds A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return Device The current object (for fluent API support)
-     */
-    public function setDeviceThresholds(PropelCollection $deviceThresholds, PropelPDO $con = null)
-    {
-        $deviceThresholdsToDelete = $this->getDeviceThresholds(new Criteria(), $con)->diff($deviceThresholds);
-
-        $this->deviceThresholdsScheduledForDeletion = unserialize(serialize($deviceThresholdsToDelete));
-
-        foreach ($deviceThresholdsToDelete as $deviceThresholdRemoved) {
-            $deviceThresholdRemoved->setDevice(null);
-        }
-
-        $this->collDeviceThresholds = null;
-        foreach ($deviceThresholds as $deviceThreshold) {
-            $this->addDeviceThreshold($deviceThreshold);
-        }
-
-        $this->collDeviceThresholds = $deviceThresholds;
-        $this->collDeviceThresholdsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Threshold objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related Threshold objects.
-     * @throws PropelException
-     */
-    public function countDeviceThresholds(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collDeviceThresholdsPartial && !$this->isNew();
-        if (null === $this->collDeviceThresholds || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collDeviceThresholds) {
-                return 0;
-            }
-
-            if($partial && !$criteria) {
-                return count($this->getDeviceThresholds());
-            }
-            $query = ThresholdQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByDevice($this)
-                ->count($con);
-        }
-
-        return count($this->collDeviceThresholds);
-    }
-
-    /**
-     * Method called to associate a Threshold object to this object
-     * through the Threshold foreign key attribute.
-     *
-     * @param    Threshold $l Threshold
-     * @return Device The current object (for fluent API support)
-     */
-    public function addDeviceThreshold(Threshold $l)
-    {
-        if ($this->collDeviceThresholds === null) {
-            $this->initDeviceThresholds();
-            $this->collDeviceThresholdsPartial = true;
-        }
-        if (!in_array($l, $this->collDeviceThresholds->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddDeviceThreshold($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	DeviceThreshold $deviceThreshold The deviceThreshold object to add.
-     */
-    protected function doAddDeviceThreshold($deviceThreshold)
-    {
-        $this->collDeviceThresholds[]= $deviceThreshold;
-        $deviceThreshold->setDevice($this);
-    }
-
-    /**
-     * @param	DeviceThreshold $deviceThreshold The deviceThreshold object to remove.
-     * @return Device The current object (for fluent API support)
-     */
-    public function removeDeviceThreshold($deviceThreshold)
-    {
-        if ($this->getDeviceThresholds()->contains($deviceThreshold)) {
-            $this->collDeviceThresholds->remove($this->collDeviceThresholds->search($deviceThreshold));
-            if (null === $this->deviceThresholdsScheduledForDeletion) {
-                $this->deviceThresholdsScheduledForDeletion = clone $this->collDeviceThresholds;
-                $this->deviceThresholdsScheduledForDeletion->clear();
-            }
-            $this->deviceThresholdsScheduledForDeletion[]= clone $deviceThreshold;
-            $deviceThreshold->setDevice(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Device is new, it will return
-     * an empty collection; or if this Device has previously
-     * been saved, it will retrieve related DeviceThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Device.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getDeviceThresholdsJoinPoll($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Poll', $join_behavior);
-
-        return $this->getDeviceThresholds($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Device is new, it will return
-     * an empty collection; or if this Device has previously
-     * been saved, it will retrieve related DeviceThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Device.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getDeviceThresholdsJoinTrap($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Trap', $join_behavior);
-
-        return $this->getDeviceThresholds($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Device is new, it will return
-     * an empty collection; or if this Device has previously
-     * been saved, it will retrieve related DeviceThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Device.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getDeviceThresholdsJoinPlugin($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Plugin', $join_behavior);
-
-        return $this->getDeviceThresholds($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Device is new, it will return
-     * an empty collection; or if this Device has previously
-     * been saved, it will retrieve related DeviceThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Device.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getDeviceThresholdsJoinSyslog($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Syslog', $join_behavior);
-
-        return $this->getDeviceThresholds($query, $con);
     }
 
     /**
@@ -2417,299 +1997,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
         $query->joinWith('Plugin', $join_behavior);
 
         return $this->getDevicePolls($query, $con);
-    }
-
-    /**
-     * Clears out the collDeviceMonitors collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return Device The current object (for fluent API support)
-     * @see        addDeviceMonitors()
-     */
-    public function clearDeviceMonitors()
-    {
-        $this->collDeviceMonitors = null; // important to set this to null since that means it is uninitialized
-        $this->collDeviceMonitorsPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collDeviceMonitors collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialDeviceMonitors($v = true)
-    {
-        $this->collDeviceMonitorsPartial = $v;
-    }
-
-    /**
-     * Initializes the collDeviceMonitors collection.
-     *
-     * By default this just sets the collDeviceMonitors collection to an empty array (like clearcollDeviceMonitors());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initDeviceMonitors($overrideExisting = true)
-    {
-        if (null !== $this->collDeviceMonitors && !$overrideExisting) {
-            return;
-        }
-        $this->collDeviceMonitors = new PropelObjectCollection();
-        $this->collDeviceMonitors->setModel('Monitor');
-    }
-
-    /**
-     * Gets an array of Monitor objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this Device is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Monitor[] List of Monitor objects
-     * @throws PropelException
-     */
-    public function getDeviceMonitors($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collDeviceMonitorsPartial && !$this->isNew();
-        if (null === $this->collDeviceMonitors || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collDeviceMonitors) {
-                // return empty collection
-                $this->initDeviceMonitors();
-            } else {
-                $collDeviceMonitors = MonitorQuery::create(null, $criteria)
-                    ->filterByDevice($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collDeviceMonitorsPartial && count($collDeviceMonitors)) {
-                      $this->initDeviceMonitors(false);
-
-                      foreach($collDeviceMonitors as $obj) {
-                        if (false == $this->collDeviceMonitors->contains($obj)) {
-                          $this->collDeviceMonitors->append($obj);
-                        }
-                      }
-
-                      $this->collDeviceMonitorsPartial = true;
-                    }
-
-                    $collDeviceMonitors->getInternalIterator()->rewind();
-                    return $collDeviceMonitors;
-                }
-
-                if($partial && $this->collDeviceMonitors) {
-                    foreach($this->collDeviceMonitors as $obj) {
-                        if($obj->isNew()) {
-                            $collDeviceMonitors[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collDeviceMonitors = $collDeviceMonitors;
-                $this->collDeviceMonitorsPartial = false;
-            }
-        }
-
-        return $this->collDeviceMonitors;
-    }
-
-    /**
-     * Sets a collection of DeviceMonitor objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $deviceMonitors A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return Device The current object (for fluent API support)
-     */
-    public function setDeviceMonitors(PropelCollection $deviceMonitors, PropelPDO $con = null)
-    {
-        $deviceMonitorsToDelete = $this->getDeviceMonitors(new Criteria(), $con)->diff($deviceMonitors);
-
-        $this->deviceMonitorsScheduledForDeletion = unserialize(serialize($deviceMonitorsToDelete));
-
-        foreach ($deviceMonitorsToDelete as $deviceMonitorRemoved) {
-            $deviceMonitorRemoved->setDevice(null);
-        }
-
-        $this->collDeviceMonitors = null;
-        foreach ($deviceMonitors as $deviceMonitor) {
-            $this->addDeviceMonitor($deviceMonitor);
-        }
-
-        $this->collDeviceMonitors = $deviceMonitors;
-        $this->collDeviceMonitorsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Monitor objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related Monitor objects.
-     * @throws PropelException
-     */
-    public function countDeviceMonitors(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collDeviceMonitorsPartial && !$this->isNew();
-        if (null === $this->collDeviceMonitors || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collDeviceMonitors) {
-                return 0;
-            }
-
-            if($partial && !$criteria) {
-                return count($this->getDeviceMonitors());
-            }
-            $query = MonitorQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByDevice($this)
-                ->count($con);
-        }
-
-        return count($this->collDeviceMonitors);
-    }
-
-    /**
-     * Method called to associate a Monitor object to this object
-     * through the Monitor foreign key attribute.
-     *
-     * @param    Monitor $l Monitor
-     * @return Device The current object (for fluent API support)
-     */
-    public function addDeviceMonitor(Monitor $l)
-    {
-        if ($this->collDeviceMonitors === null) {
-            $this->initDeviceMonitors();
-            $this->collDeviceMonitorsPartial = true;
-        }
-        if (!in_array($l, $this->collDeviceMonitors->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddDeviceMonitor($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	DeviceMonitor $deviceMonitor The deviceMonitor object to add.
-     */
-    protected function doAddDeviceMonitor($deviceMonitor)
-    {
-        $this->collDeviceMonitors[]= $deviceMonitor;
-        $deviceMonitor->setDevice($this);
-    }
-
-    /**
-     * @param	DeviceMonitor $deviceMonitor The deviceMonitor object to remove.
-     * @return Device The current object (for fluent API support)
-     */
-    public function removeDeviceMonitor($deviceMonitor)
-    {
-        if ($this->getDeviceMonitors()->contains($deviceMonitor)) {
-            $this->collDeviceMonitors->remove($this->collDeviceMonitors->search($deviceMonitor));
-            if (null === $this->deviceMonitorsScheduledForDeletion) {
-                $this->deviceMonitorsScheduledForDeletion = clone $this->collDeviceMonitors;
-                $this->deviceMonitorsScheduledForDeletion->clear();
-            }
-            $this->deviceMonitorsScheduledForDeletion[]= clone $deviceMonitor;
-            $deviceMonitor->setDevice(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Device is new, it will return
-     * an empty collection; or if this Device has previously
-     * been saved, it will retrieve related DeviceMonitors from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Device.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Monitor[] List of Monitor objects
-     */
-    public function getDeviceMonitorsJoinPlugin($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = MonitorQuery::create(null, $criteria);
-        $query->joinWith('Plugin', $join_behavior);
-
-        return $this->getDeviceMonitors($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Device is new, it will return
-     * an empty collection; or if this Device has previously
-     * been saved, it will retrieve related DeviceMonitors from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Device.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Monitor[] List of Monitor objects
-     */
-    public function getDeviceMonitorsJoinAdapter($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = MonitorQuery::create(null, $criteria);
-        $query->joinWith('Adapter', $join_behavior);
-
-        return $this->getDeviceMonitors($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Device is new, it will return
-     * an empty collection; or if this Device has previously
-     * been saved, it will retrieve related DeviceMonitors from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Device.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Monitor[] List of Monitor objects
-     */
-    public function getDeviceMonitorsJoinSnmpProperty($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = MonitorQuery::create(null, $criteria);
-        $query->joinWith('SnmpProperty', $join_behavior);
-
-        return $this->getDeviceMonitors($query, $con);
     }
 
     /**
@@ -3233,11 +2520,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->collDeviceThresholds) {
-                foreach ($this->collDeviceThresholds as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collDeviceAdapters) {
                 foreach ($this->collDeviceAdapters as $o) {
                     $o->clearAllReferences($deep);
@@ -3245,11 +2527,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
             }
             if ($this->collDevicePolls) {
                 foreach ($this->collDevicePolls as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
-            if ($this->collDeviceMonitors) {
-                foreach ($this->collDeviceMonitors as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -3270,10 +2547,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        if ($this->collDeviceThresholds instanceof PropelCollection) {
-            $this->collDeviceThresholds->clearIterator();
-        }
-        $this->collDeviceThresholds = null;
         if ($this->collDeviceAdapters instanceof PropelCollection) {
             $this->collDeviceAdapters->clearIterator();
         }
@@ -3282,10 +2555,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
             $this->collDevicePolls->clearIterator();
         }
         $this->collDevicePolls = null;
-        if ($this->collDeviceMonitors instanceof PropelCollection) {
-            $this->collDeviceMonitors->clearIterator();
-        }
-        $this->collDeviceMonitors = null;
         if ($this->collDeviceSyslogs instanceof PropelCollection) {
             $this->collDeviceSyslogs->clearIterator();
         }

@@ -39,7 +39,6 @@ class MonitorTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('MonitorId', 'Monitorid', 'INTEGER', true, null, null);
-        $this->addForeignPrimaryKey('DeviceId', 'Deviceid', 'INTEGER' , 'Device', 'DeviceId', true, null, null);
         $this->addForeignPrimaryKey('PluginId', 'Pluginid', 'INTEGER' , 'Plugin', 'PluginId', true, null, null);
         $this->addForeignPrimaryKey('AdapterId', 'Adapterid', 'INTEGER' , 'Adapter', 'AdapterId', true, null, null);
         $this->addForeignPrimaryKey('SnmpPropertyId', 'Snmppropertyid', 'INTEGER' , 'SnmpProperty', 'SnmpPropertyId', true, null, null);
@@ -51,10 +50,10 @@ class MonitorTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Device', 'Device', RelationMap::MANY_TO_ONE, array('DeviceId' => 'DeviceId', ), null, null);
         $this->addRelation('Plugin', 'Plugin', RelationMap::MANY_TO_ONE, array('PluginId' => 'PluginId', ), null, null);
         $this->addRelation('Adapter', 'Adapter', RelationMap::MANY_TO_ONE, array('AdapterId' => 'AdapterId', ), null, null);
         $this->addRelation('SnmpProperty', 'SnmpProperty', RelationMap::MANY_TO_ONE, array('SnmpPropertyId' => 'SnmpPropertyId', ), null, null);
+        $this->addRelation('MonitorThreshold', 'Threshold', RelationMap::ONE_TO_MANY, array('MonitorId' => 'MonitorId', ), null, null, 'MonitorThresholds');
     } // buildRelations()
 
 } // MonitorTableMap

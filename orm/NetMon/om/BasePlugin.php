@@ -84,6 +84,12 @@ abstract class BasePlugin extends BaseObject implements Persistent
     protected $collPluginPluginSettingsPartial;
 
     /**
+     * @var        PropelObjectCollection|PluginMeta[] Collection to store aggregation of PluginMeta objects.
+     */
+    protected $collPluginPluginMetas;
+    protected $collPluginPluginMetasPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -126,6 +132,12 @@ abstract class BasePlugin extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $pluginPluginSettingsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $pluginPluginMetasScheduledForDeletion = null;
 
     /**
      * Get the [pluginid] column value.
@@ -405,6 +417,8 @@ abstract class BasePlugin extends BaseObject implements Persistent
 
             $this->collPluginPluginSettings = null;
 
+            $this->collPluginPluginMetas = null;
+
         } // if (deep)
     }
 
@@ -591,6 +605,23 @@ abstract class BasePlugin extends BaseObject implements Persistent
 
             if ($this->collPluginPluginSettings !== null) {
                 foreach ($this->collPluginPluginSettings as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->pluginPluginMetasScheduledForDeletion !== null) {
+                if (!$this->pluginPluginMetasScheduledForDeletion->isEmpty()) {
+                    PluginMetaQuery::create()
+                        ->filterByPrimaryKeys($this->pluginPluginMetasScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->pluginPluginMetasScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collPluginPluginMetas !== null) {
+                foreach ($this->collPluginPluginMetas as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -795,6 +826,14 @@ abstract class BasePlugin extends BaseObject implements Persistent
                     }
                 }
 
+                if ($this->collPluginPluginMetas !== null) {
+                    foreach ($this->collPluginPluginMetas as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
 
             $this->alreadyInValidation = false;
         }
@@ -892,6 +931,9 @@ abstract class BasePlugin extends BaseObject implements Persistent
             }
             if (null !== $this->collPluginPluginSettings) {
                 $result['PluginPluginSettings'] = $this->collPluginPluginSettings->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collPluginPluginMetas) {
+                $result['PluginPluginMetas'] = $this->collPluginPluginMetas->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1086,6 +1128,12 @@ abstract class BasePlugin extends BaseObject implements Persistent
                 }
             }
 
+            foreach ($this->getPluginPluginMetas() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addPluginPluginMeta($relObj->copy($deepCopy));
+                }
+            }
+
             //unflag object copy
             $this->startCopy = false;
         } // if ($deepCopy)
@@ -1158,6 +1206,9 @@ abstract class BasePlugin extends BaseObject implements Persistent
         }
         if ('PluginPluginSetting' == $relationName) {
             $this->initPluginPluginSettings();
+        }
+        if ('PluginPluginMeta' == $relationName) {
+            $this->initPluginPluginMetas();
         }
     }
 
@@ -1396,85 +1447,10 @@ abstract class BasePlugin extends BaseObject implements Persistent
      * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
      * @return PropelObjectCollection|Threshold[] List of Threshold objects
      */
-    public function getPluginThresholdsJoinDevice($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public function getPluginThresholdsJoinMonitor($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Device', $join_behavior);
-
-        return $this->getPluginThresholds($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Plugin is new, it will return
-     * an empty collection; or if this Plugin has previously
-     * been saved, it will retrieve related PluginThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Plugin.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getPluginThresholdsJoinPoll($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Poll', $join_behavior);
-
-        return $this->getPluginThresholds($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Plugin is new, it will return
-     * an empty collection; or if this Plugin has previously
-     * been saved, it will retrieve related PluginThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Plugin.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getPluginThresholdsJoinTrap($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Trap', $join_behavior);
-
-        return $this->getPluginThresholds($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Plugin is new, it will return
-     * an empty collection; or if this Plugin has previously
-     * been saved, it will retrieve related PluginThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Plugin.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getPluginThresholdsJoinSyslog($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Syslog', $join_behavior);
+        $query->joinWith('Monitor', $join_behavior);
 
         return $this->getPluginThresholds($query, $con);
     }
@@ -1982,31 +1958,6 @@ abstract class BasePlugin extends BaseObject implements Persistent
      * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
      * @return PropelObjectCollection|Monitor[] List of Monitor objects
      */
-    public function getPluginMonitorsJoinDevice($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = MonitorQuery::create(null, $criteria);
-        $query->joinWith('Device', $join_behavior);
-
-        return $this->getPluginMonitors($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Plugin is new, it will return
-     * an empty collection; or if this Plugin has previously
-     * been saved, it will retrieve related PluginMonitors from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Plugin.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Monitor[] List of Monitor objects
-     */
     public function getPluginMonitorsJoinAdapter($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $query = MonitorQuery::create(null, $criteria);
@@ -2284,6 +2235,224 @@ abstract class BasePlugin extends BaseObject implements Persistent
     }
 
     /**
+     * Clears out the collPluginPluginMetas collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Plugin The current object (for fluent API support)
+     * @see        addPluginPluginMetas()
+     */
+    public function clearPluginPluginMetas()
+    {
+        $this->collPluginPluginMetas = null; // important to set this to null since that means it is uninitialized
+        $this->collPluginPluginMetasPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collPluginPluginMetas collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialPluginPluginMetas($v = true)
+    {
+        $this->collPluginPluginMetasPartial = $v;
+    }
+
+    /**
+     * Initializes the collPluginPluginMetas collection.
+     *
+     * By default this just sets the collPluginPluginMetas collection to an empty array (like clearcollPluginPluginMetas());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initPluginPluginMetas($overrideExisting = true)
+    {
+        if (null !== $this->collPluginPluginMetas && !$overrideExisting) {
+            return;
+        }
+        $this->collPluginPluginMetas = new PropelObjectCollection();
+        $this->collPluginPluginMetas->setModel('PluginMeta');
+    }
+
+    /**
+     * Gets an array of PluginMeta objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Plugin is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|PluginMeta[] List of PluginMeta objects
+     * @throws PropelException
+     */
+    public function getPluginPluginMetas($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collPluginPluginMetasPartial && !$this->isNew();
+        if (null === $this->collPluginPluginMetas || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collPluginPluginMetas) {
+                // return empty collection
+                $this->initPluginPluginMetas();
+            } else {
+                $collPluginPluginMetas = PluginMetaQuery::create(null, $criteria)
+                    ->filterByPlugin($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collPluginPluginMetasPartial && count($collPluginPluginMetas)) {
+                      $this->initPluginPluginMetas(false);
+
+                      foreach($collPluginPluginMetas as $obj) {
+                        if (false == $this->collPluginPluginMetas->contains($obj)) {
+                          $this->collPluginPluginMetas->append($obj);
+                        }
+                      }
+
+                      $this->collPluginPluginMetasPartial = true;
+                    }
+
+                    $collPluginPluginMetas->getInternalIterator()->rewind();
+                    return $collPluginPluginMetas;
+                }
+
+                if($partial && $this->collPluginPluginMetas) {
+                    foreach($this->collPluginPluginMetas as $obj) {
+                        if($obj->isNew()) {
+                            $collPluginPluginMetas[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collPluginPluginMetas = $collPluginPluginMetas;
+                $this->collPluginPluginMetasPartial = false;
+            }
+        }
+
+        return $this->collPluginPluginMetas;
+    }
+
+    /**
+     * Sets a collection of PluginPluginMeta objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $pluginPluginMetas A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Plugin The current object (for fluent API support)
+     */
+    public function setPluginPluginMetas(PropelCollection $pluginPluginMetas, PropelPDO $con = null)
+    {
+        $pluginPluginMetasToDelete = $this->getPluginPluginMetas(new Criteria(), $con)->diff($pluginPluginMetas);
+
+        $this->pluginPluginMetasScheduledForDeletion = unserialize(serialize($pluginPluginMetasToDelete));
+
+        foreach ($pluginPluginMetasToDelete as $pluginPluginMetaRemoved) {
+            $pluginPluginMetaRemoved->setPlugin(null);
+        }
+
+        $this->collPluginPluginMetas = null;
+        foreach ($pluginPluginMetas as $pluginPluginMeta) {
+            $this->addPluginPluginMeta($pluginPluginMeta);
+        }
+
+        $this->collPluginPluginMetas = $pluginPluginMetas;
+        $this->collPluginPluginMetasPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related PluginMeta objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related PluginMeta objects.
+     * @throws PropelException
+     */
+    public function countPluginPluginMetas(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collPluginPluginMetasPartial && !$this->isNew();
+        if (null === $this->collPluginPluginMetas || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collPluginPluginMetas) {
+                return 0;
+            }
+
+            if($partial && !$criteria) {
+                return count($this->getPluginPluginMetas());
+            }
+            $query = PluginMetaQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByPlugin($this)
+                ->count($con);
+        }
+
+        return count($this->collPluginPluginMetas);
+    }
+
+    /**
+     * Method called to associate a PluginMeta object to this object
+     * through the PluginMeta foreign key attribute.
+     *
+     * @param    PluginMeta $l PluginMeta
+     * @return Plugin The current object (for fluent API support)
+     */
+    public function addPluginPluginMeta(PluginMeta $l)
+    {
+        if ($this->collPluginPluginMetas === null) {
+            $this->initPluginPluginMetas();
+            $this->collPluginPluginMetasPartial = true;
+        }
+        if (!in_array($l, $this->collPluginPluginMetas->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddPluginPluginMeta($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	PluginPluginMeta $pluginPluginMeta The pluginPluginMeta object to add.
+     */
+    protected function doAddPluginPluginMeta($pluginPluginMeta)
+    {
+        $this->collPluginPluginMetas[]= $pluginPluginMeta;
+        $pluginPluginMeta->setPlugin($this);
+    }
+
+    /**
+     * @param	PluginPluginMeta $pluginPluginMeta The pluginPluginMeta object to remove.
+     * @return Plugin The current object (for fluent API support)
+     */
+    public function removePluginPluginMeta($pluginPluginMeta)
+    {
+        if ($this->getPluginPluginMetas()->contains($pluginPluginMeta)) {
+            $this->collPluginPluginMetas->remove($this->collPluginPluginMetas->search($pluginPluginMeta));
+            if (null === $this->pluginPluginMetasScheduledForDeletion) {
+                $this->pluginPluginMetasScheduledForDeletion = clone $this->collPluginPluginMetas;
+                $this->pluginPluginMetasScheduledForDeletion->clear();
+            }
+            $this->pluginPluginMetasScheduledForDeletion[]= clone $pluginPluginMeta;
+            $pluginPluginMeta->setPlugin(null);
+        }
+
+        return $this;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -2335,6 +2504,11 @@ abstract class BasePlugin extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collPluginPluginMetas) {
+                foreach ($this->collPluginPluginMetas as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
@@ -2355,6 +2529,10 @@ abstract class BasePlugin extends BaseObject implements Persistent
             $this->collPluginPluginSettings->clearIterator();
         }
         $this->collPluginPluginSettings = null;
+        if ($this->collPluginPluginMetas instanceof PropelCollection) {
+            $this->collPluginPluginMetas->clearIterator();
+        }
+        $this->collPluginPluginMetas = null;
     }
 
     /**

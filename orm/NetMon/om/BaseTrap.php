@@ -87,12 +87,6 @@ abstract class BaseTrap extends BaseObject implements Persistent
     protected $aSnmpProperty;
 
     /**
-     * @var        PropelObjectCollection|Threshold[] Collection to store aggregation of Threshold objects.
-     */
-    protected $collTrapThresholds;
-    protected $collTrapThresholdsPartial;
-
-    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -111,12 +105,6 @@ abstract class BaseTrap extends BaseObject implements Persistent
      * @var        boolean
      */
     protected $alreadyInClearAllReferencesDeep = false;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $trapThresholdsScheduledForDeletion = null;
 
     /**
      * Get the [trapid] column value.
@@ -500,8 +488,6 @@ abstract class BaseTrap extends BaseObject implements Persistent
             $this->aDevice = null;
             $this->aAdapter = null;
             $this->aSnmpProperty = null;
-            $this->collTrapThresholds = null;
-
         } // if (deep)
     }
 
@@ -650,23 +636,6 @@ abstract class BaseTrap extends BaseObject implements Persistent
                 }
                 $affectedRows += 1;
                 $this->resetModified();
-            }
-
-            if ($this->trapThresholdsScheduledForDeletion !== null) {
-                if (!$this->trapThresholdsScheduledForDeletion->isEmpty()) {
-                    ThresholdQuery::create()
-                        ->filterByPrimaryKeys($this->trapThresholdsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->trapThresholdsScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collTrapThresholds !== null) {
-                foreach ($this->collTrapThresholds as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
             }
 
             $this->alreadyInSave = false;
@@ -871,14 +840,6 @@ abstract class BaseTrap extends BaseObject implements Persistent
             }
 
 
-                if ($this->collTrapThresholds !== null) {
-                    foreach ($this->collTrapThresholds as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
 
             $this->alreadyInValidation = false;
         }
@@ -981,9 +942,6 @@ abstract class BaseTrap extends BaseObject implements Persistent
             }
             if (null !== $this->aSnmpProperty) {
                 $result['SnmpProperty'] = $this->aSnmpProperty->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->collTrapThresholds) {
-                $result['TrapThresholds'] = $this->collTrapThresholds->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1165,12 +1123,6 @@ abstract class BaseTrap extends BaseObject implements Persistent
             $copyObj->setNew(false);
             // store object hash to prevent cycle
             $this->startCopy = true;
-
-            foreach ($this->getTrapThresholds() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addTrapThreshold($relObj->copy($deepCopy));
-                }
-            }
 
             //unflag object copy
             $this->startCopy = false;
@@ -1378,340 +1330,6 @@ abstract class BaseTrap extends BaseObject implements Persistent
         return $this->aSnmpProperty;
     }
 
-
-    /**
-     * Initializes a collection based on the name of a relation.
-     * Avoids crafting an 'init[$relationName]s' method name
-     * that wouldn't work when StandardEnglishPluralizer is used.
-     *
-     * @param string $relationName The name of the relation to initialize
-     * @return void
-     */
-    public function initRelation($relationName)
-    {
-        if ('TrapThreshold' == $relationName) {
-            $this->initTrapThresholds();
-        }
-    }
-
-    /**
-     * Clears out the collTrapThresholds collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return Trap The current object (for fluent API support)
-     * @see        addTrapThresholds()
-     */
-    public function clearTrapThresholds()
-    {
-        $this->collTrapThresholds = null; // important to set this to null since that means it is uninitialized
-        $this->collTrapThresholdsPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collTrapThresholds collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialTrapThresholds($v = true)
-    {
-        $this->collTrapThresholdsPartial = $v;
-    }
-
-    /**
-     * Initializes the collTrapThresholds collection.
-     *
-     * By default this just sets the collTrapThresholds collection to an empty array (like clearcollTrapThresholds());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initTrapThresholds($overrideExisting = true)
-    {
-        if (null !== $this->collTrapThresholds && !$overrideExisting) {
-            return;
-        }
-        $this->collTrapThresholds = new PropelObjectCollection();
-        $this->collTrapThresholds->setModel('Threshold');
-    }
-
-    /**
-     * Gets an array of Threshold objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this Trap is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     * @throws PropelException
-     */
-    public function getTrapThresholds($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collTrapThresholdsPartial && !$this->isNew();
-        if (null === $this->collTrapThresholds || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collTrapThresholds) {
-                // return empty collection
-                $this->initTrapThresholds();
-            } else {
-                $collTrapThresholds = ThresholdQuery::create(null, $criteria)
-                    ->filterByTrap($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collTrapThresholdsPartial && count($collTrapThresholds)) {
-                      $this->initTrapThresholds(false);
-
-                      foreach($collTrapThresholds as $obj) {
-                        if (false == $this->collTrapThresholds->contains($obj)) {
-                          $this->collTrapThresholds->append($obj);
-                        }
-                      }
-
-                      $this->collTrapThresholdsPartial = true;
-                    }
-
-                    $collTrapThresholds->getInternalIterator()->rewind();
-                    return $collTrapThresholds;
-                }
-
-                if($partial && $this->collTrapThresholds) {
-                    foreach($this->collTrapThresholds as $obj) {
-                        if($obj->isNew()) {
-                            $collTrapThresholds[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collTrapThresholds = $collTrapThresholds;
-                $this->collTrapThresholdsPartial = false;
-            }
-        }
-
-        return $this->collTrapThresholds;
-    }
-
-    /**
-     * Sets a collection of TrapThreshold objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $trapThresholds A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return Trap The current object (for fluent API support)
-     */
-    public function setTrapThresholds(PropelCollection $trapThresholds, PropelPDO $con = null)
-    {
-        $trapThresholdsToDelete = $this->getTrapThresholds(new Criteria(), $con)->diff($trapThresholds);
-
-        $this->trapThresholdsScheduledForDeletion = unserialize(serialize($trapThresholdsToDelete));
-
-        foreach ($trapThresholdsToDelete as $trapThresholdRemoved) {
-            $trapThresholdRemoved->setTrap(null);
-        }
-
-        $this->collTrapThresholds = null;
-        foreach ($trapThresholds as $trapThreshold) {
-            $this->addTrapThreshold($trapThreshold);
-        }
-
-        $this->collTrapThresholds = $trapThresholds;
-        $this->collTrapThresholdsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Threshold objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related Threshold objects.
-     * @throws PropelException
-     */
-    public function countTrapThresholds(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collTrapThresholdsPartial && !$this->isNew();
-        if (null === $this->collTrapThresholds || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collTrapThresholds) {
-                return 0;
-            }
-
-            if($partial && !$criteria) {
-                return count($this->getTrapThresholds());
-            }
-            $query = ThresholdQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByTrap($this)
-                ->count($con);
-        }
-
-        return count($this->collTrapThresholds);
-    }
-
-    /**
-     * Method called to associate a Threshold object to this object
-     * through the Threshold foreign key attribute.
-     *
-     * @param    Threshold $l Threshold
-     * @return Trap The current object (for fluent API support)
-     */
-    public function addTrapThreshold(Threshold $l)
-    {
-        if ($this->collTrapThresholds === null) {
-            $this->initTrapThresholds();
-            $this->collTrapThresholdsPartial = true;
-        }
-        if (!in_array($l, $this->collTrapThresholds->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddTrapThreshold($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	TrapThreshold $trapThreshold The trapThreshold object to add.
-     */
-    protected function doAddTrapThreshold($trapThreshold)
-    {
-        $this->collTrapThresholds[]= $trapThreshold;
-        $trapThreshold->setTrap($this);
-    }
-
-    /**
-     * @param	TrapThreshold $trapThreshold The trapThreshold object to remove.
-     * @return Trap The current object (for fluent API support)
-     */
-    public function removeTrapThreshold($trapThreshold)
-    {
-        if ($this->getTrapThresholds()->contains($trapThreshold)) {
-            $this->collTrapThresholds->remove($this->collTrapThresholds->search($trapThreshold));
-            if (null === $this->trapThresholdsScheduledForDeletion) {
-                $this->trapThresholdsScheduledForDeletion = clone $this->collTrapThresholds;
-                $this->trapThresholdsScheduledForDeletion->clear();
-            }
-            $this->trapThresholdsScheduledForDeletion[]= clone $trapThreshold;
-            $trapThreshold->setTrap(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Trap is new, it will return
-     * an empty collection; or if this Trap has previously
-     * been saved, it will retrieve related TrapThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Trap.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getTrapThresholdsJoinDevice($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Device', $join_behavior);
-
-        return $this->getTrapThresholds($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Trap is new, it will return
-     * an empty collection; or if this Trap has previously
-     * been saved, it will retrieve related TrapThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Trap.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getTrapThresholdsJoinPoll($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Poll', $join_behavior);
-
-        return $this->getTrapThresholds($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Trap is new, it will return
-     * an empty collection; or if this Trap has previously
-     * been saved, it will retrieve related TrapThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Trap.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getTrapThresholdsJoinPlugin($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Plugin', $join_behavior);
-
-        return $this->getTrapThresholds($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Trap is new, it will return
-     * an empty collection; or if this Trap has previously
-     * been saved, it will retrieve related TrapThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Trap.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getTrapThresholdsJoinSyslog($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Syslog', $join_behavior);
-
-        return $this->getTrapThresholds($query, $con);
-    }
-
     /**
      * Clears the current object and sets all attributes to their default values
      */
@@ -1746,11 +1364,6 @@ abstract class BaseTrap extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->collTrapThresholds) {
-                foreach ($this->collTrapThresholds as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->aDevice instanceof Persistent) {
               $this->aDevice->clearAllReferences($deep);
             }
@@ -1764,10 +1377,6 @@ abstract class BaseTrap extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        if ($this->collTrapThresholds instanceof PropelCollection) {
-            $this->collTrapThresholds->clearIterator();
-        }
-        $this->collTrapThresholds = null;
         $this->aDevice = null;
         $this->aAdapter = null;
         $this->aSnmpProperty = null;

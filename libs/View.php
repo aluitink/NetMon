@@ -1,15 +1,14 @@
 <?php
 namespace NetMon\Views;
 require_once 'KLogger.php';
-require 'Template.php';
-use NetMon;
+require_once 'Template.php';
 
 class View
 {
     function __construct()
     {
-        $this->Template = new NetMon\Template("pageBase.html");
-        $this->Logger = new \KLogger(NetMon\Config::LogPath, NetMon\Config::LogLevel);
+        $this->Template = new \NetMon\Template("pageBase.html");
+        $this->Logger = new \KLogger(\NetMon\Config::LogPath, \NetMon\Config::LogLevel);
     }
     
     public function Render($name)
@@ -20,15 +19,15 @@ class View
         $view = ob_get_clean();
         
         //Read nav html into $nav
-        $nav = NetMon\Template::ReadTemplateFile("nav.html");
+        $nav = \NetMon\Template::ReadTemplateFile("nav.html");
         
         //Open header template set tag to nav
-        $headerTemplate = new NetMon\Template("header.html");
+        $headerTemplate = new \NetMon\Template("header.html");
         $headerTemplate->Set("pageNav", $nav);
         //return header text
         $header = $headerTemplate->Get();
-        $sidebar = NetMon\Template::ReadTemplateFile("sidebar.html");
-        $footer = NetMon\Template::ReadTemplateFile("footer.html");
+        $sidebar = \NetMon\Template::ReadTemplateFile("sidebar.html");
+        $footer = \NetMon\Template::ReadTemplateFile("footer.html");
         
         $this->Template->Set("pageHeader", $header);
         $this->Template->Set("pageMenu", $nav);

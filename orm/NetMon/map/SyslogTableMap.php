@@ -59,7 +59,6 @@ class SyslogTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('Device', 'Device', RelationMap::MANY_TO_ONE, array('DeviceId' => 'DeviceId', ), null, null);
-        $this->addRelation('SyslogThreshold', 'Threshold', RelationMap::ONE_TO_MANY, array('SyslogId' => 'SyslogId', ), null, null, 'SyslogThresholds');
     } // buildRelations()
 
 } // SyslogTableMap

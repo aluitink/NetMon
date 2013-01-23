@@ -7,6 +7,7 @@ require_once ROOT. 'libs/KLogger.php';
 require_once ROOT. 'libs/Propel/runtime/lib/Propel.php';
 
 \Propel::init(ROOT . Config::PropelConfig);
+\Propel::disableInstancePooling();
 set_include_path(ROOT . Config::PropelModels . PATH_SEPARATOR . get_include_path());
 
 class Bootstrap

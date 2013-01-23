@@ -56,7 +56,6 @@ class TrapTableMap extends TableMap
         $this->addRelation('Device', 'Device', RelationMap::MANY_TO_ONE, array('DeviceId' => 'DeviceId', ), null, null);
         $this->addRelation('Adapter', 'Adapter', RelationMap::MANY_TO_ONE, array('AdapterId' => 'AdapterId', ), null, null);
         $this->addRelation('SnmpProperty', 'SnmpProperty', RelationMap::MANY_TO_ONE, array('SnmpPropertyId' => 'SnmpPropertyId', ), null, null);
-        $this->addRelation('TrapThreshold', 'Threshold', RelationMap::ONE_TO_MANY, array('TrapId' => 'TrapId', ), null, null, 'TrapThresholds');
     } // buildRelations()
 
 } // TrapTableMap

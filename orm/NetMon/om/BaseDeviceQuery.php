@@ -32,10 +32,6 @@
  * @method DeviceQuery rightJoinDeviceType($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DeviceType relation
  * @method DeviceQuery innerJoinDeviceType($relationAlias = null) Adds a INNER JOIN clause to the query using the DeviceType relation
  *
- * @method DeviceQuery leftJoinDeviceThreshold($relationAlias = null) Adds a LEFT JOIN clause to the query using the DeviceThreshold relation
- * @method DeviceQuery rightJoinDeviceThreshold($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DeviceThreshold relation
- * @method DeviceQuery innerJoinDeviceThreshold($relationAlias = null) Adds a INNER JOIN clause to the query using the DeviceThreshold relation
- *
  * @method DeviceQuery leftJoinDeviceAdapter($relationAlias = null) Adds a LEFT JOIN clause to the query using the DeviceAdapter relation
  * @method DeviceQuery rightJoinDeviceAdapter($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DeviceAdapter relation
  * @method DeviceQuery innerJoinDeviceAdapter($relationAlias = null) Adds a INNER JOIN clause to the query using the DeviceAdapter relation
@@ -43,10 +39,6 @@
  * @method DeviceQuery leftJoinDevicePoll($relationAlias = null) Adds a LEFT JOIN clause to the query using the DevicePoll relation
  * @method DeviceQuery rightJoinDevicePoll($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DevicePoll relation
  * @method DeviceQuery innerJoinDevicePoll($relationAlias = null) Adds a INNER JOIN clause to the query using the DevicePoll relation
- *
- * @method DeviceQuery leftJoinDeviceMonitor($relationAlias = null) Adds a LEFT JOIN clause to the query using the DeviceMonitor relation
- * @method DeviceQuery rightJoinDeviceMonitor($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DeviceMonitor relation
- * @method DeviceQuery innerJoinDeviceMonitor($relationAlias = null) Adds a INNER JOIN clause to the query using the DeviceMonitor relation
  *
  * @method DeviceQuery leftJoinDeviceSyslog($relationAlias = null) Adds a LEFT JOIN clause to the query using the DeviceSyslog relation
  * @method DeviceQuery rightJoinDeviceSyslog($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DeviceSyslog relation
@@ -628,80 +620,6 @@ abstract class BaseDeviceQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related Threshold object
-     *
-     * @param   Threshold|PropelObjectCollection $threshold  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 DeviceQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByDeviceThreshold($threshold, $comparison = null)
-    {
-        if ($threshold instanceof Threshold) {
-            return $this
-                ->addUsingAlias(DevicePeer::DEVICEID, $threshold->getDeviceid(), $comparison);
-        } elseif ($threshold instanceof PropelObjectCollection) {
-            return $this
-                ->useDeviceThresholdQuery()
-                ->filterByPrimaryKeys($threshold->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByDeviceThreshold() only accepts arguments of type Threshold or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the DeviceThreshold relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return DeviceQuery The current query, for fluid interface
-     */
-    public function joinDeviceThreshold($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('DeviceThreshold');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'DeviceThreshold');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the DeviceThreshold relation Threshold object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   ThresholdQuery A secondary query class using the current class as primary query
-     */
-    public function useDeviceThresholdQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinDeviceThreshold($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'DeviceThreshold', 'ThresholdQuery');
-    }
-
-    /**
      * Filter the query by a related Adapter object
      *
      * @param   Adapter|PropelObjectCollection $adapter  the related object to use as filter
@@ -847,80 +765,6 @@ abstract class BaseDeviceQuery extends ModelCriteria
         return $this
             ->joinDevicePoll($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'DevicePoll', 'PollQuery');
-    }
-
-    /**
-     * Filter the query by a related Monitor object
-     *
-     * @param   Monitor|PropelObjectCollection $monitor  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 DeviceQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByDeviceMonitor($monitor, $comparison = null)
-    {
-        if ($monitor instanceof Monitor) {
-            return $this
-                ->addUsingAlias(DevicePeer::DEVICEID, $monitor->getDeviceid(), $comparison);
-        } elseif ($monitor instanceof PropelObjectCollection) {
-            return $this
-                ->useDeviceMonitorQuery()
-                ->filterByPrimaryKeys($monitor->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByDeviceMonitor() only accepts arguments of type Monitor or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the DeviceMonitor relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return DeviceQuery The current query, for fluid interface
-     */
-    public function joinDeviceMonitor($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('DeviceMonitor');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'DeviceMonitor');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the DeviceMonitor relation Monitor object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   MonitorQuery A secondary query class using the current class as primary query
-     */
-    public function useDeviceMonitorQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinDeviceMonitor($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'DeviceMonitor', 'MonitorQuery');
     }
 
     /**

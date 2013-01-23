@@ -1,7 +1,7 @@
 <?php
 namespace NetMon;
 require_once 'Config.php';
-use NetMon;
+
 class Template
 {
     public $TemplateContent;
@@ -9,7 +9,7 @@ class Template
 
     function __construct($template)
     {
-        $this->TemplateContent = file_get_contents(NetMon\Config::TemplatesPath . "/" . $template);
+        $this->TemplateContent = file_get_contents(ROOT . \NetMon\Config::TemplatesPath . "/" . $template);
     }
 
     public function Set($tagName, $value)
@@ -34,7 +34,7 @@ class Template
     
     public static function ReadTemplateFile($template)
     {
-        return file_get_contents(NetMon\Config::TemplatesPath . "/" . $template);
+        return file_get_contents(ROOT . \NetMon\Config::TemplatesPath . "/" . $template);
     }
 }
 

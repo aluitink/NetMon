@@ -36,12 +36,6 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     protected $monitorid;
 
     /**
-     * The value for the deviceid field.
-     * @var        int
-     */
-    protected $deviceid;
-
-    /**
      * The value for the pluginid field.
      * @var        int
      */
@@ -60,11 +54,6 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     protected $snmppropertyid;
 
     /**
-     * @var        Device
-     */
-    protected $aDevice;
-
-    /**
      * @var        Plugin
      */
     protected $aPlugin;
@@ -78,6 +67,12 @@ abstract class BaseMonitor extends BaseObject implements Persistent
      * @var        SnmpProperty
      */
     protected $aSnmpProperty;
+
+    /**
+     * @var        PropelObjectCollection|Threshold[] Collection to store aggregation of Threshold objects.
+     */
+    protected $collMonitorThresholds;
+    protected $collMonitorThresholdsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -100,6 +95,12 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     protected $alreadyInClearAllReferencesDeep = false;
 
     /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $monitorThresholdsScheduledForDeletion = null;
+
+    /**
      * Get the [monitorid] column value.
      *
      * @return int
@@ -107,16 +108,6 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     public function getMonitorid()
     {
         return $this->monitorid;
-    }
-
-    /**
-     * Get the [deviceid] column value.
-     *
-     * @return int
-     */
-    public function getDeviceid()
-    {
-        return $this->deviceid;
     }
 
     /**
@@ -169,31 +160,6 @@ abstract class BaseMonitor extends BaseObject implements Persistent
 
         return $this;
     } // setMonitorid()
-
-    /**
-     * Set the value of [deviceid] column.
-     *
-     * @param int $v new value
-     * @return Monitor The current object (for fluent API support)
-     */
-    public function setDeviceid($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->deviceid !== $v) {
-            $this->deviceid = $v;
-            $this->modifiedColumns[] = MonitorPeer::DEVICEID;
-        }
-
-        if ($this->aDevice !== null && $this->aDevice->getDeviceid() !== $v) {
-            $this->aDevice = null;
-        }
-
-
-        return $this;
-    } // setDeviceid()
 
     /**
      * Set the value of [pluginid] column.
@@ -303,10 +269,9 @@ abstract class BaseMonitor extends BaseObject implements Persistent
         try {
 
             $this->monitorid = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-            $this->deviceid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->pluginid = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-            $this->adapterid = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
-            $this->snmppropertyid = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
+            $this->pluginid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+            $this->adapterid = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
+            $this->snmppropertyid = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -315,7 +280,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
             $this->postHydrate($row, $startcol, $rehydrate);
-            return $startcol + 5; // 5 = MonitorPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = MonitorPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Monitor object", $e);
@@ -338,9 +303,6 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aDevice !== null && $this->deviceid !== $this->aDevice->getDeviceid()) {
-            $this->aDevice = null;
-        }
         if ($this->aPlugin !== null && $this->pluginid !== $this->aPlugin->getPluginid()) {
             $this->aPlugin = null;
         }
@@ -389,10 +351,11 @@ abstract class BaseMonitor extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aDevice = null;
             $this->aPlugin = null;
             $this->aAdapter = null;
             $this->aSnmpProperty = null;
+            $this->collMonitorThresholds = null;
+
         } // if (deep)
     }
 
@@ -511,13 +474,6 @@ abstract class BaseMonitor extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aDevice !== null) {
-                if ($this->aDevice->isModified() || $this->aDevice->isNew()) {
-                    $affectedRows += $this->aDevice->save($con);
-                }
-                $this->setDevice($this->aDevice);
-            }
-
             if ($this->aPlugin !== null) {
                 if ($this->aPlugin->isModified() || $this->aPlugin->isNew()) {
                     $affectedRows += $this->aPlugin->save($con);
@@ -550,6 +506,23 @@ abstract class BaseMonitor extends BaseObject implements Persistent
                 $this->resetModified();
             }
 
+            if ($this->monitorThresholdsScheduledForDeletion !== null) {
+                if (!$this->monitorThresholdsScheduledForDeletion->isEmpty()) {
+                    ThresholdQuery::create()
+                        ->filterByPrimaryKeys($this->monitorThresholdsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->monitorThresholdsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collMonitorThresholds !== null) {
+                foreach ($this->collMonitorThresholds as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -579,9 +552,6 @@ abstract class BaseMonitor extends BaseObject implements Persistent
         if ($this->isColumnModified(MonitorPeer::MONITORID)) {
             $modifiedColumns[':p' . $index++]  = '`MonitorId`';
         }
-        if ($this->isColumnModified(MonitorPeer::DEVICEID)) {
-            $modifiedColumns[':p' . $index++]  = '`DeviceId`';
-        }
         if ($this->isColumnModified(MonitorPeer::PLUGINID)) {
             $modifiedColumns[':p' . $index++]  = '`PluginId`';
         }
@@ -604,9 +574,6 @@ abstract class BaseMonitor extends BaseObject implements Persistent
                 switch ($columnName) {
                     case '`MonitorId`':
                         $stmt->bindValue($identifier, $this->monitorid, PDO::PARAM_INT);
-                        break;
-                    case '`DeviceId`':
-                        $stmt->bindValue($identifier, $this->deviceid, PDO::PARAM_INT);
                         break;
                     case '`PluginId`':
                         $stmt->bindValue($identifier, $this->pluginid, PDO::PARAM_INT);
@@ -716,12 +683,6 @@ abstract class BaseMonitor extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aDevice !== null) {
-                if (!$this->aDevice->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aDevice->getValidationFailures());
-                }
-            }
-
             if ($this->aPlugin !== null) {
                 if (!$this->aPlugin->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aPlugin->getValidationFailures());
@@ -745,6 +706,14 @@ abstract class BaseMonitor extends BaseObject implements Persistent
                 $failureMap = array_merge($failureMap, $retval);
             }
 
+
+                if ($this->collMonitorThresholds !== null) {
+                    foreach ($this->collMonitorThresholds as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
 
 
             $this->alreadyInValidation = false;
@@ -785,15 +754,12 @@ abstract class BaseMonitor extends BaseObject implements Persistent
                 return $this->getMonitorid();
                 break;
             case 1:
-                return $this->getDeviceid();
-                break;
-            case 2:
                 return $this->getPluginid();
                 break;
-            case 3:
+            case 2:
                 return $this->getAdapterid();
                 break;
-            case 4:
+            case 3:
                 return $this->getSnmppropertyid();
                 break;
             default:
@@ -826,15 +792,11 @@ abstract class BaseMonitor extends BaseObject implements Persistent
         $keys = MonitorPeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getMonitorid(),
-            $keys[1] => $this->getDeviceid(),
-            $keys[2] => $this->getPluginid(),
-            $keys[3] => $this->getAdapterid(),
-            $keys[4] => $this->getSnmppropertyid(),
+            $keys[1] => $this->getPluginid(),
+            $keys[2] => $this->getAdapterid(),
+            $keys[3] => $this->getSnmppropertyid(),
         );
         if ($includeForeignObjects) {
-            if (null !== $this->aDevice) {
-                $result['Device'] = $this->aDevice->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aPlugin) {
                 $result['Plugin'] = $this->aPlugin->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
@@ -843,6 +805,9 @@ abstract class BaseMonitor extends BaseObject implements Persistent
             }
             if (null !== $this->aSnmpProperty) {
                 $result['SnmpProperty'] = $this->aSnmpProperty->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collMonitorThresholds) {
+                $result['MonitorThresholds'] = $this->collMonitorThresholds->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -882,15 +847,12 @@ abstract class BaseMonitor extends BaseObject implements Persistent
                 $this->setMonitorid($value);
                 break;
             case 1:
-                $this->setDeviceid($value);
-                break;
-            case 2:
                 $this->setPluginid($value);
                 break;
-            case 3:
+            case 2:
                 $this->setAdapterid($value);
                 break;
-            case 4:
+            case 3:
                 $this->setSnmppropertyid($value);
                 break;
         } // switch()
@@ -918,10 +880,9 @@ abstract class BaseMonitor extends BaseObject implements Persistent
         $keys = MonitorPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setMonitorid($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setDeviceid($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setPluginid($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setAdapterid($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setSnmppropertyid($arr[$keys[4]]);
+        if (array_key_exists($keys[1], $arr)) $this->setPluginid($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setAdapterid($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setSnmppropertyid($arr[$keys[3]]);
     }
 
     /**
@@ -934,7 +895,6 @@ abstract class BaseMonitor extends BaseObject implements Persistent
         $criteria = new Criteria(MonitorPeer::DATABASE_NAME);
 
         if ($this->isColumnModified(MonitorPeer::MONITORID)) $criteria->add(MonitorPeer::MONITORID, $this->monitorid);
-        if ($this->isColumnModified(MonitorPeer::DEVICEID)) $criteria->add(MonitorPeer::DEVICEID, $this->deviceid);
         if ($this->isColumnModified(MonitorPeer::PLUGINID)) $criteria->add(MonitorPeer::PLUGINID, $this->pluginid);
         if ($this->isColumnModified(MonitorPeer::ADAPTERID)) $criteria->add(MonitorPeer::ADAPTERID, $this->adapterid);
         if ($this->isColumnModified(MonitorPeer::SNMPPROPERTYID)) $criteria->add(MonitorPeer::SNMPPROPERTYID, $this->snmppropertyid);
@@ -954,7 +914,6 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     {
         $criteria = new Criteria(MonitorPeer::DATABASE_NAME);
         $criteria->add(MonitorPeer::MONITORID, $this->monitorid);
-        $criteria->add(MonitorPeer::DEVICEID, $this->deviceid);
         $criteria->add(MonitorPeer::PLUGINID, $this->pluginid);
         $criteria->add(MonitorPeer::ADAPTERID, $this->adapterid);
         $criteria->add(MonitorPeer::SNMPPROPERTYID, $this->snmppropertyid);
@@ -971,10 +930,9 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     {
         $pks = array();
         $pks[0] = $this->getMonitorid();
-        $pks[1] = $this->getDeviceid();
-        $pks[2] = $this->getPluginid();
-        $pks[3] = $this->getAdapterid();
-        $pks[4] = $this->getSnmppropertyid();
+        $pks[1] = $this->getPluginid();
+        $pks[2] = $this->getAdapterid();
+        $pks[3] = $this->getSnmppropertyid();
 
         return $pks;
     }
@@ -988,10 +946,9 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     public function setPrimaryKey($keys)
     {
         $this->setMonitorid($keys[0]);
-        $this->setDeviceid($keys[1]);
-        $this->setPluginid($keys[2]);
-        $this->setAdapterid($keys[3]);
-        $this->setSnmppropertyid($keys[4]);
+        $this->setPluginid($keys[1]);
+        $this->setAdapterid($keys[2]);
+        $this->setSnmppropertyid($keys[3]);
     }
 
     /**
@@ -1001,7 +958,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     public function isPrimaryKeyNull()
     {
 
-        return (null === $this->getMonitorid()) && (null === $this->getDeviceid()) && (null === $this->getPluginid()) && (null === $this->getAdapterid()) && (null === $this->getSnmppropertyid());
+        return (null === $this->getMonitorid()) && (null === $this->getPluginid()) && (null === $this->getAdapterid()) && (null === $this->getSnmppropertyid());
     }
 
     /**
@@ -1017,7 +974,6 @@ abstract class BaseMonitor extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setDeviceid($this->getDeviceid());
         $copyObj->setPluginid($this->getPluginid());
         $copyObj->setAdapterid($this->getAdapterid());
         $copyObj->setSnmppropertyid($this->getSnmppropertyid());
@@ -1028,6 +984,12 @@ abstract class BaseMonitor extends BaseObject implements Persistent
             $copyObj->setNew(false);
             // store object hash to prevent cycle
             $this->startCopy = true;
+
+            foreach ($this->getMonitorThresholds() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addMonitorThreshold($relObj->copy($deepCopy));
+                }
+            }
 
             //unflag object copy
             $this->startCopy = false;
@@ -1077,58 +1039,6 @@ abstract class BaseMonitor extends BaseObject implements Persistent
         }
 
         return self::$peer;
-    }
-
-    /**
-     * Declares an association between this object and a Device object.
-     *
-     * @param             Device $v
-     * @return Monitor The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setDevice(Device $v = null)
-    {
-        if ($v === null) {
-            $this->setDeviceid(NULL);
-        } else {
-            $this->setDeviceid($v->getDeviceid());
-        }
-
-        $this->aDevice = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Device object, it will not be re-added.
-        if ($v !== null) {
-            $v->addDeviceMonitor($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Device object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Device The associated Device object.
-     * @throws PropelException
-     */
-    public function getDevice(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aDevice === null && ($this->deviceid !== null) && $doQuery) {
-            $this->aDevice = DeviceQuery::create()->findPk($this->deviceid, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aDevice->addDeviceMonitors($this);
-             */
-        }
-
-        return $this->aDevice;
     }
 
     /**
@@ -1287,13 +1197,271 @@ abstract class BaseMonitor extends BaseObject implements Persistent
         return $this->aSnmpProperty;
     }
 
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('MonitorThreshold' == $relationName) {
+            $this->initMonitorThresholds();
+        }
+    }
+
+    /**
+     * Clears out the collMonitorThresholds collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Monitor The current object (for fluent API support)
+     * @see        addMonitorThresholds()
+     */
+    public function clearMonitorThresholds()
+    {
+        $this->collMonitorThresholds = null; // important to set this to null since that means it is uninitialized
+        $this->collMonitorThresholdsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collMonitorThresholds collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialMonitorThresholds($v = true)
+    {
+        $this->collMonitorThresholdsPartial = $v;
+    }
+
+    /**
+     * Initializes the collMonitorThresholds collection.
+     *
+     * By default this just sets the collMonitorThresholds collection to an empty array (like clearcollMonitorThresholds());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initMonitorThresholds($overrideExisting = true)
+    {
+        if (null !== $this->collMonitorThresholds && !$overrideExisting) {
+            return;
+        }
+        $this->collMonitorThresholds = new PropelObjectCollection();
+        $this->collMonitorThresholds->setModel('Threshold');
+    }
+
+    /**
+     * Gets an array of Threshold objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Monitor is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Threshold[] List of Threshold objects
+     * @throws PropelException
+     */
+    public function getMonitorThresholds($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collMonitorThresholdsPartial && !$this->isNew();
+        if (null === $this->collMonitorThresholds || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collMonitorThresholds) {
+                // return empty collection
+                $this->initMonitorThresholds();
+            } else {
+                $collMonitorThresholds = ThresholdQuery::create(null, $criteria)
+                    ->filterByMonitor($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collMonitorThresholdsPartial && count($collMonitorThresholds)) {
+                      $this->initMonitorThresholds(false);
+
+                      foreach($collMonitorThresholds as $obj) {
+                        if (false == $this->collMonitorThresholds->contains($obj)) {
+                          $this->collMonitorThresholds->append($obj);
+                        }
+                      }
+
+                      $this->collMonitorThresholdsPartial = true;
+                    }
+
+                    $collMonitorThresholds->getInternalIterator()->rewind();
+                    return $collMonitorThresholds;
+                }
+
+                if($partial && $this->collMonitorThresholds) {
+                    foreach($this->collMonitorThresholds as $obj) {
+                        if($obj->isNew()) {
+                            $collMonitorThresholds[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collMonitorThresholds = $collMonitorThresholds;
+                $this->collMonitorThresholdsPartial = false;
+            }
+        }
+
+        return $this->collMonitorThresholds;
+    }
+
+    /**
+     * Sets a collection of MonitorThreshold objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $monitorThresholds A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Monitor The current object (for fluent API support)
+     */
+    public function setMonitorThresholds(PropelCollection $monitorThresholds, PropelPDO $con = null)
+    {
+        $monitorThresholdsToDelete = $this->getMonitorThresholds(new Criteria(), $con)->diff($monitorThresholds);
+
+        $this->monitorThresholdsScheduledForDeletion = unserialize(serialize($monitorThresholdsToDelete));
+
+        foreach ($monitorThresholdsToDelete as $monitorThresholdRemoved) {
+            $monitorThresholdRemoved->setMonitor(null);
+        }
+
+        $this->collMonitorThresholds = null;
+        foreach ($monitorThresholds as $monitorThreshold) {
+            $this->addMonitorThreshold($monitorThreshold);
+        }
+
+        $this->collMonitorThresholds = $monitorThresholds;
+        $this->collMonitorThresholdsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Threshold objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Threshold objects.
+     * @throws PropelException
+     */
+    public function countMonitorThresholds(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collMonitorThresholdsPartial && !$this->isNew();
+        if (null === $this->collMonitorThresholds || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collMonitorThresholds) {
+                return 0;
+            }
+
+            if($partial && !$criteria) {
+                return count($this->getMonitorThresholds());
+            }
+            $query = ThresholdQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByMonitor($this)
+                ->count($con);
+        }
+
+        return count($this->collMonitorThresholds);
+    }
+
+    /**
+     * Method called to associate a Threshold object to this object
+     * through the Threshold foreign key attribute.
+     *
+     * @param    Threshold $l Threshold
+     * @return Monitor The current object (for fluent API support)
+     */
+    public function addMonitorThreshold(Threshold $l)
+    {
+        if ($this->collMonitorThresholds === null) {
+            $this->initMonitorThresholds();
+            $this->collMonitorThresholdsPartial = true;
+        }
+        if (!in_array($l, $this->collMonitorThresholds->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddMonitorThreshold($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	MonitorThreshold $monitorThreshold The monitorThreshold object to add.
+     */
+    protected function doAddMonitorThreshold($monitorThreshold)
+    {
+        $this->collMonitorThresholds[]= $monitorThreshold;
+        $monitorThreshold->setMonitor($this);
+    }
+
+    /**
+     * @param	MonitorThreshold $monitorThreshold The monitorThreshold object to remove.
+     * @return Monitor The current object (for fluent API support)
+     */
+    public function removeMonitorThreshold($monitorThreshold)
+    {
+        if ($this->getMonitorThresholds()->contains($monitorThreshold)) {
+            $this->collMonitorThresholds->remove($this->collMonitorThresholds->search($monitorThreshold));
+            if (null === $this->monitorThresholdsScheduledForDeletion) {
+                $this->monitorThresholdsScheduledForDeletion = clone $this->collMonitorThresholds;
+                $this->monitorThresholdsScheduledForDeletion->clear();
+            }
+            $this->monitorThresholdsScheduledForDeletion[]= clone $monitorThreshold;
+            $monitorThreshold->setMonitor(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Monitor is new, it will return
+     * an empty collection; or if this Monitor has previously
+     * been saved, it will retrieve related MonitorThresholds from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Monitor.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Threshold[] List of Threshold objects
+     */
+    public function getMonitorThresholdsJoinPlugin($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = ThresholdQuery::create(null, $criteria);
+        $query->joinWith('Plugin', $join_behavior);
+
+        return $this->getMonitorThresholds($query, $con);
+    }
+
     /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
     {
         $this->monitorid = null;
-        $this->deviceid = null;
         $this->pluginid = null;
         $this->adapterid = null;
         $this->snmppropertyid = null;
@@ -1319,8 +1487,10 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aDevice instanceof Persistent) {
-              $this->aDevice->clearAllReferences($deep);
+            if ($this->collMonitorThresholds) {
+                foreach ($this->collMonitorThresholds as $o) {
+                    $o->clearAllReferences($deep);
+                }
             }
             if ($this->aPlugin instanceof Persistent) {
               $this->aPlugin->clearAllReferences($deep);
@@ -1335,7 +1505,10 @@ abstract class BaseMonitor extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aDevice = null;
+        if ($this->collMonitorThresholds instanceof PropelCollection) {
+            $this->collMonitorThresholds->clearIterator();
+        }
+        $this->collMonitorThresholds = null;
         $this->aPlugin = null;
         $this->aAdapter = null;
         $this->aSnmpProperty = null;

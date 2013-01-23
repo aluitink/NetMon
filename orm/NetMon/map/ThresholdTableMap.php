@@ -39,12 +39,9 @@ class ThresholdTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('ThresholdId', 'Thresholdid', 'INTEGER', true, null, null);
-        $this->addForeignKey('DeviceId', 'Deviceid', 'INTEGER', 'Device', 'DeviceId', true, null, null);
-        $this->addForeignKey('PollId', 'Pollid', 'INTEGER', 'Poll', 'PollId', true, null, null);
-        $this->addForeignKey('TrapId', 'Trapid', 'INTEGER', 'Trap', 'TrapId', true, null, null);
         $this->addForeignKey('PluginId', 'Pluginid', 'INTEGER', 'Plugin', 'PluginId', true, null, null);
-        $this->addForeignKey('SyslogId', 'Syslogid', 'INTEGER', 'Syslog', 'SyslogId', true, null, null);
-        $this->addColumn('GreaterThan', 'Greaterthan', 'INTEGER', true, null, null);
+        $this->addForeignKey('MonitorId', 'Monitorid', 'INTEGER', 'Monitor', 'MonitorId', true, null, null);
+        $this->addColumn('GreaterThan', 'Greaterthan', 'BOOLEAN', true, 1, null);
         $this->addColumn('Value', 'Value', 'INTEGER', true, null, null);
         // validators
     } // initialize()
@@ -54,11 +51,8 @@ class ThresholdTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Device', 'Device', RelationMap::MANY_TO_ONE, array('DeviceId' => 'DeviceId', ), null, null);
-        $this->addRelation('Poll', 'Poll', RelationMap::MANY_TO_ONE, array('PollId' => 'PollId', ), null, null);
-        $this->addRelation('Trap', 'Trap', RelationMap::MANY_TO_ONE, array('TrapId' => 'TrapId', ), null, null);
         $this->addRelation('Plugin', 'Plugin', RelationMap::MANY_TO_ONE, array('PluginId' => 'PluginId', ), null, null);
-        $this->addRelation('Syslog', 'Syslog', RelationMap::MANY_TO_ONE, array('SyslogId' => 'SyslogId', ), null, null);
+        $this->addRelation('Monitor', 'Monitor', RelationMap::MANY_TO_ONE, array('MonitorId' => 'MonitorId', ), null, null);
         $this->addRelation('AlarmThreshold', 'Alarm', RelationMap::ONE_TO_MANY, array('ThresholdId' => 'ThresholdId', ), null, null, 'AlarmThresholds');
     } // buildRelations()
 

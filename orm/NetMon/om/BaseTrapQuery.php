@@ -38,10 +38,6 @@
  * @method TrapQuery rightJoinSnmpProperty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the SnmpProperty relation
  * @method TrapQuery innerJoinSnmpProperty($relationAlias = null) Adds a INNER JOIN clause to the query using the SnmpProperty relation
  *
- * @method TrapQuery leftJoinTrapThreshold($relationAlias = null) Adds a LEFT JOIN clause to the query using the TrapThreshold relation
- * @method TrapQuery rightJoinTrapThreshold($relationAlias = null) Adds a RIGHT JOIN clause to the query using the TrapThreshold relation
- * @method TrapQuery innerJoinTrapThreshold($relationAlias = null) Adds a INNER JOIN clause to the query using the TrapThreshold relation
- *
  * @method Trap findOne(PropelPDO $con = null) Return the first Trap matching the query
  * @method Trap findOneOrCreate(PropelPDO $con = null) Return the first Trap matching the query, or a new Trap object populated from the query conditions when no match is found
  *
@@ -778,80 +774,6 @@ abstract class BaseTrapQuery extends ModelCriteria
         return $this
             ->joinSnmpProperty($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'SnmpProperty', 'SnmpPropertyQuery');
-    }
-
-    /**
-     * Filter the query by a related Threshold object
-     *
-     * @param   Threshold|PropelObjectCollection $threshold  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 TrapQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByTrapThreshold($threshold, $comparison = null)
-    {
-        if ($threshold instanceof Threshold) {
-            return $this
-                ->addUsingAlias(TrapPeer::TRAPID, $threshold->getTrapid(), $comparison);
-        } elseif ($threshold instanceof PropelObjectCollection) {
-            return $this
-                ->useTrapThresholdQuery()
-                ->filterByPrimaryKeys($threshold->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByTrapThreshold() only accepts arguments of type Threshold or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the TrapThreshold relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return TrapQuery The current query, for fluid interface
-     */
-    public function joinTrapThreshold($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('TrapThreshold');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'TrapThreshold');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the TrapThreshold relation Threshold object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   ThresholdQuery A secondary query class using the current class as primary query
-     */
-    public function useTrapThresholdQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinTrapThreshold($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'TrapThreshold', 'ThresholdQuery');
     }
 
     /**

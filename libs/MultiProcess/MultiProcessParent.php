@@ -1,4 +1,5 @@
 <?php
+namespace NetMon\MultiProcess;
 require_once ROOT . 'libs/Config.php';
 require_once ROOT . 'libs/Propel/runtime/lib/Propel.php';
 
@@ -7,7 +8,6 @@ class MultiProcessParent
     public $BatchIdentifier;
     function __construct()
     {
-        Propel::disableInstancePooling();
         $this->BatchIdentifier = $this->CreateBatchIdentifier();
     }
 
@@ -26,11 +26,11 @@ class MultiProcessParent
             {                    
                 $variables = base64_encode(json_encode($processes[$i]['variables']));
 
-                $multiThreadCache = new MultiThreadCache();
+                $multiThreadCache = new \MultiThreadCache();
                 $multiThreadCache->setBatchIdentifier($this->BatchIdentifier);
                 $multiThreadCache->setVariables($variables);
                 $multiThreadCache->setStatus(false);
-                $multiThreadCache->setTimelimit(NetMon\Config::MultiProcessThreadTimeLimit);
+                $multiThreadCache->setTimelimit(\NetMon\Config::MultiProcessThreadTimeLimit);
                 $multiThreadCache->save();
                 
                 $id = $multiThreadCache->getMultiThreadCacheid();
@@ -42,11 +42,11 @@ class MultiProcessParent
                 throw new Exception("Path does not exist");
             }
 
-            if(NetMon\Config::MultiProcessThrottled == 1)
+            if(\NetMon\Config::MultiProcessThrottled == 1)
             {
-                if($j == NetMon\Config::MultiProcessThreadsPerBatch)
+                if($j == \NetMon\Config::MultiProcessThreadsPerBatch)
                 {
-                    usleep(NetMon\Config::MultiProcessThrottlePause * 1000000);
+                    usleep(\NetMon\Config::MultiProcessThrottlePause * 1000000);
                     $j = 0;
                 }
             }
@@ -72,7 +72,7 @@ class MultiProcessParent
         * Check to make sure this envelope doesn't already exist
         * The probability of this happening is essentially zero
         */
-        $multiProcessCache = MultiThreadCacheQuery::create()
+        $multiProcessCache = \MultiThreadCacheQuery::create()
                 ->filterByBatchIdentifier($envelope)
                 ->findOne();
 
@@ -93,7 +93,7 @@ class MultiProcessParent
     public function CheckStatus($sleep = 100000)
     {
         $cur = 0;
-        while( $cur < NetMon\Config::MultiProcessThreadTimeLimit)
+        while( $cur < \NetMon\Config::MultiProcessThreadTimeLimit)
         {
             //echo $envelope;
             // wait for 100000 microseconds, or .1 seconds by default
@@ -119,7 +119,7 @@ class MultiProcessParent
     */
     public function ReturnStatus()
     {
-        $multiThreadCache = MultiThreadCacheQuery::create()
+        $multiThreadCache = \MultiThreadCacheQuery::create()
                             ->filterByStatus(false)
                             ->filterByBatchidentifier($this->BatchIdentifier)
                             ->find();
@@ -136,14 +136,13 @@ class MultiProcessParent
     */
     public function GetOutput()
     {
-        $multiThreadCache = MultiThreadCacheQuery::create()
+        $multiThreadCache = \MultiThreadCacheQuery::create()
                             ->filterByBatchidentifier($this->BatchIdentifier)
                             ->find();
         $output = array();
         foreach($multiThreadCache as $task)
         {
-            $id = $task->getMultiThreadCacheid();
-            $output[$id] = json_decode(base64_decode($task->getOutput()), true);
+            $output[] = json_decode(base64_decode($task->getOutput()), true);
         }
         return $output;
     }
@@ -154,7 +153,7 @@ class MultiProcessParent
     */
     function Cleanup()
     {
-        $multiThreadCache = MultiThreadCacheQuery::create()
+        $multiThreadCache = \MultiThreadCacheQuery::create()
                             ->filterByBatchidentifier($this->BatchIdentifier)
                             ->delete();
     }

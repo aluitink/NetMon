@@ -1,6 +1,7 @@
 <?php
 namespace NetMon\Controllers;
 require_once 'KLogger.php';
+require_once 'View.php';
 use NetMon;
 
 class Controller

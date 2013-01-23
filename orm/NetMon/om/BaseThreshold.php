@@ -36,38 +36,20 @@ abstract class BaseThreshold extends BaseObject implements Persistent
     protected $thresholdid;
 
     /**
-     * The value for the deviceid field.
-     * @var        int
-     */
-    protected $deviceid;
-
-    /**
-     * The value for the pollid field.
-     * @var        int
-     */
-    protected $pollid;
-
-    /**
-     * The value for the trapid field.
-     * @var        int
-     */
-    protected $trapid;
-
-    /**
      * The value for the pluginid field.
      * @var        int
      */
     protected $pluginid;
 
     /**
-     * The value for the syslogid field.
+     * The value for the monitorid field.
      * @var        int
      */
-    protected $syslogid;
+    protected $monitorid;
 
     /**
      * The value for the greaterthan field.
-     * @var        int
+     * @var        boolean
      */
     protected $greaterthan;
 
@@ -78,29 +60,14 @@ abstract class BaseThreshold extends BaseObject implements Persistent
     protected $value;
 
     /**
-     * @var        Device
-     */
-    protected $aDevice;
-
-    /**
-     * @var        Poll
-     */
-    protected $aPoll;
-
-    /**
-     * @var        Trap
-     */
-    protected $aTrap;
-
-    /**
      * @var        Plugin
      */
     protected $aPlugin;
 
     /**
-     * @var        Syslog
+     * @var        Monitor
      */
-    protected $aSyslog;
+    protected $aMonitor;
 
     /**
      * @var        PropelObjectCollection|Alarm[] Collection to store aggregation of Alarm objects.
@@ -145,36 +112,6 @@ abstract class BaseThreshold extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [deviceid] column value.
-     *
-     * @return int
-     */
-    public function getDeviceid()
-    {
-        return $this->deviceid;
-    }
-
-    /**
-     * Get the [pollid] column value.
-     *
-     * @return int
-     */
-    public function getPollid()
-    {
-        return $this->pollid;
-    }
-
-    /**
-     * Get the [trapid] column value.
-     *
-     * @return int
-     */
-    public function getTrapid()
-    {
-        return $this->trapid;
-    }
-
-    /**
      * Get the [pluginid] column value.
      *
      * @return int
@@ -185,19 +122,19 @@ abstract class BaseThreshold extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [syslogid] column value.
+     * Get the [monitorid] column value.
      *
      * @return int
      */
-    public function getSyslogid()
+    public function getMonitorid()
     {
-        return $this->syslogid;
+        return $this->monitorid;
     }
 
     /**
      * Get the [greaterthan] column value.
      *
-     * @return int
+     * @return boolean
      */
     public function getGreaterthan()
     {
@@ -236,81 +173,6 @@ abstract class BaseThreshold extends BaseObject implements Persistent
     } // setThresholdid()
 
     /**
-     * Set the value of [deviceid] column.
-     *
-     * @param int $v new value
-     * @return Threshold The current object (for fluent API support)
-     */
-    public function setDeviceid($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->deviceid !== $v) {
-            $this->deviceid = $v;
-            $this->modifiedColumns[] = ThresholdPeer::DEVICEID;
-        }
-
-        if ($this->aDevice !== null && $this->aDevice->getDeviceid() !== $v) {
-            $this->aDevice = null;
-        }
-
-
-        return $this;
-    } // setDeviceid()
-
-    /**
-     * Set the value of [pollid] column.
-     *
-     * @param int $v new value
-     * @return Threshold The current object (for fluent API support)
-     */
-    public function setPollid($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->pollid !== $v) {
-            $this->pollid = $v;
-            $this->modifiedColumns[] = ThresholdPeer::POLLID;
-        }
-
-        if ($this->aPoll !== null && $this->aPoll->getPollid() !== $v) {
-            $this->aPoll = null;
-        }
-
-
-        return $this;
-    } // setPollid()
-
-    /**
-     * Set the value of [trapid] column.
-     *
-     * @param int $v new value
-     * @return Threshold The current object (for fluent API support)
-     */
-    public function setTrapid($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->trapid !== $v) {
-            $this->trapid = $v;
-            $this->modifiedColumns[] = ThresholdPeer::TRAPID;
-        }
-
-        if ($this->aTrap !== null && $this->aTrap->getTrapid() !== $v) {
-            $this->aTrap = null;
-        }
-
-
-        return $this;
-    } // setTrapid()
-
-    /**
      * Set the value of [pluginid] column.
      *
      * @param int $v new value
@@ -336,40 +198,48 @@ abstract class BaseThreshold extends BaseObject implements Persistent
     } // setPluginid()
 
     /**
-     * Set the value of [syslogid] column.
+     * Set the value of [monitorid] column.
      *
      * @param int $v new value
      * @return Threshold The current object (for fluent API support)
      */
-    public function setSyslogid($v)
+    public function setMonitorid($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
-        if ($this->syslogid !== $v) {
-            $this->syslogid = $v;
-            $this->modifiedColumns[] = ThresholdPeer::SYSLOGID;
+        if ($this->monitorid !== $v) {
+            $this->monitorid = $v;
+            $this->modifiedColumns[] = ThresholdPeer::MONITORID;
         }
 
-        if ($this->aSyslog !== null && $this->aSyslog->getSyslogid() !== $v) {
-            $this->aSyslog = null;
+        if ($this->aMonitor !== null && $this->aMonitor->getMonitorid() !== $v) {
+            $this->aMonitor = null;
         }
 
 
         return $this;
-    } // setSyslogid()
+    } // setMonitorid()
 
     /**
-     * Set the value of [greaterthan] column.
+     * Sets the value of the [greaterthan] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      *
-     * @param int $v new value
+     * @param boolean|integer|string $v The new value
      * @return Threshold The current object (for fluent API support)
      */
     public function setGreaterthan($v)
     {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
         }
 
         if ($this->greaterthan !== $v) {
@@ -435,13 +305,10 @@ abstract class BaseThreshold extends BaseObject implements Persistent
         try {
 
             $this->thresholdid = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-            $this->deviceid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->pollid = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-            $this->trapid = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
-            $this->pluginid = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
-            $this->syslogid = ($row[$startcol + 5] !== null) ? (int) $row[$startcol + 5] : null;
-            $this->greaterthan = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
-            $this->value = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
+            $this->pluginid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+            $this->monitorid = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
+            $this->greaterthan = ($row[$startcol + 3] !== null) ? (boolean) $row[$startcol + 3] : null;
+            $this->value = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -450,7 +317,7 @@ abstract class BaseThreshold extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
             $this->postHydrate($row, $startcol, $rehydrate);
-            return $startcol + 8; // 8 = ThresholdPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = ThresholdPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Threshold object", $e);
@@ -473,20 +340,11 @@ abstract class BaseThreshold extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aDevice !== null && $this->deviceid !== $this->aDevice->getDeviceid()) {
-            $this->aDevice = null;
-        }
-        if ($this->aPoll !== null && $this->pollid !== $this->aPoll->getPollid()) {
-            $this->aPoll = null;
-        }
-        if ($this->aTrap !== null && $this->trapid !== $this->aTrap->getTrapid()) {
-            $this->aTrap = null;
-        }
         if ($this->aPlugin !== null && $this->pluginid !== $this->aPlugin->getPluginid()) {
             $this->aPlugin = null;
         }
-        if ($this->aSyslog !== null && $this->syslogid !== $this->aSyslog->getSyslogid()) {
-            $this->aSyslog = null;
+        if ($this->aMonitor !== null && $this->monitorid !== $this->aMonitor->getMonitorid()) {
+            $this->aMonitor = null;
         }
     } // ensureConsistency
 
@@ -527,11 +385,8 @@ abstract class BaseThreshold extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aDevice = null;
-            $this->aPoll = null;
-            $this->aTrap = null;
             $this->aPlugin = null;
-            $this->aSyslog = null;
+            $this->aMonitor = null;
             $this->collAlarmThresholds = null;
 
         } // if (deep)
@@ -652,27 +507,6 @@ abstract class BaseThreshold extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aDevice !== null) {
-                if ($this->aDevice->isModified() || $this->aDevice->isNew()) {
-                    $affectedRows += $this->aDevice->save($con);
-                }
-                $this->setDevice($this->aDevice);
-            }
-
-            if ($this->aPoll !== null) {
-                if ($this->aPoll->isModified() || $this->aPoll->isNew()) {
-                    $affectedRows += $this->aPoll->save($con);
-                }
-                $this->setPoll($this->aPoll);
-            }
-
-            if ($this->aTrap !== null) {
-                if ($this->aTrap->isModified() || $this->aTrap->isNew()) {
-                    $affectedRows += $this->aTrap->save($con);
-                }
-                $this->setTrap($this->aTrap);
-            }
-
             if ($this->aPlugin !== null) {
                 if ($this->aPlugin->isModified() || $this->aPlugin->isNew()) {
                     $affectedRows += $this->aPlugin->save($con);
@@ -680,11 +514,11 @@ abstract class BaseThreshold extends BaseObject implements Persistent
                 $this->setPlugin($this->aPlugin);
             }
 
-            if ($this->aSyslog !== null) {
-                if ($this->aSyslog->isModified() || $this->aSyslog->isNew()) {
-                    $affectedRows += $this->aSyslog->save($con);
+            if ($this->aMonitor !== null) {
+                if ($this->aMonitor->isModified() || $this->aMonitor->isNew()) {
+                    $affectedRows += $this->aMonitor->save($con);
                 }
-                $this->setSyslog($this->aSyslog);
+                $this->setMonitor($this->aMonitor);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -744,20 +578,11 @@ abstract class BaseThreshold extends BaseObject implements Persistent
         if ($this->isColumnModified(ThresholdPeer::THRESHOLDID)) {
             $modifiedColumns[':p' . $index++]  = '`ThresholdId`';
         }
-        if ($this->isColumnModified(ThresholdPeer::DEVICEID)) {
-            $modifiedColumns[':p' . $index++]  = '`DeviceId`';
-        }
-        if ($this->isColumnModified(ThresholdPeer::POLLID)) {
-            $modifiedColumns[':p' . $index++]  = '`PollId`';
-        }
-        if ($this->isColumnModified(ThresholdPeer::TRAPID)) {
-            $modifiedColumns[':p' . $index++]  = '`TrapId`';
-        }
         if ($this->isColumnModified(ThresholdPeer::PLUGINID)) {
             $modifiedColumns[':p' . $index++]  = '`PluginId`';
         }
-        if ($this->isColumnModified(ThresholdPeer::SYSLOGID)) {
-            $modifiedColumns[':p' . $index++]  = '`SyslogId`';
+        if ($this->isColumnModified(ThresholdPeer::MONITORID)) {
+            $modifiedColumns[':p' . $index++]  = '`MonitorId`';
         }
         if ($this->isColumnModified(ThresholdPeer::GREATERTHAN)) {
             $modifiedColumns[':p' . $index++]  = '`GreaterThan`';
@@ -779,23 +604,14 @@ abstract class BaseThreshold extends BaseObject implements Persistent
                     case '`ThresholdId`':
                         $stmt->bindValue($identifier, $this->thresholdid, PDO::PARAM_INT);
                         break;
-                    case '`DeviceId`':
-                        $stmt->bindValue($identifier, $this->deviceid, PDO::PARAM_INT);
-                        break;
-                    case '`PollId`':
-                        $stmt->bindValue($identifier, $this->pollid, PDO::PARAM_INT);
-                        break;
-                    case '`TrapId`':
-                        $stmt->bindValue($identifier, $this->trapid, PDO::PARAM_INT);
-                        break;
                     case '`PluginId`':
                         $stmt->bindValue($identifier, $this->pluginid, PDO::PARAM_INT);
                         break;
-                    case '`SyslogId`':
-                        $stmt->bindValue($identifier, $this->syslogid, PDO::PARAM_INT);
+                    case '`MonitorId`':
+                        $stmt->bindValue($identifier, $this->monitorid, PDO::PARAM_INT);
                         break;
                     case '`GreaterThan`':
-                        $stmt->bindValue($identifier, $this->greaterthan, PDO::PARAM_INT);
+                        $stmt->bindValue($identifier, (int) $this->greaterthan, PDO::PARAM_INT);
                         break;
                     case '`Value`':
                         $stmt->bindValue($identifier, $this->value, PDO::PARAM_INT);
@@ -899,33 +715,15 @@ abstract class BaseThreshold extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aDevice !== null) {
-                if (!$this->aDevice->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aDevice->getValidationFailures());
-                }
-            }
-
-            if ($this->aPoll !== null) {
-                if (!$this->aPoll->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aPoll->getValidationFailures());
-                }
-            }
-
-            if ($this->aTrap !== null) {
-                if (!$this->aTrap->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aTrap->getValidationFailures());
-                }
-            }
-
             if ($this->aPlugin !== null) {
                 if (!$this->aPlugin->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aPlugin->getValidationFailures());
                 }
             }
 
-            if ($this->aSyslog !== null) {
-                if (!$this->aSyslog->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aSyslog->getValidationFailures());
+            if ($this->aMonitor !== null) {
+                if (!$this->aMonitor->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aMonitor->getValidationFailures());
                 }
             }
 
@@ -982,24 +780,15 @@ abstract class BaseThreshold extends BaseObject implements Persistent
                 return $this->getThresholdid();
                 break;
             case 1:
-                return $this->getDeviceid();
-                break;
-            case 2:
-                return $this->getPollid();
-                break;
-            case 3:
-                return $this->getTrapid();
-                break;
-            case 4:
                 return $this->getPluginid();
                 break;
-            case 5:
-                return $this->getSyslogid();
+            case 2:
+                return $this->getMonitorid();
                 break;
-            case 6:
+            case 3:
                 return $this->getGreaterthan();
                 break;
-            case 7:
+            case 4:
                 return $this->getValue();
                 break;
             default:
@@ -1032,29 +821,17 @@ abstract class BaseThreshold extends BaseObject implements Persistent
         $keys = ThresholdPeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getThresholdid(),
-            $keys[1] => $this->getDeviceid(),
-            $keys[2] => $this->getPollid(),
-            $keys[3] => $this->getTrapid(),
-            $keys[4] => $this->getPluginid(),
-            $keys[5] => $this->getSyslogid(),
-            $keys[6] => $this->getGreaterthan(),
-            $keys[7] => $this->getValue(),
+            $keys[1] => $this->getPluginid(),
+            $keys[2] => $this->getMonitorid(),
+            $keys[3] => $this->getGreaterthan(),
+            $keys[4] => $this->getValue(),
         );
         if ($includeForeignObjects) {
-            if (null !== $this->aDevice) {
-                $result['Device'] = $this->aDevice->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aPoll) {
-                $result['Poll'] = $this->aPoll->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aTrap) {
-                $result['Trap'] = $this->aTrap->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aPlugin) {
                 $result['Plugin'] = $this->aPlugin->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->aSyslog) {
-                $result['Syslog'] = $this->aSyslog->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            if (null !== $this->aMonitor) {
+                $result['Monitor'] = $this->aMonitor->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collAlarmThresholds) {
                 $result['AlarmThresholds'] = $this->collAlarmThresholds->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1097,24 +874,15 @@ abstract class BaseThreshold extends BaseObject implements Persistent
                 $this->setThresholdid($value);
                 break;
             case 1:
-                $this->setDeviceid($value);
-                break;
-            case 2:
-                $this->setPollid($value);
-                break;
-            case 3:
-                $this->setTrapid($value);
-                break;
-            case 4:
                 $this->setPluginid($value);
                 break;
-            case 5:
-                $this->setSyslogid($value);
+            case 2:
+                $this->setMonitorid($value);
                 break;
-            case 6:
+            case 3:
                 $this->setGreaterthan($value);
                 break;
-            case 7:
+            case 4:
                 $this->setValue($value);
                 break;
         } // switch()
@@ -1142,13 +910,10 @@ abstract class BaseThreshold extends BaseObject implements Persistent
         $keys = ThresholdPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setThresholdid($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setDeviceid($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setPollid($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setTrapid($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setPluginid($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setSyslogid($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setGreaterthan($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setValue($arr[$keys[7]]);
+        if (array_key_exists($keys[1], $arr)) $this->setPluginid($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setMonitorid($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setGreaterthan($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setValue($arr[$keys[4]]);
     }
 
     /**
@@ -1161,11 +926,8 @@ abstract class BaseThreshold extends BaseObject implements Persistent
         $criteria = new Criteria(ThresholdPeer::DATABASE_NAME);
 
         if ($this->isColumnModified(ThresholdPeer::THRESHOLDID)) $criteria->add(ThresholdPeer::THRESHOLDID, $this->thresholdid);
-        if ($this->isColumnModified(ThresholdPeer::DEVICEID)) $criteria->add(ThresholdPeer::DEVICEID, $this->deviceid);
-        if ($this->isColumnModified(ThresholdPeer::POLLID)) $criteria->add(ThresholdPeer::POLLID, $this->pollid);
-        if ($this->isColumnModified(ThresholdPeer::TRAPID)) $criteria->add(ThresholdPeer::TRAPID, $this->trapid);
         if ($this->isColumnModified(ThresholdPeer::PLUGINID)) $criteria->add(ThresholdPeer::PLUGINID, $this->pluginid);
-        if ($this->isColumnModified(ThresholdPeer::SYSLOGID)) $criteria->add(ThresholdPeer::SYSLOGID, $this->syslogid);
+        if ($this->isColumnModified(ThresholdPeer::MONITORID)) $criteria->add(ThresholdPeer::MONITORID, $this->monitorid);
         if ($this->isColumnModified(ThresholdPeer::GREATERTHAN)) $criteria->add(ThresholdPeer::GREATERTHAN, $this->greaterthan);
         if ($this->isColumnModified(ThresholdPeer::VALUE)) $criteria->add(ThresholdPeer::VALUE, $this->value);
 
@@ -1231,11 +993,8 @@ abstract class BaseThreshold extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setDeviceid($this->getDeviceid());
-        $copyObj->setPollid($this->getPollid());
-        $copyObj->setTrapid($this->getTrapid());
         $copyObj->setPluginid($this->getPluginid());
-        $copyObj->setSyslogid($this->getSyslogid());
+        $copyObj->setMonitorid($this->getMonitorid());
         $copyObj->setGreaterthan($this->getGreaterthan());
         $copyObj->setValue($this->getValue());
 
@@ -1303,162 +1062,6 @@ abstract class BaseThreshold extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a Device object.
-     *
-     * @param             Device $v
-     * @return Threshold The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setDevice(Device $v = null)
-    {
-        if ($v === null) {
-            $this->setDeviceid(NULL);
-        } else {
-            $this->setDeviceid($v->getDeviceid());
-        }
-
-        $this->aDevice = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Device object, it will not be re-added.
-        if ($v !== null) {
-            $v->addDeviceThreshold($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Device object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Device The associated Device object.
-     * @throws PropelException
-     */
-    public function getDevice(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aDevice === null && ($this->deviceid !== null) && $doQuery) {
-            $this->aDevice = DeviceQuery::create()->findPk($this->deviceid, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aDevice->addDeviceThresholds($this);
-             */
-        }
-
-        return $this->aDevice;
-    }
-
-    /**
-     * Declares an association between this object and a Poll object.
-     *
-     * @param             Poll $v
-     * @return Threshold The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setPoll(Poll $v = null)
-    {
-        if ($v === null) {
-            $this->setPollid(NULL);
-        } else {
-            $this->setPollid($v->getPollid());
-        }
-
-        $this->aPoll = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Poll object, it will not be re-added.
-        if ($v !== null) {
-            $v->addPollThreshold($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Poll object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Poll The associated Poll object.
-     * @throws PropelException
-     */
-    public function getPoll(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aPoll === null && ($this->pollid !== null) && $doQuery) {
-            $this->aPoll = PollQuery::create()->findPk($this->pollid, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aPoll->addPollThresholds($this);
-             */
-        }
-
-        return $this->aPoll;
-    }
-
-    /**
-     * Declares an association between this object and a Trap object.
-     *
-     * @param             Trap $v
-     * @return Threshold The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setTrap(Trap $v = null)
-    {
-        if ($v === null) {
-            $this->setTrapid(NULL);
-        } else {
-            $this->setTrapid($v->getTrapid());
-        }
-
-        $this->aTrap = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Trap object, it will not be re-added.
-        if ($v !== null) {
-            $v->addTrapThreshold($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Trap object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Trap The associated Trap object.
-     * @throws PropelException
-     */
-    public function getTrap(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aTrap === null && ($this->trapid !== null) && $doQuery) {
-            $this->aTrap = TrapQuery::create()->findPk($this->trapid, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aTrap->addTrapThresholds($this);
-             */
-        }
-
-        return $this->aTrap;
-    }
-
-    /**
      * Declares an association between this object and a Plugin object.
      *
      * @param             Plugin $v
@@ -1511,26 +1114,26 @@ abstract class BaseThreshold extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a Syslog object.
+     * Declares an association between this object and a Monitor object.
      *
-     * @param             Syslog $v
+     * @param             Monitor $v
      * @return Threshold The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setSyslog(Syslog $v = null)
+    public function setMonitor(Monitor $v = null)
     {
         if ($v === null) {
-            $this->setSyslogid(NULL);
+            $this->setMonitorid(NULL);
         } else {
-            $this->setSyslogid($v->getSyslogid());
+            $this->setMonitorid($v->getMonitorid());
         }
 
-        $this->aSyslog = $v;
+        $this->aMonitor = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Syslog object, it will not be re-added.
+        // If this object has already been added to the Monitor object, it will not be re-added.
         if ($v !== null) {
-            $v->addSyslogThreshold($this);
+            $v->addMonitorThreshold($this);
         }
 
 
@@ -1539,27 +1142,29 @@ abstract class BaseThreshold extends BaseObject implements Persistent
 
 
     /**
-     * Get the associated Syslog object
+     * Get the associated Monitor object
      *
      * @param PropelPDO $con Optional Connection object.
      * @param $doQuery Executes a query to get the object if required
-     * @return Syslog The associated Syslog object.
+     * @return Monitor The associated Monitor object.
      * @throws PropelException
      */
-    public function getSyslog(PropelPDO $con = null, $doQuery = true)
+    public function getMonitor(PropelPDO $con = null, $doQuery = true)
     {
-        if ($this->aSyslog === null && ($this->syslogid !== null) && $doQuery) {
-            $this->aSyslog = SyslogQuery::create()->findPk($this->syslogid, $con);
+        if ($this->aMonitor === null && ($this->monitorid !== null) && $doQuery) {
+            $this->aMonitor = MonitorQuery::create()
+                ->filterByMonitorThreshold($this) // here
+                ->findOne($con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aSyslog->addSyslogThresholds($this);
+                $this->aMonitor->addMonitorThresholds($this);
              */
         }
 
-        return $this->aSyslog;
+        return $this->aMonitor;
     }
 
 
@@ -1802,11 +1407,8 @@ abstract class BaseThreshold extends BaseObject implements Persistent
     public function clear()
     {
         $this->thresholdid = null;
-        $this->deviceid = null;
-        $this->pollid = null;
-        $this->trapid = null;
         $this->pluginid = null;
-        $this->syslogid = null;
+        $this->monitorid = null;
         $this->greaterthan = null;
         $this->value = null;
         $this->alreadyInSave = false;
@@ -1836,20 +1438,11 @@ abstract class BaseThreshold extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->aDevice instanceof Persistent) {
-              $this->aDevice->clearAllReferences($deep);
-            }
-            if ($this->aPoll instanceof Persistent) {
-              $this->aPoll->clearAllReferences($deep);
-            }
-            if ($this->aTrap instanceof Persistent) {
-              $this->aTrap->clearAllReferences($deep);
-            }
             if ($this->aPlugin instanceof Persistent) {
               $this->aPlugin->clearAllReferences($deep);
             }
-            if ($this->aSyslog instanceof Persistent) {
-              $this->aSyslog->clearAllReferences($deep);
+            if ($this->aMonitor instanceof Persistent) {
+              $this->aMonitor->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
@@ -1859,11 +1452,8 @@ abstract class BaseThreshold extends BaseObject implements Persistent
             $this->collAlarmThresholds->clearIterator();
         }
         $this->collAlarmThresholds = null;
-        $this->aDevice = null;
-        $this->aPoll = null;
-        $this->aTrap = null;
         $this->aPlugin = null;
-        $this->aSyslog = null;
+        $this->aMonitor = null;
     }
 
     /**

@@ -2,24 +2,24 @@
 
 
 /**
- * Base class that represents a row from the 'Poll' table.
+ * Base class that represents a row from the 'PortStatus' table.
  *
  *
  *
  * @package    propel.generator.NetMon.om
  */
-abstract class BasePoll extends BaseObject implements Persistent
+abstract class BasePortStatus extends BaseObject implements Persistent
 {
     /**
      * Peer class name
      */
-    const PEER = 'PollPeer';
+    const PEER = 'PortStatusPeer';
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        PollPeer
+     * @var        PortStatusPeer
      */
     protected static $peer;
 
@@ -30,55 +30,57 @@ abstract class BasePoll extends BaseObject implements Persistent
     protected $startCopy = false;
 
     /**
-     * The value for the pollid field.
+     * The value for the portstatusid field.
      * @var        int
      */
-    protected $pollid;
+    protected $portstatusid;
 
     /**
-     * The value for the deviceid field.
+     * The value for the adapterid field.
      * @var        int
      */
-    protected $deviceid;
+    protected $adapterid;
 
     /**
-     * The value for the snmppropertyid field.
-     * @var        int
-     */
-    protected $snmppropertyid;
-
-    /**
-     * The value for the pluginid field.
-     * @var        int
-     */
-    protected $pluginid;
-
-    /**
-     * The value for the timestamp field.
+     * The value for the protocol field.
      * @var        string
      */
-    protected $timestamp;
+    protected $protocol;
 
     /**
-     * The value for the value field.
+     * The value for the port field.
+     * @var        int
+     */
+    protected $port;
+
+    /**
+     * The value for the name field.
      * @var        string
      */
-    protected $value;
+    protected $name;
 
     /**
-     * @var        Device
+     * The value for the product field.
+     * @var        string
      */
-    protected $aDevice;
+    protected $product;
 
     /**
-     * @var        SnmpProperty
+     * The value for the version field.
+     * @var        string
      */
-    protected $aSnmpProperty;
+    protected $version;
 
     /**
-     * @var        Plugin
+     * The value for the state field.
+     * @var        boolean
      */
-    protected $aPlugin;
+    protected $state;
+
+    /**
+     * @var        Adapter
+     */
+    protected $aAdapter;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -101,234 +103,264 @@ abstract class BasePoll extends BaseObject implements Persistent
     protected $alreadyInClearAllReferencesDeep = false;
 
     /**
-     * Get the [pollid] column value.
+     * Get the [portstatusid] column value.
      *
      * @return int
      */
-    public function getPollid()
+    public function getPortstatusid()
     {
-        return $this->pollid;
+        return $this->portstatusid;
     }
 
     /**
-     * Get the [deviceid] column value.
+     * Get the [adapterid] column value.
      *
      * @return int
      */
-    public function getDeviceid()
+    public function getAdapterid()
     {
-        return $this->deviceid;
+        return $this->adapterid;
     }
 
     /**
-     * Get the [snmppropertyid] column value.
-     *
-     * @return int
-     */
-    public function getSnmppropertyid()
-    {
-        return $this->snmppropertyid;
-    }
-
-    /**
-     * Get the [pluginid] column value.
-     *
-     * @return int
-     */
-    public function getPluginid()
-    {
-        return $this->pluginid;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [timestamp] column value.
-     *
-     *
-     * @param string $format The date/time format string (either date()-style or strftime()-style).
-     *				 If format is null, then the raw DateTime object will be returned.
-     * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getTimestamp($format = '{Y-m-d H:i:s}|string')
-    {
-        if ($this->timestamp === null) {
-            return null;
-        }
-
-        if ($this->timestamp === '0000-00-00 00:00:00') {
-            // while technically this is not a default value of null,
-            // this seems to be closest in meaning.
-            return null;
-        }
-
-        try {
-            $dt = new DateTime($this->timestamp);
-        } catch (Exception $x) {
-            throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->timestamp, true), $x);
-        }
-
-        if ($format === null) {
-            // Because propel.useDateTimeClass is true, we return a DateTime object.
-            return $dt;
-        }
-
-        if (strpos($format, '%') !== false) {
-            return strftime($format, $dt->format('U'));
-        }
-
-        return $dt->format($format);
-
-    }
-
-    /**
-     * Get the [value] column value.
+     * Get the [protocol] column value.
      *
      * @return string
      */
-    public function getValue()
+    public function getProtocol()
     {
-        return $this->value;
+        return $this->protocol;
     }
 
     /**
-     * Set the value of [pollid] column.
+     * Get the [port] column value.
+     *
+     * @return int
+     */
+    public function getPort()
+    {
+        return $this->port;
+    }
+
+    /**
+     * Get the [name] column value.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Get the [product] column value.
+     *
+     * @return string
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+    /**
+     * Get the [version] column value.
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * Get the [state] column value.
+     *
+     * @return boolean
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * Set the value of [portstatusid] column.
      *
      * @param int $v new value
-     * @return Poll The current object (for fluent API support)
+     * @return PortStatus The current object (for fluent API support)
      */
-    public function setPollid($v)
+    public function setPortstatusid($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
-        if ($this->pollid !== $v) {
-            $this->pollid = $v;
-            $this->modifiedColumns[] = PollPeer::POLLID;
+        if ($this->portstatusid !== $v) {
+            $this->portstatusid = $v;
+            $this->modifiedColumns[] = PortStatusPeer::PORTSTATUSID;
         }
 
 
         return $this;
-    } // setPollid()
+    } // setPortstatusid()
 
     /**
-     * Set the value of [deviceid] column.
+     * Set the value of [adapterid] column.
      *
      * @param int $v new value
-     * @return Poll The current object (for fluent API support)
+     * @return PortStatus The current object (for fluent API support)
      */
-    public function setDeviceid($v)
+    public function setAdapterid($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
-        if ($this->deviceid !== $v) {
-            $this->deviceid = $v;
-            $this->modifiedColumns[] = PollPeer::DEVICEID;
+        if ($this->adapterid !== $v) {
+            $this->adapterid = $v;
+            $this->modifiedColumns[] = PortStatusPeer::ADAPTERID;
         }
 
-        if ($this->aDevice !== null && $this->aDevice->getDeviceid() !== $v) {
-            $this->aDevice = null;
-        }
-
-
-        return $this;
-    } // setDeviceid()
-
-    /**
-     * Set the value of [snmppropertyid] column.
-     *
-     * @param int $v new value
-     * @return Poll The current object (for fluent API support)
-     */
-    public function setSnmppropertyid($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->snmppropertyid !== $v) {
-            $this->snmppropertyid = $v;
-            $this->modifiedColumns[] = PollPeer::SNMPPROPERTYID;
-        }
-
-        if ($this->aSnmpProperty !== null && $this->aSnmpProperty->getSnmppropertyid() !== $v) {
-            $this->aSnmpProperty = null;
+        if ($this->aAdapter !== null && $this->aAdapter->getAdapterid() !== $v) {
+            $this->aAdapter = null;
         }
 
 
         return $this;
-    } // setSnmppropertyid()
+    } // setAdapterid()
 
     /**
-     * Set the value of [pluginid] column.
-     *
-     * @param int $v new value
-     * @return Poll The current object (for fluent API support)
-     */
-    public function setPluginid($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->pluginid !== $v) {
-            $this->pluginid = $v;
-            $this->modifiedColumns[] = PollPeer::PLUGINID;
-        }
-
-        if ($this->aPlugin !== null && $this->aPlugin->getPluginid() !== $v) {
-            $this->aPlugin = null;
-        }
-
-
-        return $this;
-    } // setPluginid()
-
-    /**
-     * Sets the value of [timestamp] column to a normalized version of the date/time value specified.
-     *
-     * @param mixed $v string, integer (timestamp), or DateTime value.
-     *               Empty strings are treated as null.
-     * @return Poll The current object (for fluent API support)
-     */
-    public function setTimestamp($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->timestamp !== null || $dt !== null) {
-            $currentDateAsString = ($this->timestamp !== null && $tmpDt = new DateTime($this->timestamp)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-            $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-            if ($currentDateAsString !== $newDateAsString) {
-                $this->timestamp = $newDateAsString;
-                $this->modifiedColumns[] = PollPeer::TIMESTAMP;
-            }
-        } // if either are not null
-
-
-        return $this;
-    } // setTimestamp()
-
-    /**
-     * Set the value of [value] column.
+     * Set the value of [protocol] column.
      *
      * @param string $v new value
-     * @return Poll The current object (for fluent API support)
+     * @return PortStatus The current object (for fluent API support)
      */
-    public function setValue($v)
+    public function setProtocol($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (string) $v;
         }
 
-        if ($this->value !== $v) {
-            $this->value = $v;
-            $this->modifiedColumns[] = PollPeer::VALUE;
+        if ($this->protocol !== $v) {
+            $this->protocol = $v;
+            $this->modifiedColumns[] = PortStatusPeer::PROTOCOL;
         }
 
 
         return $this;
-    } // setValue()
+    } // setProtocol()
+
+    /**
+     * Set the value of [port] column.
+     *
+     * @param int $v new value
+     * @return PortStatus The current object (for fluent API support)
+     */
+    public function setPort($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->port !== $v) {
+            $this->port = $v;
+            $this->modifiedColumns[] = PortStatusPeer::PORT;
+        }
+
+
+        return $this;
+    } // setPort()
+
+    /**
+     * Set the value of [name] column.
+     *
+     * @param string $v new value
+     * @return PortStatus The current object (for fluent API support)
+     */
+    public function setName($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->name !== $v) {
+            $this->name = $v;
+            $this->modifiedColumns[] = PortStatusPeer::NAME;
+        }
+
+
+        return $this;
+    } // setName()
+
+    /**
+     * Set the value of [product] column.
+     *
+     * @param string $v new value
+     * @return PortStatus The current object (for fluent API support)
+     */
+    public function setProduct($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->product !== $v) {
+            $this->product = $v;
+            $this->modifiedColumns[] = PortStatusPeer::PRODUCT;
+        }
+
+
+        return $this;
+    } // setProduct()
+
+    /**
+     * Set the value of [version] column.
+     *
+     * @param string $v new value
+     * @return PortStatus The current object (for fluent API support)
+     */
+    public function setVersion($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->version !== $v) {
+            $this->version = $v;
+            $this->modifiedColumns[] = PortStatusPeer::VERSION;
+        }
+
+
+        return $this;
+    } // setVersion()
+
+    /**
+     * Sets the value of the [state] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param boolean|integer|string $v The new value
+     * @return PortStatus The current object (for fluent API support)
+     */
+    public function setState($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->state !== $v) {
+            $this->state = $v;
+            $this->modifiedColumns[] = PortStatusPeer::STATE;
+        }
+
+
+        return $this;
+    } // setState()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -362,12 +394,14 @@ abstract class BasePoll extends BaseObject implements Persistent
     {
         try {
 
-            $this->pollid = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-            $this->deviceid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->snmppropertyid = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-            $this->pluginid = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
-            $this->timestamp = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-            $this->value = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+            $this->portstatusid = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+            $this->adapterid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+            $this->protocol = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+            $this->port = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
+            $this->name = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+            $this->product = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+            $this->version = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+            $this->state = ($row[$startcol + 7] !== null) ? (boolean) $row[$startcol + 7] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -376,10 +410,10 @@ abstract class BasePoll extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
             $this->postHydrate($row, $startcol, $rehydrate);
-            return $startcol + 6; // 6 = PollPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 8; // 8 = PortStatusPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating Poll object", $e);
+            throw new PropelException("Error populating PortStatus object", $e);
         }
     }
 
@@ -399,14 +433,8 @@ abstract class BasePoll extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aDevice !== null && $this->deviceid !== $this->aDevice->getDeviceid()) {
-            $this->aDevice = null;
-        }
-        if ($this->aSnmpProperty !== null && $this->snmppropertyid !== $this->aSnmpProperty->getSnmppropertyid()) {
-            $this->aSnmpProperty = null;
-        }
-        if ($this->aPlugin !== null && $this->pluginid !== $this->aPlugin->getPluginid()) {
-            $this->aPlugin = null;
+        if ($this->aAdapter !== null && $this->adapterid !== $this->aAdapter->getAdapterid()) {
+            $this->aAdapter = null;
         }
     } // ensureConsistency
 
@@ -431,13 +459,13 @@ abstract class BasePoll extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(PollPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(PortStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $stmt = PollPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+        $stmt = PortStatusPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
         $row = $stmt->fetch(PDO::FETCH_NUM);
         $stmt->closeCursor();
         if (!$row) {
@@ -447,9 +475,7 @@ abstract class BasePoll extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aDevice = null;
-            $this->aSnmpProperty = null;
-            $this->aPlugin = null;
+            $this->aAdapter = null;
         } // if (deep)
     }
 
@@ -470,12 +496,12 @@ abstract class BasePoll extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(PollPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(PortStatusPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
         try {
-            $deleteQuery = PollQuery::create()
+            $deleteQuery = PortStatusQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -513,7 +539,7 @@ abstract class BasePoll extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(PollPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(PortStatusPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
@@ -533,7 +559,7 @@ abstract class BasePoll extends BaseObject implements Persistent
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                PollPeer::addInstanceToPool($this);
+                PortStatusPeer::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -568,25 +594,11 @@ abstract class BasePoll extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aDevice !== null) {
-                if ($this->aDevice->isModified() || $this->aDevice->isNew()) {
-                    $affectedRows += $this->aDevice->save($con);
+            if ($this->aAdapter !== null) {
+                if ($this->aAdapter->isModified() || $this->aAdapter->isNew()) {
+                    $affectedRows += $this->aAdapter->save($con);
                 }
-                $this->setDevice($this->aDevice);
-            }
-
-            if ($this->aSnmpProperty !== null) {
-                if ($this->aSnmpProperty->isModified() || $this->aSnmpProperty->isNew()) {
-                    $affectedRows += $this->aSnmpProperty->save($con);
-                }
-                $this->setSnmpProperty($this->aSnmpProperty);
-            }
-
-            if ($this->aPlugin !== null) {
-                if ($this->aPlugin->isModified() || $this->aPlugin->isNew()) {
-                    $affectedRows += $this->aPlugin->save($con);
-                }
-                $this->setPlugin($this->aPlugin);
+                $this->setAdapter($this->aAdapter);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -620,33 +632,39 @@ abstract class BasePoll extends BaseObject implements Persistent
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[] = PollPeer::POLLID;
-        if (null !== $this->pollid) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . PollPeer::POLLID . ')');
+        $this->modifiedColumns[] = PortStatusPeer::PORTSTATUSID;
+        if (null !== $this->portstatusid) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . PortStatusPeer::PORTSTATUSID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(PollPeer::POLLID)) {
-            $modifiedColumns[':p' . $index++]  = '`PollId`';
+        if ($this->isColumnModified(PortStatusPeer::PORTSTATUSID)) {
+            $modifiedColumns[':p' . $index++]  = '`PortStatusId`';
         }
-        if ($this->isColumnModified(PollPeer::DEVICEID)) {
-            $modifiedColumns[':p' . $index++]  = '`DeviceId`';
+        if ($this->isColumnModified(PortStatusPeer::ADAPTERID)) {
+            $modifiedColumns[':p' . $index++]  = '`AdapterId`';
         }
-        if ($this->isColumnModified(PollPeer::SNMPPROPERTYID)) {
-            $modifiedColumns[':p' . $index++]  = '`SnmpPropertyId`';
+        if ($this->isColumnModified(PortStatusPeer::PROTOCOL)) {
+            $modifiedColumns[':p' . $index++]  = '`Protocol`';
         }
-        if ($this->isColumnModified(PollPeer::PLUGINID)) {
-            $modifiedColumns[':p' . $index++]  = '`PluginId`';
+        if ($this->isColumnModified(PortStatusPeer::PORT)) {
+            $modifiedColumns[':p' . $index++]  = '`Port`';
         }
-        if ($this->isColumnModified(PollPeer::TIMESTAMP)) {
-            $modifiedColumns[':p' . $index++]  = '`Timestamp`';
+        if ($this->isColumnModified(PortStatusPeer::NAME)) {
+            $modifiedColumns[':p' . $index++]  = '`Name`';
         }
-        if ($this->isColumnModified(PollPeer::VALUE)) {
-            $modifiedColumns[':p' . $index++]  = '`Value`';
+        if ($this->isColumnModified(PortStatusPeer::PRODUCT)) {
+            $modifiedColumns[':p' . $index++]  = '`Product`';
+        }
+        if ($this->isColumnModified(PortStatusPeer::VERSION)) {
+            $modifiedColumns[':p' . $index++]  = '`Version`';
+        }
+        if ($this->isColumnModified(PortStatusPeer::STATE)) {
+            $modifiedColumns[':p' . $index++]  = '`State`';
         }
 
         $sql = sprintf(
-            'INSERT INTO `Poll` (%s) VALUES (%s)',
+            'INSERT INTO `PortStatus` (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -655,23 +673,29 @@ abstract class BasePoll extends BaseObject implements Persistent
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case '`PollId`':
-                        $stmt->bindValue($identifier, $this->pollid, PDO::PARAM_INT);
+                    case '`PortStatusId`':
+                        $stmt->bindValue($identifier, $this->portstatusid, PDO::PARAM_INT);
                         break;
-                    case '`DeviceId`':
-                        $stmt->bindValue($identifier, $this->deviceid, PDO::PARAM_INT);
+                    case '`AdapterId`':
+                        $stmt->bindValue($identifier, $this->adapterid, PDO::PARAM_INT);
                         break;
-                    case '`SnmpPropertyId`':
-                        $stmt->bindValue($identifier, $this->snmppropertyid, PDO::PARAM_INT);
+                    case '`Protocol`':
+                        $stmt->bindValue($identifier, $this->protocol, PDO::PARAM_STR);
                         break;
-                    case '`PluginId`':
-                        $stmt->bindValue($identifier, $this->pluginid, PDO::PARAM_INT);
+                    case '`Port`':
+                        $stmt->bindValue($identifier, $this->port, PDO::PARAM_INT);
                         break;
-                    case '`Timestamp`':
-                        $stmt->bindValue($identifier, $this->timestamp, PDO::PARAM_STR);
+                    case '`Name`':
+                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
-                    case '`Value`':
-                        $stmt->bindValue($identifier, $this->value, PDO::PARAM_STR);
+                    case '`Product`':
+                        $stmt->bindValue($identifier, $this->product, PDO::PARAM_STR);
+                        break;
+                    case '`Version`':
+                        $stmt->bindValue($identifier, $this->version, PDO::PARAM_STR);
+                        break;
+                    case '`State`':
+                        $stmt->bindValue($identifier, (int) $this->state, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -686,7 +710,7 @@ abstract class BasePoll extends BaseObject implements Persistent
         } catch (Exception $e) {
             throw new PropelException('Unable to get autoincrement id.', $e);
         }
-        $this->setPollid($pk);
+        $this->setPortstatusid($pk);
 
         $this->setNew(false);
     }
@@ -772,26 +796,14 @@ abstract class BasePoll extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aDevice !== null) {
-                if (!$this->aDevice->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aDevice->getValidationFailures());
-                }
-            }
-
-            if ($this->aSnmpProperty !== null) {
-                if (!$this->aSnmpProperty->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aSnmpProperty->getValidationFailures());
-                }
-            }
-
-            if ($this->aPlugin !== null) {
-                if (!$this->aPlugin->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aPlugin->getValidationFailures());
+            if ($this->aAdapter !== null) {
+                if (!$this->aAdapter->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aAdapter->getValidationFailures());
                 }
             }
 
 
-            if (($retval = PollPeer::doValidate($this, $columns)) !== true) {
+            if (($retval = PortStatusPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -815,7 +827,7 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = PollPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = PortStatusPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -832,22 +844,28 @@ abstract class BasePoll extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                return $this->getPollid();
+                return $this->getPortstatusid();
                 break;
             case 1:
-                return $this->getDeviceid();
+                return $this->getAdapterid();
                 break;
             case 2:
-                return $this->getSnmppropertyid();
+                return $this->getProtocol();
                 break;
             case 3:
-                return $this->getPluginid();
+                return $this->getPort();
                 break;
             case 4:
-                return $this->getTimestamp();
+                return $this->getName();
                 break;
             case 5:
-                return $this->getValue();
+                return $this->getProduct();
+                break;
+            case 6:
+                return $this->getVersion();
+                break;
+            case 7:
+                return $this->getState();
                 break;
             default:
                 return null;
@@ -872,28 +890,24 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
-        if (isset($alreadyDumpedObjects['Poll'][$this->getPrimaryKey()])) {
+        if (isset($alreadyDumpedObjects['PortStatus'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Poll'][$this->getPrimaryKey()] = true;
-        $keys = PollPeer::getFieldNames($keyType);
+        $alreadyDumpedObjects['PortStatus'][$this->getPrimaryKey()] = true;
+        $keys = PortStatusPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getPollid(),
-            $keys[1] => $this->getDeviceid(),
-            $keys[2] => $this->getSnmppropertyid(),
-            $keys[3] => $this->getPluginid(),
-            $keys[4] => $this->getTimestamp(),
-            $keys[5] => $this->getValue(),
+            $keys[0] => $this->getPortstatusid(),
+            $keys[1] => $this->getAdapterid(),
+            $keys[2] => $this->getProtocol(),
+            $keys[3] => $this->getPort(),
+            $keys[4] => $this->getName(),
+            $keys[5] => $this->getProduct(),
+            $keys[6] => $this->getVersion(),
+            $keys[7] => $this->getState(),
         );
         if ($includeForeignObjects) {
-            if (null !== $this->aDevice) {
-                $result['Device'] = $this->aDevice->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aSnmpProperty) {
-                $result['SnmpProperty'] = $this->aSnmpProperty->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aPlugin) {
-                $result['Plugin'] = $this->aPlugin->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            if (null !== $this->aAdapter) {
+                $result['Adapter'] = $this->aAdapter->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -913,7 +927,7 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = PollPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = PortStatusPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 
         $this->setByPosition($pos, $value);
     }
@@ -930,22 +944,28 @@ abstract class BasePoll extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                $this->setPollid($value);
+                $this->setPortstatusid($value);
                 break;
             case 1:
-                $this->setDeviceid($value);
+                $this->setAdapterid($value);
                 break;
             case 2:
-                $this->setSnmppropertyid($value);
+                $this->setProtocol($value);
                 break;
             case 3:
-                $this->setPluginid($value);
+                $this->setPort($value);
                 break;
             case 4:
-                $this->setTimestamp($value);
+                $this->setName($value);
                 break;
             case 5:
-                $this->setValue($value);
+                $this->setProduct($value);
+                break;
+            case 6:
+                $this->setVersion($value);
+                break;
+            case 7:
+                $this->setState($value);
                 break;
         } // switch()
     }
@@ -969,14 +989,16 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = PollPeer::getFieldNames($keyType);
+        $keys = PortStatusPeer::getFieldNames($keyType);
 
-        if (array_key_exists($keys[0], $arr)) $this->setPollid($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setDeviceid($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setSnmppropertyid($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setPluginid($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setTimestamp($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setValue($arr[$keys[5]]);
+        if (array_key_exists($keys[0], $arr)) $this->setPortstatusid($arr[$keys[0]]);
+        if (array_key_exists($keys[1], $arr)) $this->setAdapterid($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setProtocol($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setPort($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setName($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setProduct($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setVersion($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setState($arr[$keys[7]]);
     }
 
     /**
@@ -986,14 +1008,16 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(PollPeer::DATABASE_NAME);
+        $criteria = new Criteria(PortStatusPeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(PollPeer::POLLID)) $criteria->add(PollPeer::POLLID, $this->pollid);
-        if ($this->isColumnModified(PollPeer::DEVICEID)) $criteria->add(PollPeer::DEVICEID, $this->deviceid);
-        if ($this->isColumnModified(PollPeer::SNMPPROPERTYID)) $criteria->add(PollPeer::SNMPPROPERTYID, $this->snmppropertyid);
-        if ($this->isColumnModified(PollPeer::PLUGINID)) $criteria->add(PollPeer::PLUGINID, $this->pluginid);
-        if ($this->isColumnModified(PollPeer::TIMESTAMP)) $criteria->add(PollPeer::TIMESTAMP, $this->timestamp);
-        if ($this->isColumnModified(PollPeer::VALUE)) $criteria->add(PollPeer::VALUE, $this->value);
+        if ($this->isColumnModified(PortStatusPeer::PORTSTATUSID)) $criteria->add(PortStatusPeer::PORTSTATUSID, $this->portstatusid);
+        if ($this->isColumnModified(PortStatusPeer::ADAPTERID)) $criteria->add(PortStatusPeer::ADAPTERID, $this->adapterid);
+        if ($this->isColumnModified(PortStatusPeer::PROTOCOL)) $criteria->add(PortStatusPeer::PROTOCOL, $this->protocol);
+        if ($this->isColumnModified(PortStatusPeer::PORT)) $criteria->add(PortStatusPeer::PORT, $this->port);
+        if ($this->isColumnModified(PortStatusPeer::NAME)) $criteria->add(PortStatusPeer::NAME, $this->name);
+        if ($this->isColumnModified(PortStatusPeer::PRODUCT)) $criteria->add(PortStatusPeer::PRODUCT, $this->product);
+        if ($this->isColumnModified(PortStatusPeer::VERSION)) $criteria->add(PortStatusPeer::VERSION, $this->version);
+        if ($this->isColumnModified(PortStatusPeer::STATE)) $criteria->add(PortStatusPeer::STATE, $this->state);
 
         return $criteria;
     }
@@ -1008,8 +1032,8 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(PollPeer::DATABASE_NAME);
-        $criteria->add(PollPeer::POLLID, $this->pollid);
+        $criteria = new Criteria(PortStatusPeer::DATABASE_NAME);
+        $criteria->add(PortStatusPeer::PORTSTATUSID, $this->portstatusid);
 
         return $criteria;
     }
@@ -1020,18 +1044,18 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getPollid();
+        return $this->getPortstatusid();
     }
 
     /**
-     * Generic method to set the primary key (pollid column).
+     * Generic method to set the primary key (portstatusid column).
      *
      * @param  int $key Primary key.
      * @return void
      */
     public function setPrimaryKey($key)
     {
-        $this->setPollid($key);
+        $this->setPortstatusid($key);
     }
 
     /**
@@ -1041,7 +1065,7 @@ abstract class BasePoll extends BaseObject implements Persistent
     public function isPrimaryKeyNull()
     {
 
-        return null === $this->getPollid();
+        return null === $this->getPortstatusid();
     }
 
     /**
@@ -1050,18 +1074,20 @@ abstract class BasePoll extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param object $copyObj An object of Poll (or compatible) type.
+     * @param object $copyObj An object of PortStatus (or compatible) type.
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setDeviceid($this->getDeviceid());
-        $copyObj->setSnmppropertyid($this->getSnmppropertyid());
-        $copyObj->setPluginid($this->getPluginid());
-        $copyObj->setTimestamp($this->getTimestamp());
-        $copyObj->setValue($this->getValue());
+        $copyObj->setAdapterid($this->getAdapterid());
+        $copyObj->setProtocol($this->getProtocol());
+        $copyObj->setPort($this->getPort());
+        $copyObj->setName($this->getName());
+        $copyObj->setProduct($this->getProduct());
+        $copyObj->setVersion($this->getVersion());
+        $copyObj->setState($this->getState());
 
         if ($deepCopy && !$this->startCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1076,7 +1102,7 @@ abstract class BasePoll extends BaseObject implements Persistent
 
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setPollid(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setPortstatusid(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1089,7 +1115,7 @@ abstract class BasePoll extends BaseObject implements Persistent
      * objects.
      *
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return Poll Clone of current object.
+     * @return PortStatus Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1109,38 +1135,38 @@ abstract class BasePoll extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return PollPeer
+     * @return PortStatusPeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new PollPeer();
+            self::$peer = new PortStatusPeer();
         }
 
         return self::$peer;
     }
 
     /**
-     * Declares an association between this object and a Device object.
+     * Declares an association between this object and a Adapter object.
      *
-     * @param             Device $v
-     * @return Poll The current object (for fluent API support)
+     * @param             Adapter $v
+     * @return PortStatus The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setDevice(Device $v = null)
+    public function setAdapter(Adapter $v = null)
     {
         if ($v === null) {
-            $this->setDeviceid(NULL);
+            $this->setAdapterid(NULL);
         } else {
-            $this->setDeviceid($v->getDeviceid());
+            $this->setAdapterid($v->getAdapterid());
         }
 
-        $this->aDevice = $v;
+        $this->aAdapter = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Device object, it will not be re-added.
+        // If this object has already been added to the Adapter object, it will not be re-added.
         if ($v !== null) {
-            $v->addDevicePoll($this);
+            $v->addAdapterPortStatus($this);
         }
 
 
@@ -1149,131 +1175,27 @@ abstract class BasePoll extends BaseObject implements Persistent
 
 
     /**
-     * Get the associated Device object
+     * Get the associated Adapter object
      *
      * @param PropelPDO $con Optional Connection object.
      * @param $doQuery Executes a query to get the object if required
-     * @return Device The associated Device object.
+     * @return Adapter The associated Adapter object.
      * @throws PropelException
      */
-    public function getDevice(PropelPDO $con = null, $doQuery = true)
+    public function getAdapter(PropelPDO $con = null, $doQuery = true)
     {
-        if ($this->aDevice === null && ($this->deviceid !== null) && $doQuery) {
-            $this->aDevice = DeviceQuery::create()->findPk($this->deviceid, $con);
+        if ($this->aAdapter === null && ($this->adapterid !== null) && $doQuery) {
+            $this->aAdapter = AdapterQuery::create()->findPk($this->adapterid, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aDevice->addDevicePolls($this);
+                $this->aAdapter->addAdapterPortStatuss($this);
              */
         }
 
-        return $this->aDevice;
-    }
-
-    /**
-     * Declares an association between this object and a SnmpProperty object.
-     *
-     * @param             SnmpProperty $v
-     * @return Poll The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setSnmpProperty(SnmpProperty $v = null)
-    {
-        if ($v === null) {
-            $this->setSnmppropertyid(NULL);
-        } else {
-            $this->setSnmppropertyid($v->getSnmppropertyid());
-        }
-
-        $this->aSnmpProperty = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the SnmpProperty object, it will not be re-added.
-        if ($v !== null) {
-            $v->addSnmpPropertyPoll($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated SnmpProperty object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return SnmpProperty The associated SnmpProperty object.
-     * @throws PropelException
-     */
-    public function getSnmpProperty(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aSnmpProperty === null && ($this->snmppropertyid !== null) && $doQuery) {
-            $this->aSnmpProperty = SnmpPropertyQuery::create()->findPk($this->snmppropertyid, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aSnmpProperty->addSnmpPropertyPolls($this);
-             */
-        }
-
-        return $this->aSnmpProperty;
-    }
-
-    /**
-     * Declares an association between this object and a Plugin object.
-     *
-     * @param             Plugin $v
-     * @return Poll The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setPlugin(Plugin $v = null)
-    {
-        if ($v === null) {
-            $this->setPluginid(NULL);
-        } else {
-            $this->setPluginid($v->getPluginid());
-        }
-
-        $this->aPlugin = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Plugin object, it will not be re-added.
-        if ($v !== null) {
-            $v->addPluginPoll($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Plugin object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Plugin The associated Plugin object.
-     * @throws PropelException
-     */
-    public function getPlugin(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aPlugin === null && ($this->pluginid !== null) && $doQuery) {
-            $this->aPlugin = PluginQuery::create()->findPk($this->pluginid, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aPlugin->addPluginPolls($this);
-             */
-        }
-
-        return $this->aPlugin;
+        return $this->aAdapter;
     }
 
     /**
@@ -1281,12 +1203,14 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function clear()
     {
-        $this->pollid = null;
-        $this->deviceid = null;
-        $this->snmppropertyid = null;
-        $this->pluginid = null;
-        $this->timestamp = null;
-        $this->value = null;
+        $this->portstatusid = null;
+        $this->adapterid = null;
+        $this->protocol = null;
+        $this->port = null;
+        $this->name = null;
+        $this->product = null;
+        $this->version = null;
+        $this->state = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;
@@ -1309,22 +1233,14 @@ abstract class BasePoll extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aDevice instanceof Persistent) {
-              $this->aDevice->clearAllReferences($deep);
-            }
-            if ($this->aSnmpProperty instanceof Persistent) {
-              $this->aSnmpProperty->clearAllReferences($deep);
-            }
-            if ($this->aPlugin instanceof Persistent) {
-              $this->aPlugin->clearAllReferences($deep);
+            if ($this->aAdapter instanceof Persistent) {
+              $this->aAdapter->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aDevice = null;
-        $this->aSnmpProperty = null;
-        $this->aPlugin = null;
+        $this->aAdapter = null;
     }
 
     /**
@@ -1334,7 +1250,7 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function __toString()
     {
-        return (string) $this->exportTo(PollPeer::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(PortStatusPeer::DEFAULT_STRING_FORMAT);
     }
 
     /**

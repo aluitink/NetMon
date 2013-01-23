@@ -1,5 +1,5 @@
 <?php
-
+require_once ROOT . 'libs/plugins/PluginBase.php';
 
 
 /**
@@ -15,4 +15,19 @@
  */
 class Adapter extends BaseAdapter
 {
+    private $pluginBase;
+
+    function __construct()
+    {
+        $this->pluginBase = new \NetMon\Plugins\PluginBase();
+    }
+    public function postInsert(\PropelPDO $con = NULL)
+    {
+        $this->pluginBase->CallbackActivePlugins("OnAdapterAdd", $this);
+    }
+    public function postUpdate(\PropelPDO $con = NULL)
+    {
+        $this->pluginBase->CallbackActivePlugins("OnAdapterUpdate", $this);
+    }
+    
 }

@@ -2,24 +2,24 @@
 
 
 /**
- * Base class that represents a row from the 'Poll' table.
+ * Base class that represents a row from the 'PluginMeta' table.
  *
  *
  *
  * @package    propel.generator.NetMon.om
  */
-abstract class BasePoll extends BaseObject implements Persistent
+abstract class BasePluginMeta extends BaseObject implements Persistent
 {
     /**
      * Peer class name
      */
-    const PEER = 'PollPeer';
+    const PEER = 'PluginMetaPeer';
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        PollPeer
+     * @var        PluginMetaPeer
      */
     protected static $peer;
 
@@ -30,22 +30,10 @@ abstract class BasePoll extends BaseObject implements Persistent
     protected $startCopy = false;
 
     /**
-     * The value for the pollid field.
+     * The value for the pluginmetaid field.
      * @var        int
      */
-    protected $pollid;
-
-    /**
-     * The value for the deviceid field.
-     * @var        int
-     */
-    protected $deviceid;
-
-    /**
-     * The value for the snmppropertyid field.
-     * @var        int
-     */
-    protected $snmppropertyid;
+    protected $pluginmetaid;
 
     /**
      * The value for the pluginid field.
@@ -54,26 +42,16 @@ abstract class BasePoll extends BaseObject implements Persistent
     protected $pluginid;
 
     /**
-     * The value for the timestamp field.
+     * The value for the key field.
      * @var        string
      */
-    protected $timestamp;
+    protected $key;
 
     /**
      * The value for the value field.
      * @var        string
      */
     protected $value;
-
-    /**
-     * @var        Device
-     */
-    protected $aDevice;
-
-    /**
-     * @var        SnmpProperty
-     */
-    protected $aSnmpProperty;
 
     /**
      * @var        Plugin
@@ -101,33 +79,13 @@ abstract class BasePoll extends BaseObject implements Persistent
     protected $alreadyInClearAllReferencesDeep = false;
 
     /**
-     * Get the [pollid] column value.
+     * Get the [pluginmetaid] column value.
      *
      * @return int
      */
-    public function getPollid()
+    public function getPluginmetaid()
     {
-        return $this->pollid;
-    }
-
-    /**
-     * Get the [deviceid] column value.
-     *
-     * @return int
-     */
-    public function getDeviceid()
-    {
-        return $this->deviceid;
-    }
-
-    /**
-     * Get the [snmppropertyid] column value.
-     *
-     * @return int
-     */
-    public function getSnmppropertyid()
-    {
-        return $this->snmppropertyid;
+        return $this->pluginmetaid;
     }
 
     /**
@@ -141,43 +99,13 @@ abstract class BasePoll extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [optionally formatted] temporal [timestamp] column value.
+     * Get the [key] column value.
      *
-     *
-     * @param string $format The date/time format string (either date()-style or strftime()-style).
-     *				 If format is null, then the raw DateTime object will be returned.
-     * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
-     * @throws PropelException - if unable to parse/validate the date/time value.
+     * @return string
      */
-    public function getTimestamp($format = '{Y-m-d H:i:s}|string')
+    public function getKey()
     {
-        if ($this->timestamp === null) {
-            return null;
-        }
-
-        if ($this->timestamp === '0000-00-00 00:00:00') {
-            // while technically this is not a default value of null,
-            // this seems to be closest in meaning.
-            return null;
-        }
-
-        try {
-            $dt = new DateTime($this->timestamp);
-        } catch (Exception $x) {
-            throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->timestamp, true), $x);
-        }
-
-        if ($format === null) {
-            // Because propel.useDateTimeClass is true, we return a DateTime object.
-            return $dt;
-        }
-
-        if (strpos($format, '%') !== false) {
-            return strftime($format, $dt->format('U'));
-        }
-
-        return $dt->format($format);
-
+        return $this->key;
     }
 
     /**
@@ -191,81 +119,31 @@ abstract class BasePoll extends BaseObject implements Persistent
     }
 
     /**
-     * Set the value of [pollid] column.
+     * Set the value of [pluginmetaid] column.
      *
      * @param int $v new value
-     * @return Poll The current object (for fluent API support)
+     * @return PluginMeta The current object (for fluent API support)
      */
-    public function setPollid($v)
+    public function setPluginmetaid($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
-        if ($this->pollid !== $v) {
-            $this->pollid = $v;
-            $this->modifiedColumns[] = PollPeer::POLLID;
+        if ($this->pluginmetaid !== $v) {
+            $this->pluginmetaid = $v;
+            $this->modifiedColumns[] = PluginMetaPeer::PLUGINMETAID;
         }
 
 
         return $this;
-    } // setPollid()
-
-    /**
-     * Set the value of [deviceid] column.
-     *
-     * @param int $v new value
-     * @return Poll The current object (for fluent API support)
-     */
-    public function setDeviceid($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->deviceid !== $v) {
-            $this->deviceid = $v;
-            $this->modifiedColumns[] = PollPeer::DEVICEID;
-        }
-
-        if ($this->aDevice !== null && $this->aDevice->getDeviceid() !== $v) {
-            $this->aDevice = null;
-        }
-
-
-        return $this;
-    } // setDeviceid()
-
-    /**
-     * Set the value of [snmppropertyid] column.
-     *
-     * @param int $v new value
-     * @return Poll The current object (for fluent API support)
-     */
-    public function setSnmppropertyid($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->snmppropertyid !== $v) {
-            $this->snmppropertyid = $v;
-            $this->modifiedColumns[] = PollPeer::SNMPPROPERTYID;
-        }
-
-        if ($this->aSnmpProperty !== null && $this->aSnmpProperty->getSnmppropertyid() !== $v) {
-            $this->aSnmpProperty = null;
-        }
-
-
-        return $this;
-    } // setSnmppropertyid()
+    } // setPluginmetaid()
 
     /**
      * Set the value of [pluginid] column.
      *
      * @param int $v new value
-     * @return Poll The current object (for fluent API support)
+     * @return PluginMeta The current object (for fluent API support)
      */
     public function setPluginid($v)
     {
@@ -275,7 +153,7 @@ abstract class BasePoll extends BaseObject implements Persistent
 
         if ($this->pluginid !== $v) {
             $this->pluginid = $v;
-            $this->modifiedColumns[] = PollPeer::PLUGINID;
+            $this->modifiedColumns[] = PluginMetaPeer::PLUGINID;
         }
 
         if ($this->aPlugin !== null && $this->aPlugin->getPluginid() !== $v) {
@@ -287,33 +165,31 @@ abstract class BasePoll extends BaseObject implements Persistent
     } // setPluginid()
 
     /**
-     * Sets the value of [timestamp] column to a normalized version of the date/time value specified.
+     * Set the value of [key] column.
      *
-     * @param mixed $v string, integer (timestamp), or DateTime value.
-     *               Empty strings are treated as null.
-     * @return Poll The current object (for fluent API support)
+     * @param string $v new value
+     * @return PluginMeta The current object (for fluent API support)
      */
-    public function setTimestamp($v)
+    public function setKey($v)
     {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->timestamp !== null || $dt !== null) {
-            $currentDateAsString = ($this->timestamp !== null && $tmpDt = new DateTime($this->timestamp)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-            $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-            if ($currentDateAsString !== $newDateAsString) {
-                $this->timestamp = $newDateAsString;
-                $this->modifiedColumns[] = PollPeer::TIMESTAMP;
-            }
-        } // if either are not null
+        if ($v !== null && is_numeric($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->key !== $v) {
+            $this->key = $v;
+            $this->modifiedColumns[] = PluginMetaPeer::KEY;
+        }
 
 
         return $this;
-    } // setTimestamp()
+    } // setKey()
 
     /**
      * Set the value of [value] column.
      *
      * @param string $v new value
-     * @return Poll The current object (for fluent API support)
+     * @return PluginMeta The current object (for fluent API support)
      */
     public function setValue($v)
     {
@@ -323,7 +199,7 @@ abstract class BasePoll extends BaseObject implements Persistent
 
         if ($this->value !== $v) {
             $this->value = $v;
-            $this->modifiedColumns[] = PollPeer::VALUE;
+            $this->modifiedColumns[] = PluginMetaPeer::VALUE;
         }
 
 
@@ -362,12 +238,10 @@ abstract class BasePoll extends BaseObject implements Persistent
     {
         try {
 
-            $this->pollid = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-            $this->deviceid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->snmppropertyid = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-            $this->pluginid = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
-            $this->timestamp = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-            $this->value = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+            $this->pluginmetaid = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+            $this->pluginid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+            $this->key = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+            $this->value = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -376,10 +250,10 @@ abstract class BasePoll extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
             $this->postHydrate($row, $startcol, $rehydrate);
-            return $startcol + 6; // 6 = PollPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = PluginMetaPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating Poll object", $e);
+            throw new PropelException("Error populating PluginMeta object", $e);
         }
     }
 
@@ -399,12 +273,6 @@ abstract class BasePoll extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aDevice !== null && $this->deviceid !== $this->aDevice->getDeviceid()) {
-            $this->aDevice = null;
-        }
-        if ($this->aSnmpProperty !== null && $this->snmppropertyid !== $this->aSnmpProperty->getSnmppropertyid()) {
-            $this->aSnmpProperty = null;
-        }
         if ($this->aPlugin !== null && $this->pluginid !== $this->aPlugin->getPluginid()) {
             $this->aPlugin = null;
         }
@@ -431,13 +299,13 @@ abstract class BasePoll extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(PollPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(PluginMetaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $stmt = PollPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+        $stmt = PluginMetaPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
         $row = $stmt->fetch(PDO::FETCH_NUM);
         $stmt->closeCursor();
         if (!$row) {
@@ -447,8 +315,6 @@ abstract class BasePoll extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aDevice = null;
-            $this->aSnmpProperty = null;
             $this->aPlugin = null;
         } // if (deep)
     }
@@ -470,12 +336,12 @@ abstract class BasePoll extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(PollPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(PluginMetaPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
         try {
-            $deleteQuery = PollQuery::create()
+            $deleteQuery = PluginMetaQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -513,7 +379,7 @@ abstract class BasePoll extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(PollPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(PluginMetaPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
@@ -533,7 +399,7 @@ abstract class BasePoll extends BaseObject implements Persistent
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                PollPeer::addInstanceToPool($this);
+                PluginMetaPeer::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -567,20 +433,6 @@ abstract class BasePoll extends BaseObject implements Persistent
             // were passed to this object by their coresponding set
             // method.  This object relates to these object(s) by a
             // foreign key reference.
-
-            if ($this->aDevice !== null) {
-                if ($this->aDevice->isModified() || $this->aDevice->isNew()) {
-                    $affectedRows += $this->aDevice->save($con);
-                }
-                $this->setDevice($this->aDevice);
-            }
-
-            if ($this->aSnmpProperty !== null) {
-                if ($this->aSnmpProperty->isModified() || $this->aSnmpProperty->isNew()) {
-                    $affectedRows += $this->aSnmpProperty->save($con);
-                }
-                $this->setSnmpProperty($this->aSnmpProperty);
-            }
 
             if ($this->aPlugin !== null) {
                 if ($this->aPlugin->isModified() || $this->aPlugin->isNew()) {
@@ -620,33 +472,27 @@ abstract class BasePoll extends BaseObject implements Persistent
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[] = PollPeer::POLLID;
-        if (null !== $this->pollid) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . PollPeer::POLLID . ')');
+        $this->modifiedColumns[] = PluginMetaPeer::PLUGINMETAID;
+        if (null !== $this->pluginmetaid) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . PluginMetaPeer::PLUGINMETAID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(PollPeer::POLLID)) {
-            $modifiedColumns[':p' . $index++]  = '`PollId`';
+        if ($this->isColumnModified(PluginMetaPeer::PLUGINMETAID)) {
+            $modifiedColumns[':p' . $index++]  = '`PluginMetaId`';
         }
-        if ($this->isColumnModified(PollPeer::DEVICEID)) {
-            $modifiedColumns[':p' . $index++]  = '`DeviceId`';
-        }
-        if ($this->isColumnModified(PollPeer::SNMPPROPERTYID)) {
-            $modifiedColumns[':p' . $index++]  = '`SnmpPropertyId`';
-        }
-        if ($this->isColumnModified(PollPeer::PLUGINID)) {
+        if ($this->isColumnModified(PluginMetaPeer::PLUGINID)) {
             $modifiedColumns[':p' . $index++]  = '`PluginId`';
         }
-        if ($this->isColumnModified(PollPeer::TIMESTAMP)) {
-            $modifiedColumns[':p' . $index++]  = '`Timestamp`';
+        if ($this->isColumnModified(PluginMetaPeer::KEY)) {
+            $modifiedColumns[':p' . $index++]  = '`Key`';
         }
-        if ($this->isColumnModified(PollPeer::VALUE)) {
+        if ($this->isColumnModified(PluginMetaPeer::VALUE)) {
             $modifiedColumns[':p' . $index++]  = '`Value`';
         }
 
         $sql = sprintf(
-            'INSERT INTO `Poll` (%s) VALUES (%s)',
+            'INSERT INTO `PluginMeta` (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -655,20 +501,14 @@ abstract class BasePoll extends BaseObject implements Persistent
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case '`PollId`':
-                        $stmt->bindValue($identifier, $this->pollid, PDO::PARAM_INT);
-                        break;
-                    case '`DeviceId`':
-                        $stmt->bindValue($identifier, $this->deviceid, PDO::PARAM_INT);
-                        break;
-                    case '`SnmpPropertyId`':
-                        $stmt->bindValue($identifier, $this->snmppropertyid, PDO::PARAM_INT);
+                    case '`PluginMetaId`':
+                        $stmt->bindValue($identifier, $this->pluginmetaid, PDO::PARAM_INT);
                         break;
                     case '`PluginId`':
                         $stmt->bindValue($identifier, $this->pluginid, PDO::PARAM_INT);
                         break;
-                    case '`Timestamp`':
-                        $stmt->bindValue($identifier, $this->timestamp, PDO::PARAM_STR);
+                    case '`Key`':
+                        $stmt->bindValue($identifier, $this->key, PDO::PARAM_STR);
                         break;
                     case '`Value`':
                         $stmt->bindValue($identifier, $this->value, PDO::PARAM_STR);
@@ -686,7 +526,7 @@ abstract class BasePoll extends BaseObject implements Persistent
         } catch (Exception $e) {
             throw new PropelException('Unable to get autoincrement id.', $e);
         }
-        $this->setPollid($pk);
+        $this->setPluginmetaid($pk);
 
         $this->setNew(false);
     }
@@ -772,18 +612,6 @@ abstract class BasePoll extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aDevice !== null) {
-                if (!$this->aDevice->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aDevice->getValidationFailures());
-                }
-            }
-
-            if ($this->aSnmpProperty !== null) {
-                if (!$this->aSnmpProperty->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aSnmpProperty->getValidationFailures());
-                }
-            }
-
             if ($this->aPlugin !== null) {
                 if (!$this->aPlugin->validate($columns)) {
                     $failureMap = array_merge($failureMap, $this->aPlugin->getValidationFailures());
@@ -791,7 +619,7 @@ abstract class BasePoll extends BaseObject implements Persistent
             }
 
 
-            if (($retval = PollPeer::doValidate($this, $columns)) !== true) {
+            if (($retval = PluginMetaPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -815,7 +643,7 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = PollPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = PluginMetaPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -832,21 +660,15 @@ abstract class BasePoll extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                return $this->getPollid();
+                return $this->getPluginmetaid();
                 break;
             case 1:
-                return $this->getDeviceid();
-                break;
-            case 2:
-                return $this->getSnmppropertyid();
-                break;
-            case 3:
                 return $this->getPluginid();
                 break;
-            case 4:
-                return $this->getTimestamp();
+            case 2:
+                return $this->getKey();
                 break;
-            case 5:
+            case 3:
                 return $this->getValue();
                 break;
             default:
@@ -872,26 +694,18 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
-        if (isset($alreadyDumpedObjects['Poll'][$this->getPrimaryKey()])) {
+        if (isset($alreadyDumpedObjects['PluginMeta'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Poll'][$this->getPrimaryKey()] = true;
-        $keys = PollPeer::getFieldNames($keyType);
+        $alreadyDumpedObjects['PluginMeta'][$this->getPrimaryKey()] = true;
+        $keys = PluginMetaPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getPollid(),
-            $keys[1] => $this->getDeviceid(),
-            $keys[2] => $this->getSnmppropertyid(),
-            $keys[3] => $this->getPluginid(),
-            $keys[4] => $this->getTimestamp(),
-            $keys[5] => $this->getValue(),
+            $keys[0] => $this->getPluginmetaid(),
+            $keys[1] => $this->getPluginid(),
+            $keys[2] => $this->getKey(),
+            $keys[3] => $this->getValue(),
         );
         if ($includeForeignObjects) {
-            if (null !== $this->aDevice) {
-                $result['Device'] = $this->aDevice->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aSnmpProperty) {
-                $result['SnmpProperty'] = $this->aSnmpProperty->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aPlugin) {
                 $result['Plugin'] = $this->aPlugin->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
@@ -913,7 +727,7 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = PollPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = PluginMetaPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 
         $this->setByPosition($pos, $value);
     }
@@ -930,21 +744,15 @@ abstract class BasePoll extends BaseObject implements Persistent
     {
         switch ($pos) {
             case 0:
-                $this->setPollid($value);
+                $this->setPluginmetaid($value);
                 break;
             case 1:
-                $this->setDeviceid($value);
-                break;
-            case 2:
-                $this->setSnmppropertyid($value);
-                break;
-            case 3:
                 $this->setPluginid($value);
                 break;
-            case 4:
-                $this->setTimestamp($value);
+            case 2:
+                $this->setKey($value);
                 break;
-            case 5:
+            case 3:
                 $this->setValue($value);
                 break;
         } // switch()
@@ -969,14 +777,12 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = PollPeer::getFieldNames($keyType);
+        $keys = PluginMetaPeer::getFieldNames($keyType);
 
-        if (array_key_exists($keys[0], $arr)) $this->setPollid($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setDeviceid($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setSnmppropertyid($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setPluginid($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setTimestamp($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setValue($arr[$keys[5]]);
+        if (array_key_exists($keys[0], $arr)) $this->setPluginmetaid($arr[$keys[0]]);
+        if (array_key_exists($keys[1], $arr)) $this->setPluginid($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setKey($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setValue($arr[$keys[3]]);
     }
 
     /**
@@ -986,14 +792,12 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(PollPeer::DATABASE_NAME);
+        $criteria = new Criteria(PluginMetaPeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(PollPeer::POLLID)) $criteria->add(PollPeer::POLLID, $this->pollid);
-        if ($this->isColumnModified(PollPeer::DEVICEID)) $criteria->add(PollPeer::DEVICEID, $this->deviceid);
-        if ($this->isColumnModified(PollPeer::SNMPPROPERTYID)) $criteria->add(PollPeer::SNMPPROPERTYID, $this->snmppropertyid);
-        if ($this->isColumnModified(PollPeer::PLUGINID)) $criteria->add(PollPeer::PLUGINID, $this->pluginid);
-        if ($this->isColumnModified(PollPeer::TIMESTAMP)) $criteria->add(PollPeer::TIMESTAMP, $this->timestamp);
-        if ($this->isColumnModified(PollPeer::VALUE)) $criteria->add(PollPeer::VALUE, $this->value);
+        if ($this->isColumnModified(PluginMetaPeer::PLUGINMETAID)) $criteria->add(PluginMetaPeer::PLUGINMETAID, $this->pluginmetaid);
+        if ($this->isColumnModified(PluginMetaPeer::PLUGINID)) $criteria->add(PluginMetaPeer::PLUGINID, $this->pluginid);
+        if ($this->isColumnModified(PluginMetaPeer::KEY)) $criteria->add(PluginMetaPeer::KEY, $this->key);
+        if ($this->isColumnModified(PluginMetaPeer::VALUE)) $criteria->add(PluginMetaPeer::VALUE, $this->value);
 
         return $criteria;
     }
@@ -1008,8 +812,8 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(PollPeer::DATABASE_NAME);
-        $criteria->add(PollPeer::POLLID, $this->pollid);
+        $criteria = new Criteria(PluginMetaPeer::DATABASE_NAME);
+        $criteria->add(PluginMetaPeer::PLUGINMETAID, $this->pluginmetaid);
 
         return $criteria;
     }
@@ -1020,18 +824,18 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function getPrimaryKey()
     {
-        return $this->getPollid();
+        return $this->getPluginmetaid();
     }
 
     /**
-     * Generic method to set the primary key (pollid column).
+     * Generic method to set the primary key (pluginmetaid column).
      *
      * @param  int $key Primary key.
      * @return void
      */
     public function setPrimaryKey($key)
     {
-        $this->setPollid($key);
+        $this->setPluginmetaid($key);
     }
 
     /**
@@ -1041,7 +845,7 @@ abstract class BasePoll extends BaseObject implements Persistent
     public function isPrimaryKeyNull()
     {
 
-        return null === $this->getPollid();
+        return null === $this->getPluginmetaid();
     }
 
     /**
@@ -1050,17 +854,15 @@ abstract class BasePoll extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param object $copyObj An object of Poll (or compatible) type.
+     * @param object $copyObj An object of PluginMeta (or compatible) type.
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setDeviceid($this->getDeviceid());
-        $copyObj->setSnmppropertyid($this->getSnmppropertyid());
         $copyObj->setPluginid($this->getPluginid());
-        $copyObj->setTimestamp($this->getTimestamp());
+        $copyObj->setKey($this->getKey());
         $copyObj->setValue($this->getValue());
 
         if ($deepCopy && !$this->startCopy) {
@@ -1076,7 +878,7 @@ abstract class BasePoll extends BaseObject implements Persistent
 
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setPollid(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setPluginmetaid(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1089,7 +891,7 @@ abstract class BasePoll extends BaseObject implements Persistent
      * objects.
      *
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return Poll Clone of current object.
+     * @return PluginMeta Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1109,126 +911,22 @@ abstract class BasePoll extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return PollPeer
+     * @return PluginMetaPeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new PollPeer();
+            self::$peer = new PluginMetaPeer();
         }
 
         return self::$peer;
     }
 
     /**
-     * Declares an association between this object and a Device object.
-     *
-     * @param             Device $v
-     * @return Poll The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setDevice(Device $v = null)
-    {
-        if ($v === null) {
-            $this->setDeviceid(NULL);
-        } else {
-            $this->setDeviceid($v->getDeviceid());
-        }
-
-        $this->aDevice = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Device object, it will not be re-added.
-        if ($v !== null) {
-            $v->addDevicePoll($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Device object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Device The associated Device object.
-     * @throws PropelException
-     */
-    public function getDevice(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aDevice === null && ($this->deviceid !== null) && $doQuery) {
-            $this->aDevice = DeviceQuery::create()->findPk($this->deviceid, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aDevice->addDevicePolls($this);
-             */
-        }
-
-        return $this->aDevice;
-    }
-
-    /**
-     * Declares an association between this object and a SnmpProperty object.
-     *
-     * @param             SnmpProperty $v
-     * @return Poll The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setSnmpProperty(SnmpProperty $v = null)
-    {
-        if ($v === null) {
-            $this->setSnmppropertyid(NULL);
-        } else {
-            $this->setSnmppropertyid($v->getSnmppropertyid());
-        }
-
-        $this->aSnmpProperty = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the SnmpProperty object, it will not be re-added.
-        if ($v !== null) {
-            $v->addSnmpPropertyPoll($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated SnmpProperty object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return SnmpProperty The associated SnmpProperty object.
-     * @throws PropelException
-     */
-    public function getSnmpProperty(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aSnmpProperty === null && ($this->snmppropertyid !== null) && $doQuery) {
-            $this->aSnmpProperty = SnmpPropertyQuery::create()->findPk($this->snmppropertyid, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aSnmpProperty->addSnmpPropertyPolls($this);
-             */
-        }
-
-        return $this->aSnmpProperty;
-    }
-
-    /**
      * Declares an association between this object and a Plugin object.
      *
      * @param             Plugin $v
-     * @return Poll The current object (for fluent API support)
+     * @return PluginMeta The current object (for fluent API support)
      * @throws PropelException
      */
     public function setPlugin(Plugin $v = null)
@@ -1244,7 +942,7 @@ abstract class BasePoll extends BaseObject implements Persistent
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the Plugin object, it will not be re-added.
         if ($v !== null) {
-            $v->addPluginPoll($this);
+            $v->addPluginPluginMeta($this);
         }
 
 
@@ -1269,7 +967,7 @@ abstract class BasePoll extends BaseObject implements Persistent
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aPlugin->addPluginPolls($this);
+                $this->aPlugin->addPluginPluginMetas($this);
              */
         }
 
@@ -1281,11 +979,9 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function clear()
     {
-        $this->pollid = null;
-        $this->deviceid = null;
-        $this->snmppropertyid = null;
+        $this->pluginmetaid = null;
         $this->pluginid = null;
-        $this->timestamp = null;
+        $this->key = null;
         $this->value = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
@@ -1309,12 +1005,6 @@ abstract class BasePoll extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aDevice instanceof Persistent) {
-              $this->aDevice->clearAllReferences($deep);
-            }
-            if ($this->aSnmpProperty instanceof Persistent) {
-              $this->aSnmpProperty->clearAllReferences($deep);
-            }
             if ($this->aPlugin instanceof Persistent) {
               $this->aPlugin->clearAllReferences($deep);
             }
@@ -1322,8 +1012,6 @@ abstract class BasePoll extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aDevice = null;
-        $this->aSnmpProperty = null;
         $this->aPlugin = null;
     }
 
@@ -1334,7 +1022,7 @@ abstract class BasePoll extends BaseObject implements Persistent
      */
     public function __toString()
     {
-        return (string) $this->exportTo(PollPeer::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(PluginMetaPeer::DEFAULT_STRING_FORMAT);
     }
 
     /**

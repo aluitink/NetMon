@@ -48,6 +48,10 @@
  * @method AdapterQuery rightJoinAdapterAdapterStatistic($relationAlias = null) Adds a RIGHT JOIN clause to the query using the AdapterAdapterStatistic relation
  * @method AdapterQuery innerJoinAdapterAdapterStatistic($relationAlias = null) Adds a INNER JOIN clause to the query using the AdapterAdapterStatistic relation
  *
+ * @method AdapterQuery leftJoinAdapterPortStatus($relationAlias = null) Adds a LEFT JOIN clause to the query using the AdapterPortStatus relation
+ * @method AdapterQuery rightJoinAdapterPortStatus($relationAlias = null) Adds a RIGHT JOIN clause to the query using the AdapterPortStatus relation
+ * @method AdapterQuery innerJoinAdapterPortStatus($relationAlias = null) Adds a INNER JOIN clause to the query using the AdapterPortStatus relation
+ *
  * @method AdapterQuery leftJoinAdapterMonitor($relationAlias = null) Adds a LEFT JOIN clause to the query using the AdapterMonitor relation
  * @method AdapterQuery rightJoinAdapterMonitor($relationAlias = null) Adds a RIGHT JOIN clause to the query using the AdapterMonitor relation
  * @method AdapterQuery innerJoinAdapterMonitor($relationAlias = null) Adds a INNER JOIN clause to the query using the AdapterMonitor relation
@@ -910,6 +914,80 @@ abstract class BaseAdapterQuery extends ModelCriteria
         return $this
             ->joinAdapterAdapterStatistic($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'AdapterAdapterStatistic', 'AdapterStatisticQuery');
+    }
+
+    /**
+     * Filter the query by a related PortStatus object
+     *
+     * @param   PortStatus|PropelObjectCollection $portStatus  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 AdapterQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByAdapterPortStatus($portStatus, $comparison = null)
+    {
+        if ($portStatus instanceof PortStatus) {
+            return $this
+                ->addUsingAlias(AdapterPeer::ADAPTERID, $portStatus->getAdapterid(), $comparison);
+        } elseif ($portStatus instanceof PropelObjectCollection) {
+            return $this
+                ->useAdapterPortStatusQuery()
+                ->filterByPrimaryKeys($portStatus->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByAdapterPortStatus() only accepts arguments of type PortStatus or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the AdapterPortStatus relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return AdapterQuery The current query, for fluid interface
+     */
+    public function joinAdapterPortStatus($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('AdapterPortStatus');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'AdapterPortStatus');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the AdapterPortStatus relation PortStatus object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   PortStatusQuery A secondary query class using the current class as primary query
+     */
+    public function useAdapterPortStatusQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinAdapterPortStatus($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'AdapterPortStatus', 'PortStatusQuery');
     }
 
     /**

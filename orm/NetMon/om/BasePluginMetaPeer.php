@@ -2,59 +2,56 @@
 
 
 /**
- * Base static class for performing query and update operations on the 'Threshold' table.
+ * Base static class for performing query and update operations on the 'PluginMeta' table.
  *
  *
  *
  * @package propel.generator.NetMon.om
  */
-abstract class BaseThresholdPeer
+abstract class BasePluginMetaPeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'NetMon';
 
     /** the table name for this class */
-    const TABLE_NAME = 'Threshold';
+    const TABLE_NAME = 'PluginMeta';
 
     /** the related Propel class for this table */
-    const OM_CLASS = 'Threshold';
+    const OM_CLASS = 'PluginMeta';
 
     /** the related TableMap class for this table */
-    const TM_CLASS = 'ThresholdTableMap';
+    const TM_CLASS = 'PluginMetaTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 4;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 4;
 
-    /** the column name for the ThresholdId field */
-    const THRESHOLDID = 'Threshold.ThresholdId';
+    /** the column name for the PluginMetaId field */
+    const PLUGINMETAID = 'PluginMeta.PluginMetaId';
 
     /** the column name for the PluginId field */
-    const PLUGINID = 'Threshold.PluginId';
+    const PLUGINID = 'PluginMeta.PluginId';
 
-    /** the column name for the MonitorId field */
-    const MONITORID = 'Threshold.MonitorId';
-
-    /** the column name for the GreaterThan field */
-    const GREATERTHAN = 'Threshold.GreaterThan';
+    /** the column name for the Key field */
+    const KEY = 'PluginMeta.Key';
 
     /** the column name for the Value field */
-    const VALUE = 'Threshold.Value';
+    const VALUE = 'PluginMeta.Value';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
 
     /**
-     * An identiy map to hold any loaded instances of Threshold objects.
+     * An identiy map to hold any loaded instances of PluginMeta objects.
      * This must be public so that other peer classes can access this when hydrating from JOIN
      * queries.
-     * @var        array Threshold[]
+     * @var        array PluginMeta[]
      */
     public static $instances = array();
 
@@ -63,30 +60,30 @@ abstract class BaseThresholdPeer
      * holds an array of fieldnames
      *
      * first dimension keys are the type constants
-     * e.g. ThresholdPeer::$fieldNames[ThresholdPeer::TYPE_PHPNAME][0] = 'Id'
+     * e.g. PluginMetaPeer::$fieldNames[PluginMetaPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Thresholdid', 'Pluginid', 'Monitorid', 'Greaterthan', 'Value', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('thresholdid', 'pluginid', 'monitorid', 'greaterthan', 'value', ),
-        BasePeer::TYPE_COLNAME => array (ThresholdPeer::THRESHOLDID, ThresholdPeer::PLUGINID, ThresholdPeer::MONITORID, ThresholdPeer::GREATERTHAN, ThresholdPeer::VALUE, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('THRESHOLDID', 'PLUGINID', 'MONITORID', 'GREATERTHAN', 'VALUE', ),
-        BasePeer::TYPE_FIELDNAME => array ('ThresholdId', 'PluginId', 'MonitorId', 'GreaterThan', 'Value', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
+        BasePeer::TYPE_PHPNAME => array ('Pluginmetaid', 'Pluginid', 'Key', 'Value', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('pluginmetaid', 'pluginid', 'key', 'value', ),
+        BasePeer::TYPE_COLNAME => array (PluginMetaPeer::PLUGINMETAID, PluginMetaPeer::PLUGINID, PluginMetaPeer::KEY, PluginMetaPeer::VALUE, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('PLUGINMETAID', 'PLUGINID', 'KEY', 'VALUE', ),
+        BasePeer::TYPE_FIELDNAME => array ('PluginMetaId', 'PluginId', 'Key', 'Value', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
     /**
      * holds an array of keys for quick access to the fieldnames array
      *
      * first dimension keys are the type constants
-     * e.g. ThresholdPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
+     * e.g. PluginMetaPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Thresholdid' => 0, 'Pluginid' => 1, 'Monitorid' => 2, 'Greaterthan' => 3, 'Value' => 4, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('thresholdid' => 0, 'pluginid' => 1, 'monitorid' => 2, 'greaterthan' => 3, 'value' => 4, ),
-        BasePeer::TYPE_COLNAME => array (ThresholdPeer::THRESHOLDID => 0, ThresholdPeer::PLUGINID => 1, ThresholdPeer::MONITORID => 2, ThresholdPeer::GREATERTHAN => 3, ThresholdPeer::VALUE => 4, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('THRESHOLDID' => 0, 'PLUGINID' => 1, 'MONITORID' => 2, 'GREATERTHAN' => 3, 'VALUE' => 4, ),
-        BasePeer::TYPE_FIELDNAME => array ('ThresholdId' => 0, 'PluginId' => 1, 'MonitorId' => 2, 'GreaterThan' => 3, 'Value' => 4, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
+        BasePeer::TYPE_PHPNAME => array ('Pluginmetaid' => 0, 'Pluginid' => 1, 'Key' => 2, 'Value' => 3, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('pluginmetaid' => 0, 'pluginid' => 1, 'key' => 2, 'value' => 3, ),
+        BasePeer::TYPE_COLNAME => array (PluginMetaPeer::PLUGINMETAID => 0, PluginMetaPeer::PLUGINID => 1, PluginMetaPeer::KEY => 2, PluginMetaPeer::VALUE => 3, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('PLUGINMETAID' => 0, 'PLUGINID' => 1, 'KEY' => 2, 'VALUE' => 3, ),
+        BasePeer::TYPE_FIELDNAME => array ('PluginMetaId' => 0, 'PluginId' => 1, 'Key' => 2, 'Value' => 3, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
     /**
@@ -101,10 +98,10 @@ abstract class BaseThresholdPeer
      */
     public static function translateFieldName($name, $fromType, $toType)
     {
-        $toNames = ThresholdPeer::getFieldNames($toType);
-        $key = isset(ThresholdPeer::$fieldKeys[$fromType][$name]) ? ThresholdPeer::$fieldKeys[$fromType][$name] : null;
+        $toNames = PluginMetaPeer::getFieldNames($toType);
+        $key = isset(PluginMetaPeer::$fieldKeys[$fromType][$name]) ? PluginMetaPeer::$fieldKeys[$fromType][$name] : null;
         if ($key === null) {
-            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(ThresholdPeer::$fieldKeys[$fromType], true));
+            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(PluginMetaPeer::$fieldKeys[$fromType], true));
         }
 
         return $toNames[$key];
@@ -121,11 +118,11 @@ abstract class BaseThresholdPeer
      */
     public static function getFieldNames($type = BasePeer::TYPE_PHPNAME)
     {
-        if (!array_key_exists($type, ThresholdPeer::$fieldNames)) {
+        if (!array_key_exists($type, PluginMetaPeer::$fieldNames)) {
             throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . $type . ' was given.');
         }
 
-        return ThresholdPeer::$fieldNames[$type];
+        return PluginMetaPeer::$fieldNames[$type];
     }
 
     /**
@@ -137,12 +134,12 @@ abstract class BaseThresholdPeer
      *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. ThresholdPeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. PluginMetaPeer::COLUMN_NAME).
      * @return string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(ThresholdPeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(PluginMetaPeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -160,16 +157,14 @@ abstract class BaseThresholdPeer
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(ThresholdPeer::THRESHOLDID);
-            $criteria->addSelectColumn(ThresholdPeer::PLUGINID);
-            $criteria->addSelectColumn(ThresholdPeer::MONITORID);
-            $criteria->addSelectColumn(ThresholdPeer::GREATERTHAN);
-            $criteria->addSelectColumn(ThresholdPeer::VALUE);
+            $criteria->addSelectColumn(PluginMetaPeer::PLUGINMETAID);
+            $criteria->addSelectColumn(PluginMetaPeer::PLUGINID);
+            $criteria->addSelectColumn(PluginMetaPeer::KEY);
+            $criteria->addSelectColumn(PluginMetaPeer::VALUE);
         } else {
-            $criteria->addSelectColumn($alias . '.ThresholdId');
+            $criteria->addSelectColumn($alias . '.PluginMetaId');
             $criteria->addSelectColumn($alias . '.PluginId');
-            $criteria->addSelectColumn($alias . '.MonitorId');
-            $criteria->addSelectColumn($alias . '.GreaterThan');
+            $criteria->addSelectColumn($alias . '.Key');
             $criteria->addSelectColumn($alias . '.Value');
         }
     }
@@ -190,21 +185,21 @@ abstract class BaseThresholdPeer
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(ThresholdPeer::TABLE_NAME);
+        $criteria->setPrimaryTableName(PluginMetaPeer::TABLE_NAME);
 
         if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->setDistinct();
         }
 
         if (!$criteria->hasSelectClause()) {
-            ThresholdPeer::addSelectColumns($criteria);
+            PluginMetaPeer::addSelectColumns($criteria);
         }
 
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-        $criteria->setDbName(ThresholdPeer::DATABASE_NAME); // Set the correct dbName
+        $criteria->setDbName(PluginMetaPeer::DATABASE_NAME); // Set the correct dbName
 
         if ($con === null) {
-            $con = Propel::getConnection(ThresholdPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(PluginMetaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
         // BasePeer returns a PDOStatement
         $stmt = BasePeer::doCount($criteria, $con);
@@ -223,7 +218,7 @@ abstract class BaseThresholdPeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      PropelPDO $con
-     * @return                 Threshold
+     * @return                 PluginMeta
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
@@ -231,7 +226,7 @@ abstract class BaseThresholdPeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = ThresholdPeer::doSelect($critcopy, $con);
+        $objects = PluginMetaPeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -249,7 +244,7 @@ abstract class BaseThresholdPeer
      */
     public static function doSelect(Criteria $criteria, PropelPDO $con = null)
     {
-        return ThresholdPeer::populateObjects(ThresholdPeer::doSelectStmt($criteria, $con));
+        return PluginMetaPeer::populateObjects(PluginMetaPeer::doSelectStmt($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
@@ -267,16 +262,16 @@ abstract class BaseThresholdPeer
     public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ThresholdPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(PluginMetaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         if (!$criteria->hasSelectClause()) {
             $criteria = clone $criteria;
-            ThresholdPeer::addSelectColumns($criteria);
+            PluginMetaPeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
-        $criteria->setDbName(ThresholdPeer::DATABASE_NAME);
+        $criteria->setDbName(PluginMetaPeer::DATABASE_NAME);
 
         // BasePeer returns a PDOStatement
         return BasePeer::doSelect($criteria, $con);
@@ -290,16 +285,16 @@ abstract class BaseThresholdPeer
      * to the cache in order to ensure that the same objects are always returned by doSelect*()
      * and retrieveByPK*() calls.
      *
-     * @param      Threshold $obj A Threshold object.
+     * @param      PluginMeta $obj A PluginMeta object.
      * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
     public static function addInstanceToPool($obj, $key = null)
     {
         if (Propel::isInstancePoolingEnabled()) {
             if ($key === null) {
-                $key = (string) $obj->getThresholdid();
+                $key = (string) $obj->getPluginmetaid();
             } // if key === null
-            ThresholdPeer::$instances[$key] = $obj;
+            PluginMetaPeer::$instances[$key] = $obj;
         }
     }
 
@@ -311,7 +306,7 @@ abstract class BaseThresholdPeer
      * methods in your stub classes -- you may need to explicitly remove objects
      * from the cache in order to prevent returning objects that no longer exist.
      *
-     * @param      mixed $value A Threshold object or a primary key value.
+     * @param      mixed $value A PluginMeta object or a primary key value.
      *
      * @return void
      * @throws PropelException - if the value is invalid.
@@ -319,17 +314,17 @@ abstract class BaseThresholdPeer
     public static function removeInstanceFromPool($value)
     {
         if (Propel::isInstancePoolingEnabled() && $value !== null) {
-            if (is_object($value) && $value instanceof Threshold) {
-                $key = (string) $value->getThresholdid();
+            if (is_object($value) && $value instanceof PluginMeta) {
+                $key = (string) $value->getPluginmetaid();
             } elseif (is_scalar($value)) {
                 // assume we've been passed a primary key
                 $key = (string) $value;
             } else {
-                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or Threshold object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or PluginMeta object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
                 throw $e;
             }
 
-            unset(ThresholdPeer::$instances[$key]);
+            unset(PluginMetaPeer::$instances[$key]);
         }
     } // removeInstanceFromPool()
 
@@ -340,14 +335,14 @@ abstract class BaseThresholdPeer
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
      * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-     * @return   Threshold Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+     * @return   PluginMeta Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
      * @see        getPrimaryKeyHash()
      */
     public static function getInstanceFromPool($key)
     {
         if (Propel::isInstancePoolingEnabled()) {
-            if (isset(ThresholdPeer::$instances[$key])) {
-                return ThresholdPeer::$instances[$key];
+            if (isset(PluginMetaPeer::$instances[$key])) {
+                return PluginMetaPeer::$instances[$key];
             }
         }
 
@@ -363,16 +358,16 @@ abstract class BaseThresholdPeer
     {
       if ($and_clear_all_references)
       {
-        foreach (ThresholdPeer::$instances as $instance)
+        foreach (PluginMetaPeer::$instances as $instance)
         {
           $instance->clearAllReferences(true);
         }
       }
-        ThresholdPeer::$instances = array();
+        PluginMetaPeer::$instances = array();
     }
 
     /**
-     * Method to invalidate the instance pool of all tables related to Threshold
+     * Method to invalidate the instance pool of all tables related to PluginMeta
      * by a foreign key with ON DELETE CASCADE
      */
     public static function clearRelatedInstancePool()
@@ -426,11 +421,11 @@ abstract class BaseThresholdPeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = ThresholdPeer::getOMClass();
+        $cls = PluginMetaPeer::getOMClass();
         // populate the object(s)
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key = ThresholdPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj = ThresholdPeer::getInstanceFromPool($key))) {
+            $key = PluginMetaPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj = PluginMetaPeer::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
@@ -439,7 +434,7 @@ abstract class BaseThresholdPeer
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                ThresholdPeer::addInstanceToPool($obj, $key);
+                PluginMetaPeer::addInstanceToPool($obj, $key);
             } // if key exists
         }
         $stmt->closeCursor();
@@ -453,21 +448,21 @@ abstract class BaseThresholdPeer
      * @param      int $startcol The 0-based offset for reading from the resultset row.
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
-     * @return array (Threshold object, last column rank)
+     * @return array (PluginMeta object, last column rank)
      */
     public static function populateObject($row, $startcol = 0)
     {
-        $key = ThresholdPeer::getPrimaryKeyHashFromRow($row, $startcol);
-        if (null !== ($obj = ThresholdPeer::getInstanceFromPool($key))) {
+        $key = PluginMetaPeer::getPrimaryKeyHashFromRow($row, $startcol);
+        if (null !== ($obj = PluginMetaPeer::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $startcol, true); // rehydrate
-            $col = $startcol + ThresholdPeer::NUM_HYDRATE_COLUMNS;
+            $col = $startcol + PluginMetaPeer::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = ThresholdPeer::OM_CLASS;
+            $cls = PluginMetaPeer::OM_CLASS;
             $obj = new $cls();
             $col = $obj->hydrate($row, $startcol);
-            ThresholdPeer::addInstanceToPool($obj, $key);
+            PluginMetaPeer::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -491,26 +486,26 @@ abstract class BaseThresholdPeer
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(ThresholdPeer::TABLE_NAME);
+        $criteria->setPrimaryTableName(PluginMetaPeer::TABLE_NAME);
 
         if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->setDistinct();
         }
 
         if (!$criteria->hasSelectClause()) {
-            ThresholdPeer::addSelectColumns($criteria);
+            PluginMetaPeer::addSelectColumns($criteria);
         }
 
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 
         // Set the correct dbName
-        $criteria->setDbName(ThresholdPeer::DATABASE_NAME);
+        $criteria->setDbName(PluginMetaPeer::DATABASE_NAME);
 
         if ($con === null) {
-            $con = Propel::getConnection(ThresholdPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(PluginMetaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(ThresholdPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
+        $criteria->addJoin(PluginMetaPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -526,62 +521,11 @@ abstract class BaseThresholdPeer
 
 
     /**
-     * Returns the number of rows matching criteria, joining the related Monitor table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinMonitor(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(ThresholdPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            ThresholdPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-        // Set the correct dbName
-        $criteria->setDbName(ThresholdPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(ThresholdPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(ThresholdPeer::MONITORID, MonitorPeer::MONITORID, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
-    }
-
-
-    /**
-     * Selects a collection of Threshold objects pre-filled with their Plugin objects.
+     * Selects a collection of PluginMeta objects pre-filled with their Plugin objects.
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Threshold objects.
+     * @return array           Array of PluginMeta objects.
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
@@ -591,31 +535,31 @@ abstract class BaseThresholdPeer
 
         // Set the correct dbName if it has not been overridden
         if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(ThresholdPeer::DATABASE_NAME);
+            $criteria->setDbName(PluginMetaPeer::DATABASE_NAME);
         }
 
-        ThresholdPeer::addSelectColumns($criteria);
-        $startcol = ThresholdPeer::NUM_HYDRATE_COLUMNS;
+        PluginMetaPeer::addSelectColumns($criteria);
+        $startcol = PluginMetaPeer::NUM_HYDRATE_COLUMNS;
         PluginPeer::addSelectColumns($criteria);
 
-        $criteria->addJoin(ThresholdPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
+        $criteria->addJoin(PluginMetaPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
 
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = ThresholdPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = ThresholdPeer::getInstanceFromPool($key1))) {
+            $key1 = PluginMetaPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = PluginMetaPeer::getInstanceFromPool($key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj1->hydrate($row, 0, true); // rehydrate
             } else {
 
-                $cls = ThresholdPeer::getOMClass();
+                $cls = PluginMetaPeer::getOMClass();
 
                 $obj1 = new $cls();
                 $obj1->hydrate($row);
-                ThresholdPeer::addInstanceToPool($obj1, $key1);
+                PluginMetaPeer::addInstanceToPool($obj1, $key1);
             } // if $obj1 already loaded
 
             $key2 = PluginPeer::getPrimaryKeyHashFromRow($row, $startcol);
@@ -630,75 +574,8 @@ abstract class BaseThresholdPeer
                     PluginPeer::addInstanceToPool($obj2, $key2);
                 } // if obj2 already loaded
 
-                // Add the $obj1 (Threshold) to $obj2 (Plugin)
-                $obj2->addPluginThreshold($obj1);
-
-            } // if joined row was not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Selects a collection of Threshold objects pre-filled with their Monitor objects.
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Threshold objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinMonitor(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(ThresholdPeer::DATABASE_NAME);
-        }
-
-        ThresholdPeer::addSelectColumns($criteria);
-        $startcol = ThresholdPeer::NUM_HYDRATE_COLUMNS;
-        MonitorPeer::addSelectColumns($criteria);
-
-        $criteria->addJoin(ThresholdPeer::MONITORID, MonitorPeer::MONITORID, $join_behavior);
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = ThresholdPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = ThresholdPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-
-                $cls = ThresholdPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                ThresholdPeer::addInstanceToPool($obj1, $key1);
-            } // if $obj1 already loaded
-
-            $key2 = MonitorPeer::getPrimaryKeyHashFromRow($row, $startcol);
-            if ($key2 !== null) {
-                $obj2 = MonitorPeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = MonitorPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol);
-                    MonitorPeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 already loaded
-
-                // Add the $obj1 (Threshold) to $obj2 (Monitor)
-                $obj2->addMonitorThreshold($obj1);
+                // Add the $obj1 (PluginMeta) to $obj2 (Plugin)
+                $obj2->addPluginPluginMeta($obj1);
 
             } // if joined row was not null
 
@@ -727,28 +604,26 @@ abstract class BaseThresholdPeer
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(ThresholdPeer::TABLE_NAME);
+        $criteria->setPrimaryTableName(PluginMetaPeer::TABLE_NAME);
 
         if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->setDistinct();
         }
 
         if (!$criteria->hasSelectClause()) {
-            ThresholdPeer::addSelectColumns($criteria);
+            PluginMetaPeer::addSelectColumns($criteria);
         }
 
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 
         // Set the correct dbName
-        $criteria->setDbName(ThresholdPeer::DATABASE_NAME);
+        $criteria->setDbName(PluginMetaPeer::DATABASE_NAME);
 
         if ($con === null) {
-            $con = Propel::getConnection(ThresholdPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(PluginMetaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(ThresholdPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
-
-        $criteria->addJoin(ThresholdPeer::MONITORID, MonitorPeer::MONITORID, $join_behavior);
+        $criteria->addJoin(PluginMetaPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -763,12 +638,12 @@ abstract class BaseThresholdPeer
     }
 
     /**
-     * Selects a collection of Threshold objects pre-filled with all related objects.
+     * Selects a collection of PluginMeta objects pre-filled with all related objects.
      *
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Threshold objects.
+     * @return array           Array of PluginMeta objects.
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
@@ -778,37 +653,32 @@ abstract class BaseThresholdPeer
 
         // Set the correct dbName if it has not been overridden
         if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(ThresholdPeer::DATABASE_NAME);
+            $criteria->setDbName(PluginMetaPeer::DATABASE_NAME);
         }
 
-        ThresholdPeer::addSelectColumns($criteria);
-        $startcol2 = ThresholdPeer::NUM_HYDRATE_COLUMNS;
+        PluginMetaPeer::addSelectColumns($criteria);
+        $startcol2 = PluginMetaPeer::NUM_HYDRATE_COLUMNS;
 
         PluginPeer::addSelectColumns($criteria);
         $startcol3 = $startcol2 + PluginPeer::NUM_HYDRATE_COLUMNS;
 
-        MonitorPeer::addSelectColumns($criteria);
-        $startcol4 = $startcol3 + MonitorPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(ThresholdPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
-
-        $criteria->addJoin(ThresholdPeer::MONITORID, MonitorPeer::MONITORID, $join_behavior);
+        $criteria->addJoin(PluginMetaPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
 
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = ThresholdPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = ThresholdPeer::getInstanceFromPool($key1))) {
+            $key1 = PluginMetaPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = PluginMetaPeer::getInstanceFromPool($key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj1->hydrate($row, 0, true); // rehydrate
             } else {
-                $cls = ThresholdPeer::getOMClass();
+                $cls = PluginMetaPeer::getOMClass();
 
                 $obj1 = new $cls();
                 $obj1->hydrate($row);
-                ThresholdPeer::addInstanceToPool($obj1, $key1);
+                PluginMetaPeer::addInstanceToPool($obj1, $key1);
             } // if obj1 already loaded
 
             // Add objects for joined Plugin rows
@@ -825,277 +695,9 @@ abstract class BaseThresholdPeer
                     PluginPeer::addInstanceToPool($obj2, $key2);
                 } // if obj2 loaded
 
-                // Add the $obj1 (Threshold) to the collection in $obj2 (Plugin)
-                $obj2->addPluginThreshold($obj1);
+                // Add the $obj1 (PluginMeta) to the collection in $obj2 (Plugin)
+                $obj2->addPluginPluginMeta($obj1);
             } // if joined row not null
-
-            // Add objects for joined Monitor rows
-
-            $key3 = MonitorPeer::getPrimaryKeyHashFromRow($row, $startcol3);
-            if ($key3 !== null) {
-                $obj3 = MonitorPeer::getInstanceFromPool($key3);
-                if (!$obj3) {
-
-                    $cls = MonitorPeer::getOMClass();
-
-                    $obj3 = new $cls();
-                    $obj3->hydrate($row, $startcol3);
-                    MonitorPeer::addInstanceToPool($obj3, $key3);
-                } // if obj3 loaded
-
-                // Add the $obj1 (Threshold) to the collection in $obj3 (Monitor)
-                $obj3->addMonitorThreshold($obj1);
-            } // if joined row not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining the related Plugin table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinAllExceptPlugin(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(ThresholdPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            ThresholdPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
-
-        // Set the correct dbName
-        $criteria->setDbName(ThresholdPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(ThresholdPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(ThresholdPeer::MONITORID, MonitorPeer::MONITORID, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining the related Monitor table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinAllExceptMonitor(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(ThresholdPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            ThresholdPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
-
-        // Set the correct dbName
-        $criteria->setDbName(ThresholdPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(ThresholdPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(ThresholdPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
-    }
-
-
-    /**
-     * Selects a collection of Threshold objects pre-filled with all related objects except Plugin.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Threshold objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAllExceptPlugin(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(ThresholdPeer::DATABASE_NAME);
-        }
-
-        ThresholdPeer::addSelectColumns($criteria);
-        $startcol2 = ThresholdPeer::NUM_HYDRATE_COLUMNS;
-
-        MonitorPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + MonitorPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(ThresholdPeer::MONITORID, MonitorPeer::MONITORID, $join_behavior);
-
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = ThresholdPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = ThresholdPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = ThresholdPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                ThresholdPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-                // Add objects for joined Monitor rows
-
-                $key2 = MonitorPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = MonitorPeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
-
-                        $cls = MonitorPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    MonitorPeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
-
-                // Add the $obj1 (Threshold) to the collection in $obj2 (Monitor)
-                $obj2->addMonitorThreshold($obj1);
-
-            } // if joined row is not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Selects a collection of Threshold objects pre-filled with all related objects except Monitor.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Threshold objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAllExceptMonitor(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(ThresholdPeer::DATABASE_NAME);
-        }
-
-        ThresholdPeer::addSelectColumns($criteria);
-        $startcol2 = ThresholdPeer::NUM_HYDRATE_COLUMNS;
-
-        PluginPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + PluginPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(ThresholdPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
-
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = ThresholdPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = ThresholdPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = ThresholdPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                ThresholdPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-                // Add objects for joined Plugin rows
-
-                $key2 = PluginPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = PluginPeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
-
-                        $cls = PluginPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    PluginPeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
-
-                // Add the $obj1 (Threshold) to the collection in $obj2 (Plugin)
-                $obj2->addPluginThreshold($obj1);
-
-            } // if joined row is not null
 
             $results[] = $obj1;
         }
@@ -1113,7 +715,7 @@ abstract class BaseThresholdPeer
      */
     public static function getTableMap()
     {
-        return Propel::getDatabaseMap(ThresholdPeer::DATABASE_NAME)->getTable(ThresholdPeer::TABLE_NAME);
+        return Propel::getDatabaseMap(PluginMetaPeer::DATABASE_NAME)->getTable(PluginMetaPeer::TABLE_NAME);
     }
 
     /**
@@ -1121,9 +723,9 @@ abstract class BaseThresholdPeer
      */
     public static function buildTableMap()
     {
-      $dbMap = Propel::getDatabaseMap(BaseThresholdPeer::DATABASE_NAME);
-      if (!$dbMap->hasTable(BaseThresholdPeer::TABLE_NAME)) {
-        $dbMap->addTableObject(new ThresholdTableMap());
+      $dbMap = Propel::getDatabaseMap(BasePluginMetaPeer::DATABASE_NAME);
+      if (!$dbMap->hasTable(BasePluginMetaPeer::TABLE_NAME)) {
+        $dbMap->addTableObject(new PluginMetaTableMap());
       }
     }
 
@@ -1135,13 +737,13 @@ abstract class BaseThresholdPeer
      */
     public static function getOMClass()
     {
-        return ThresholdPeer::OM_CLASS;
+        return PluginMetaPeer::OM_CLASS;
     }
 
     /**
-     * Performs an INSERT on the database, given a Threshold or Criteria object.
+     * Performs an INSERT on the database, given a PluginMeta or Criteria object.
      *
-     * @param      mixed $values Criteria or Threshold object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or PluginMeta object containing data that is used to create the INSERT statement.
      * @param      PropelPDO $con the PropelPDO connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -1150,22 +752,22 @@ abstract class BaseThresholdPeer
     public static function doInsert($values, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ThresholdPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(PluginMetaPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from Threshold object
+            $criteria = $values->buildCriteria(); // build Criteria from PluginMeta object
         }
 
-        if ($criteria->containsKey(ThresholdPeer::THRESHOLDID) && $criteria->keyContainsValue(ThresholdPeer::THRESHOLDID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ThresholdPeer::THRESHOLDID.')');
+        if ($criteria->containsKey(PluginMetaPeer::PLUGINMETAID) && $criteria->keyContainsValue(PluginMetaPeer::PLUGINMETAID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.PluginMetaPeer::PLUGINMETAID.')');
         }
 
 
         // Set the correct dbName
-        $criteria->setDbName(ThresholdPeer::DATABASE_NAME);
+        $criteria->setDbName(PluginMetaPeer::DATABASE_NAME);
 
         try {
             // use transaction because $criteria could contain info
@@ -1182,9 +784,9 @@ abstract class BaseThresholdPeer
     }
 
     /**
-     * Performs an UPDATE on the database, given a Threshold or Criteria object.
+     * Performs an UPDATE on the database, given a PluginMeta or Criteria object.
      *
-     * @param      mixed $values Criteria or Threshold object containing data that is used to create the UPDATE statement.
+     * @param      mixed $values Criteria or PluginMeta object containing data that is used to create the UPDATE statement.
      * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
      * @return int             The number of affected rows (if supported by underlying database driver).
      * @throws PropelException Any exceptions caught during processing will be
@@ -1193,35 +795,35 @@ abstract class BaseThresholdPeer
     public static function doUpdate($values, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ThresholdPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(PluginMetaPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
-        $selectCriteria = new Criteria(ThresholdPeer::DATABASE_NAME);
+        $selectCriteria = new Criteria(PluginMetaPeer::DATABASE_NAME);
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(ThresholdPeer::THRESHOLDID);
-            $value = $criteria->remove(ThresholdPeer::THRESHOLDID);
+            $comparison = $criteria->getComparison(PluginMetaPeer::PLUGINMETAID);
+            $value = $criteria->remove(PluginMetaPeer::PLUGINMETAID);
             if ($value) {
-                $selectCriteria->add(ThresholdPeer::THRESHOLDID, $value, $comparison);
+                $selectCriteria->add(PluginMetaPeer::PLUGINMETAID, $value, $comparison);
             } else {
-                $selectCriteria->setPrimaryTableName(ThresholdPeer::TABLE_NAME);
+                $selectCriteria->setPrimaryTableName(PluginMetaPeer::TABLE_NAME);
             }
 
-        } else { // $values is Threshold object
+        } else { // $values is PluginMeta object
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
         }
 
         // set the correct dbName
-        $criteria->setDbName(ThresholdPeer::DATABASE_NAME);
+        $criteria->setDbName(PluginMetaPeer::DATABASE_NAME);
 
         return BasePeer::doUpdate($selectCriteria, $criteria, $con);
     }
 
     /**
-     * Deletes all rows from the Threshold table.
+     * Deletes all rows from the PluginMeta table.
      *
      * @param      PropelPDO $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).
@@ -1230,19 +832,19 @@ abstract class BaseThresholdPeer
     public static function doDeleteAll(PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ThresholdPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(PluginMetaPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
         $affectedRows = 0; // initialize var to track total num of affected rows
         try {
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->beginTransaction();
-            $affectedRows += BasePeer::doDeleteAll(ThresholdPeer::TABLE_NAME, $con, ThresholdPeer::DATABASE_NAME);
+            $affectedRows += BasePeer::doDeleteAll(PluginMetaPeer::TABLE_NAME, $con, PluginMetaPeer::DATABASE_NAME);
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            ThresholdPeer::clearInstancePool();
-            ThresholdPeer::clearRelatedInstancePool();
+            PluginMetaPeer::clearInstancePool();
+            PluginMetaPeer::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -1253,9 +855,9 @@ abstract class BaseThresholdPeer
     }
 
     /**
-     * Performs a DELETE on the database, given a Threshold or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a PluginMeta or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or Threshold object or primary key or array of primary keys
+     * @param      mixed $values Criteria or PluginMeta object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      PropelPDO $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -1266,32 +868,32 @@ abstract class BaseThresholdPeer
      public static function doDelete($values, PropelPDO $con = null)
      {
         if ($con === null) {
-            $con = Propel::getConnection(ThresholdPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(PluginMetaPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         if ($values instanceof Criteria) {
             // invalidate the cache for all objects of this type, since we have no
             // way of knowing (without running a query) what objects should be invalidated
             // from the cache based on this Criteria.
-            ThresholdPeer::clearInstancePool();
+            PluginMetaPeer::clearInstancePool();
             // rename for clarity
             $criteria = clone $values;
-        } elseif ($values instanceof Threshold) { // it's a model object
+        } elseif ($values instanceof PluginMeta) { // it's a model object
             // invalidate the cache for this single object
-            ThresholdPeer::removeInstanceFromPool($values);
+            PluginMetaPeer::removeInstanceFromPool($values);
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(ThresholdPeer::DATABASE_NAME);
-            $criteria->add(ThresholdPeer::THRESHOLDID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(PluginMetaPeer::DATABASE_NAME);
+            $criteria->add(PluginMetaPeer::PLUGINMETAID, (array) $values, Criteria::IN);
             // invalidate the cache for this object(s)
             foreach ((array) $values as $singleval) {
-                ThresholdPeer::removeInstanceFromPool($singleval);
+                PluginMetaPeer::removeInstanceFromPool($singleval);
             }
         }
 
         // Set the correct dbName
-        $criteria->setDbName(ThresholdPeer::DATABASE_NAME);
+        $criteria->setDbName(PluginMetaPeer::DATABASE_NAME);
 
         $affectedRows = 0; // initialize var to track total num of affected rows
 
@@ -1301,7 +903,7 @@ abstract class BaseThresholdPeer
             $con->beginTransaction();
 
             $affectedRows += BasePeer::doDelete($criteria, $con);
-            ThresholdPeer::clearRelatedInstancePool();
+            PluginMetaPeer::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -1312,13 +914,13 @@ abstract class BaseThresholdPeer
     }
 
     /**
-     * Validates all modified columns of given Threshold object.
+     * Validates all modified columns of given PluginMeta object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      Threshold $obj The object to validate.
+     * @param      PluginMeta $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return mixed TRUE if all columns are valid or the error message of the first invalid column.
@@ -1328,8 +930,8 @@ abstract class BaseThresholdPeer
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(ThresholdPeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(ThresholdPeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(PluginMetaPeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(PluginMetaPeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -1345,7 +947,7 @@ abstract class BaseThresholdPeer
 
         }
 
-        return BasePeer::doValidate(ThresholdPeer::DATABASE_NAME, ThresholdPeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(PluginMetaPeer::DATABASE_NAME, PluginMetaPeer::TABLE_NAME, $columns);
     }
 
     /**
@@ -1353,23 +955,23 @@ abstract class BaseThresholdPeer
      *
      * @param      int $pk the primary key.
      * @param      PropelPDO $con the connection to use
-     * @return Threshold
+     * @return PluginMeta
      */
     public static function retrieveByPK($pk, PropelPDO $con = null)
     {
 
-        if (null !== ($obj = ThresholdPeer::getInstanceFromPool((string) $pk))) {
+        if (null !== ($obj = PluginMetaPeer::getInstanceFromPool((string) $pk))) {
             return $obj;
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(ThresholdPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(PluginMetaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria = new Criteria(ThresholdPeer::DATABASE_NAME);
-        $criteria->add(ThresholdPeer::THRESHOLDID, $pk);
+        $criteria = new Criteria(PluginMetaPeer::DATABASE_NAME);
+        $criteria->add(PluginMetaPeer::PLUGINMETAID, $pk);
 
-        $v = ThresholdPeer::doSelect($criteria, $con);
+        $v = PluginMetaPeer::doSelect($criteria, $con);
 
         return !empty($v) > 0 ? $v[0] : null;
     }
@@ -1379,31 +981,31 @@ abstract class BaseThresholdPeer
      *
      * @param      array $pks List of primary keys
      * @param      PropelPDO $con the connection to use
-     * @return Threshold[]
+     * @return PluginMeta[]
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
     public static function retrieveByPKs($pks, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(ThresholdPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(PluginMetaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         $objs = null;
         if (empty($pks)) {
             $objs = array();
         } else {
-            $criteria = new Criteria(ThresholdPeer::DATABASE_NAME);
-            $criteria->add(ThresholdPeer::THRESHOLDID, $pks, Criteria::IN);
-            $objs = ThresholdPeer::doSelect($criteria, $con);
+            $criteria = new Criteria(PluginMetaPeer::DATABASE_NAME);
+            $criteria->add(PluginMetaPeer::PLUGINMETAID, $pks, Criteria::IN);
+            $objs = PluginMetaPeer::doSelect($criteria, $con);
         }
 
         return $objs;
     }
 
-} // BaseThresholdPeer
+} // BasePluginMetaPeer
 
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-BaseThresholdPeer::buildTableMap();
+BasePluginMetaPeer::buildTableMap();
 

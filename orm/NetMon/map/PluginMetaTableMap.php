@@ -3,7 +3,7 @@
 
 
 /**
- * This class defines the structure of the 'Poll' table.
+ * This class defines the structure of the 'PluginMeta' table.
  *
  *
  *
@@ -14,13 +14,13 @@
  *
  * @package    propel.generator.NetMon.map
  */
-class PollTableMap extends TableMap
+class PluginMetaTableMap extends TableMap
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'NetMon.map.PollTableMap';
+    const CLASS_NAME = 'NetMon.map.PluginMetaTableMap';
 
     /**
      * Initialize the table attributes, columns and validators
@@ -32,18 +32,16 @@ class PollTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('Poll');
-        $this->setPhpName('Poll');
-        $this->setClassname('Poll');
+        $this->setName('PluginMeta');
+        $this->setPhpName('PluginMeta');
+        $this->setClassname('PluginMeta');
         $this->setPackage('NetMon');
         $this->setUseIdGenerator(true);
         // columns
-        $this->addPrimaryKey('PollId', 'Pollid', 'INTEGER', true, null, null);
-        $this->addForeignKey('DeviceId', 'Deviceid', 'INTEGER', 'Device', 'DeviceId', true, null, null);
-        $this->addForeignKey('SnmpPropertyId', 'Snmppropertyid', 'INTEGER', 'SnmpProperty', 'SnmpPropertyId', true, null, null);
+        $this->addPrimaryKey('PluginMetaId', 'Pluginmetaid', 'INTEGER', true, null, null);
         $this->addForeignKey('PluginId', 'Pluginid', 'INTEGER', 'Plugin', 'PluginId', true, null, null);
-        $this->addColumn('Timestamp', 'Timestamp', 'TIMESTAMP', true, null, null);
-        $this->addColumn('Value', 'Value', 'VARCHAR', true, 50, null);
+        $this->addColumn('Key', 'Key', 'VARCHAR', true, 32, null);
+        $this->addColumn('Value', 'Value', 'LONGVARCHAR', false, null, null);
         // validators
     } // initialize()
 
@@ -52,9 +50,7 @@ class PollTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Device', 'Device', RelationMap::MANY_TO_ONE, array('DeviceId' => 'DeviceId', ), null, null);
-        $this->addRelation('SnmpProperty', 'SnmpProperty', RelationMap::MANY_TO_ONE, array('SnmpPropertyId' => 'SnmpPropertyId', ), null, null);
         $this->addRelation('Plugin', 'Plugin', RelationMap::MANY_TO_ONE, array('PluginId' => 'PluginId', ), null, null);
     } // buildRelations()
 
-} // PollTableMap
+} // PluginMetaTableMap

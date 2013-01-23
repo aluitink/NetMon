@@ -40,10 +40,6 @@
  * @method SyslogQuery rightJoinDevice($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Device relation
  * @method SyslogQuery innerJoinDevice($relationAlias = null) Adds a INNER JOIN clause to the query using the Device relation
  *
- * @method SyslogQuery leftJoinSyslogThreshold($relationAlias = null) Adds a LEFT JOIN clause to the query using the SyslogThreshold relation
- * @method SyslogQuery rightJoinSyslogThreshold($relationAlias = null) Adds a RIGHT JOIN clause to the query using the SyslogThreshold relation
- * @method SyslogQuery innerJoinSyslogThreshold($relationAlias = null) Adds a INNER JOIN clause to the query using the SyslogThreshold relation
- *
  * @method Syslog findOne(PropelPDO $con = null) Return the first Syslog matching the query
  * @method Syslog findOneOrCreate(PropelPDO $con = null) Return the first Syslog matching the query, or a new Syslog object populated from the query conditions when no match is found
  *
@@ -766,80 +762,6 @@ abstract class BaseSyslogQuery extends ModelCriteria
         return $this
             ->joinDevice($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Device', 'DeviceQuery');
-    }
-
-    /**
-     * Filter the query by a related Threshold object
-     *
-     * @param   Threshold|PropelObjectCollection $threshold  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 SyslogQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterBySyslogThreshold($threshold, $comparison = null)
-    {
-        if ($threshold instanceof Threshold) {
-            return $this
-                ->addUsingAlias(SyslogPeer::SYSLOGID, $threshold->getSyslogid(), $comparison);
-        } elseif ($threshold instanceof PropelObjectCollection) {
-            return $this
-                ->useSyslogThresholdQuery()
-                ->filterByPrimaryKeys($threshold->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterBySyslogThreshold() only accepts arguments of type Threshold or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the SyslogThreshold relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return SyslogQuery The current query, for fluid interface
-     */
-    public function joinSyslogThreshold($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('SyslogThreshold');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'SyslogThreshold');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the SyslogThreshold relation Threshold object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   ThresholdQuery A secondary query class using the current class as primary query
-     */
-    public function useSyslogThresholdQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinSyslogThreshold($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'SyslogThreshold', 'ThresholdQuery');
     }
 
     /**

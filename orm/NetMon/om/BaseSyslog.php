@@ -107,12 +107,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
     protected $aDevice;
 
     /**
-     * @var        PropelObjectCollection|Threshold[] Collection to store aggregation of Threshold objects.
-     */
-    protected $collSyslogThresholds;
-    protected $collSyslogThresholdsPartial;
-
-    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -131,12 +125,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
      * @var        boolean
      */
     protected $alreadyInClearAllReferencesDeep = false;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $syslogThresholdsScheduledForDeletion = null;
 
     /**
      * Get the [syslogid] column value.
@@ -664,8 +652,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
         if ($deep) {  // also de-associate any related objects?
 
             $this->aDevice = null;
-            $this->collSyslogThresholds = null;
-
         } // if (deep)
     }
 
@@ -800,23 +786,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
                 }
                 $affectedRows += 1;
                 $this->resetModified();
-            }
-
-            if ($this->syslogThresholdsScheduledForDeletion !== null) {
-                if (!$this->syslogThresholdsScheduledForDeletion->isEmpty()) {
-                    ThresholdQuery::create()
-                        ->filterByPrimaryKeys($this->syslogThresholdsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->syslogThresholdsScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collSyslogThresholds !== null) {
-                foreach ($this->collSyslogThresholds as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
             }
 
             $this->alreadyInSave = false;
@@ -1039,14 +1008,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
             }
 
 
-                if ($this->collSyslogThresholds !== null) {
-                    foreach ($this->collSyslogThresholds as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
 
             $this->alreadyInValidation = false;
         }
@@ -1163,9 +1124,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
         if ($includeForeignObjects) {
             if (null !== $this->aDevice) {
                 $result['Device'] = $this->aDevice->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->collSyslogThresholds) {
-                $result['SyslogThresholds'] = $this->collSyslogThresholds->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1378,12 +1336,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
             // store object hash to prevent cycle
             $this->startCopy = true;
 
-            foreach ($this->getSyslogThresholds() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addSyslogThreshold($relObj->copy($deepCopy));
-                }
-            }
-
             //unflag object copy
             $this->startCopy = false;
         } // if ($deepCopy)
@@ -1486,340 +1438,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
         return $this->aDevice;
     }
 
-
-    /**
-     * Initializes a collection based on the name of a relation.
-     * Avoids crafting an 'init[$relationName]s' method name
-     * that wouldn't work when StandardEnglishPluralizer is used.
-     *
-     * @param string $relationName The name of the relation to initialize
-     * @return void
-     */
-    public function initRelation($relationName)
-    {
-        if ('SyslogThreshold' == $relationName) {
-            $this->initSyslogThresholds();
-        }
-    }
-
-    /**
-     * Clears out the collSyslogThresholds collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return Syslog The current object (for fluent API support)
-     * @see        addSyslogThresholds()
-     */
-    public function clearSyslogThresholds()
-    {
-        $this->collSyslogThresholds = null; // important to set this to null since that means it is uninitialized
-        $this->collSyslogThresholdsPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collSyslogThresholds collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialSyslogThresholds($v = true)
-    {
-        $this->collSyslogThresholdsPartial = $v;
-    }
-
-    /**
-     * Initializes the collSyslogThresholds collection.
-     *
-     * By default this just sets the collSyslogThresholds collection to an empty array (like clearcollSyslogThresholds());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initSyslogThresholds($overrideExisting = true)
-    {
-        if (null !== $this->collSyslogThresholds && !$overrideExisting) {
-            return;
-        }
-        $this->collSyslogThresholds = new PropelObjectCollection();
-        $this->collSyslogThresholds->setModel('Threshold');
-    }
-
-    /**
-     * Gets an array of Threshold objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this Syslog is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     * @throws PropelException
-     */
-    public function getSyslogThresholds($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collSyslogThresholdsPartial && !$this->isNew();
-        if (null === $this->collSyslogThresholds || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collSyslogThresholds) {
-                // return empty collection
-                $this->initSyslogThresholds();
-            } else {
-                $collSyslogThresholds = ThresholdQuery::create(null, $criteria)
-                    ->filterBySyslog($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collSyslogThresholdsPartial && count($collSyslogThresholds)) {
-                      $this->initSyslogThresholds(false);
-
-                      foreach($collSyslogThresholds as $obj) {
-                        if (false == $this->collSyslogThresholds->contains($obj)) {
-                          $this->collSyslogThresholds->append($obj);
-                        }
-                      }
-
-                      $this->collSyslogThresholdsPartial = true;
-                    }
-
-                    $collSyslogThresholds->getInternalIterator()->rewind();
-                    return $collSyslogThresholds;
-                }
-
-                if($partial && $this->collSyslogThresholds) {
-                    foreach($this->collSyslogThresholds as $obj) {
-                        if($obj->isNew()) {
-                            $collSyslogThresholds[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collSyslogThresholds = $collSyslogThresholds;
-                $this->collSyslogThresholdsPartial = false;
-            }
-        }
-
-        return $this->collSyslogThresholds;
-    }
-
-    /**
-     * Sets a collection of SyslogThreshold objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $syslogThresholds A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return Syslog The current object (for fluent API support)
-     */
-    public function setSyslogThresholds(PropelCollection $syslogThresholds, PropelPDO $con = null)
-    {
-        $syslogThresholdsToDelete = $this->getSyslogThresholds(new Criteria(), $con)->diff($syslogThresholds);
-
-        $this->syslogThresholdsScheduledForDeletion = unserialize(serialize($syslogThresholdsToDelete));
-
-        foreach ($syslogThresholdsToDelete as $syslogThresholdRemoved) {
-            $syslogThresholdRemoved->setSyslog(null);
-        }
-
-        $this->collSyslogThresholds = null;
-        foreach ($syslogThresholds as $syslogThreshold) {
-            $this->addSyslogThreshold($syslogThreshold);
-        }
-
-        $this->collSyslogThresholds = $syslogThresholds;
-        $this->collSyslogThresholdsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Threshold objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related Threshold objects.
-     * @throws PropelException
-     */
-    public function countSyslogThresholds(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collSyslogThresholdsPartial && !$this->isNew();
-        if (null === $this->collSyslogThresholds || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collSyslogThresholds) {
-                return 0;
-            }
-
-            if($partial && !$criteria) {
-                return count($this->getSyslogThresholds());
-            }
-            $query = ThresholdQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterBySyslog($this)
-                ->count($con);
-        }
-
-        return count($this->collSyslogThresholds);
-    }
-
-    /**
-     * Method called to associate a Threshold object to this object
-     * through the Threshold foreign key attribute.
-     *
-     * @param    Threshold $l Threshold
-     * @return Syslog The current object (for fluent API support)
-     */
-    public function addSyslogThreshold(Threshold $l)
-    {
-        if ($this->collSyslogThresholds === null) {
-            $this->initSyslogThresholds();
-            $this->collSyslogThresholdsPartial = true;
-        }
-        if (!in_array($l, $this->collSyslogThresholds->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddSyslogThreshold($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	SyslogThreshold $syslogThreshold The syslogThreshold object to add.
-     */
-    protected function doAddSyslogThreshold($syslogThreshold)
-    {
-        $this->collSyslogThresholds[]= $syslogThreshold;
-        $syslogThreshold->setSyslog($this);
-    }
-
-    /**
-     * @param	SyslogThreshold $syslogThreshold The syslogThreshold object to remove.
-     * @return Syslog The current object (for fluent API support)
-     */
-    public function removeSyslogThreshold($syslogThreshold)
-    {
-        if ($this->getSyslogThresholds()->contains($syslogThreshold)) {
-            $this->collSyslogThresholds->remove($this->collSyslogThresholds->search($syslogThreshold));
-            if (null === $this->syslogThresholdsScheduledForDeletion) {
-                $this->syslogThresholdsScheduledForDeletion = clone $this->collSyslogThresholds;
-                $this->syslogThresholdsScheduledForDeletion->clear();
-            }
-            $this->syslogThresholdsScheduledForDeletion[]= clone $syslogThreshold;
-            $syslogThreshold->setSyslog(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Syslog is new, it will return
-     * an empty collection; or if this Syslog has previously
-     * been saved, it will retrieve related SyslogThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Syslog.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getSyslogThresholdsJoinDevice($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Device', $join_behavior);
-
-        return $this->getSyslogThresholds($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Syslog is new, it will return
-     * an empty collection; or if this Syslog has previously
-     * been saved, it will retrieve related SyslogThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Syslog.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getSyslogThresholdsJoinPoll($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Poll', $join_behavior);
-
-        return $this->getSyslogThresholds($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Syslog is new, it will return
-     * an empty collection; or if this Syslog has previously
-     * been saved, it will retrieve related SyslogThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Syslog.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getSyslogThresholdsJoinTrap($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Trap', $join_behavior);
-
-        return $this->getSyslogThresholds($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Syslog is new, it will return
-     * an empty collection; or if this Syslog has previously
-     * been saved, it will retrieve related SyslogThresholds from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Syslog.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Threshold[] List of Threshold objects
-     */
-    public function getSyslogThresholdsJoinPlugin($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = ThresholdQuery::create(null, $criteria);
-        $query->joinWith('Plugin', $join_behavior);
-
-        return $this->getSyslogThresholds($query, $con);
-    }
-
     /**
      * Clears the current object and sets all attributes to their default values
      */
@@ -1859,11 +1477,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->collSyslogThresholds) {
-                foreach ($this->collSyslogThresholds as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->aDevice instanceof Persistent) {
               $this->aDevice->clearAllReferences($deep);
             }
@@ -1871,10 +1484,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        if ($this->collSyslogThresholds instanceof PropelCollection) {
-            $this->collSyslogThresholds->clearIterator();
-        }
-        $this->collSyslogThresholds = null;
         $this->aDevice = null;
     }
 

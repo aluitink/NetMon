@@ -118,6 +118,12 @@ abstract class BaseAdapter extends BaseObject implements Persistent
     protected $collAdapterAdapterStatisticsPartial;
 
     /**
+     * @var        PropelObjectCollection|PortStatus[] Collection to store aggregation of PortStatus objects.
+     */
+    protected $collAdapterPortStatuss;
+    protected $collAdapterPortStatussPartial;
+
+    /**
      * @var        PropelObjectCollection|Monitor[] Collection to store aggregation of Monitor objects.
      */
     protected $collAdapterMonitors;
@@ -154,6 +160,12 @@ abstract class BaseAdapter extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $adapterAdapterStatisticsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $adapterPortStatussScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -695,6 +707,8 @@ abstract class BaseAdapter extends BaseObject implements Persistent
             $this->aDevice = null;
             $this->collAdapterAdapterStatistics = null;
 
+            $this->collAdapterPortStatuss = null;
+
             $this->collAdapterMonitors = null;
 
             $this->collAdapterTraps = null;
@@ -853,6 +867,23 @@ abstract class BaseAdapter extends BaseObject implements Persistent
 
             if ($this->collAdapterAdapterStatistics !== null) {
                 foreach ($this->collAdapterAdapterStatistics as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->adapterPortStatussScheduledForDeletion !== null) {
+                if (!$this->adapterPortStatussScheduledForDeletion->isEmpty()) {
+                    PortStatusQuery::create()
+                        ->filterByPrimaryKeys($this->adapterPortStatussScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->adapterPortStatussScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collAdapterPortStatuss !== null) {
+                foreach ($this->collAdapterPortStatuss as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1128,6 +1159,14 @@ abstract class BaseAdapter extends BaseObject implements Persistent
                     }
                 }
 
+                if ($this->collAdapterPortStatuss !== null) {
+                    foreach ($this->collAdapterPortStatuss as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
                 if ($this->collAdapterMonitors !== null) {
                     foreach ($this->collAdapterMonitors as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -1266,6 +1305,9 @@ abstract class BaseAdapter extends BaseObject implements Persistent
             }
             if (null !== $this->collAdapterAdapterStatistics) {
                 $result['AdapterAdapterStatistics'] = $this->collAdapterAdapterStatistics->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collAdapterPortStatuss) {
+                $result['AdapterPortStatuss'] = $this->collAdapterPortStatuss->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collAdapterMonitors) {
                 $result['AdapterMonitors'] = $this->collAdapterMonitors->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1490,6 +1532,12 @@ abstract class BaseAdapter extends BaseObject implements Persistent
                 }
             }
 
+            foreach ($this->getAdapterPortStatuss() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addAdapterPortStatus($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getAdapterMonitors() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addAdapterMonitor($relObj->copy($deepCopy));
@@ -1669,6 +1717,9 @@ abstract class BaseAdapter extends BaseObject implements Persistent
     {
         if ('AdapterAdapterStatistic' == $relationName) {
             $this->initAdapterAdapterStatistics();
+        }
+        if ('AdapterPortStatus' == $relationName) {
+            $this->initAdapterPortStatuss();
         }
         if ('AdapterMonitor' == $relationName) {
             $this->initAdapterMonitors();
@@ -1897,6 +1948,224 @@ abstract class BaseAdapter extends BaseObject implements Persistent
     }
 
     /**
+     * Clears out the collAdapterPortStatuss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return Adapter The current object (for fluent API support)
+     * @see        addAdapterPortStatuss()
+     */
+    public function clearAdapterPortStatuss()
+    {
+        $this->collAdapterPortStatuss = null; // important to set this to null since that means it is uninitialized
+        $this->collAdapterPortStatussPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collAdapterPortStatuss collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialAdapterPortStatuss($v = true)
+    {
+        $this->collAdapterPortStatussPartial = $v;
+    }
+
+    /**
+     * Initializes the collAdapterPortStatuss collection.
+     *
+     * By default this just sets the collAdapterPortStatuss collection to an empty array (like clearcollAdapterPortStatuss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initAdapterPortStatuss($overrideExisting = true)
+    {
+        if (null !== $this->collAdapterPortStatuss && !$overrideExisting) {
+            return;
+        }
+        $this->collAdapterPortStatuss = new PropelObjectCollection();
+        $this->collAdapterPortStatuss->setModel('PortStatus');
+    }
+
+    /**
+     * Gets an array of PortStatus objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this Adapter is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|PortStatus[] List of PortStatus objects
+     * @throws PropelException
+     */
+    public function getAdapterPortStatuss($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collAdapterPortStatussPartial && !$this->isNew();
+        if (null === $this->collAdapterPortStatuss || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collAdapterPortStatuss) {
+                // return empty collection
+                $this->initAdapterPortStatuss();
+            } else {
+                $collAdapterPortStatuss = PortStatusQuery::create(null, $criteria)
+                    ->filterByAdapter($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collAdapterPortStatussPartial && count($collAdapterPortStatuss)) {
+                      $this->initAdapterPortStatuss(false);
+
+                      foreach($collAdapterPortStatuss as $obj) {
+                        if (false == $this->collAdapterPortStatuss->contains($obj)) {
+                          $this->collAdapterPortStatuss->append($obj);
+                        }
+                      }
+
+                      $this->collAdapterPortStatussPartial = true;
+                    }
+
+                    $collAdapterPortStatuss->getInternalIterator()->rewind();
+                    return $collAdapterPortStatuss;
+                }
+
+                if($partial && $this->collAdapterPortStatuss) {
+                    foreach($this->collAdapterPortStatuss as $obj) {
+                        if($obj->isNew()) {
+                            $collAdapterPortStatuss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collAdapterPortStatuss = $collAdapterPortStatuss;
+                $this->collAdapterPortStatussPartial = false;
+            }
+        }
+
+        return $this->collAdapterPortStatuss;
+    }
+
+    /**
+     * Sets a collection of AdapterPortStatus objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $adapterPortStatuss A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return Adapter The current object (for fluent API support)
+     */
+    public function setAdapterPortStatuss(PropelCollection $adapterPortStatuss, PropelPDO $con = null)
+    {
+        $adapterPortStatussToDelete = $this->getAdapterPortStatuss(new Criteria(), $con)->diff($adapterPortStatuss);
+
+        $this->adapterPortStatussScheduledForDeletion = unserialize(serialize($adapterPortStatussToDelete));
+
+        foreach ($adapterPortStatussToDelete as $adapterPortStatusRemoved) {
+            $adapterPortStatusRemoved->setAdapter(null);
+        }
+
+        $this->collAdapterPortStatuss = null;
+        foreach ($adapterPortStatuss as $adapterPortStatus) {
+            $this->addAdapterPortStatus($adapterPortStatus);
+        }
+
+        $this->collAdapterPortStatuss = $adapterPortStatuss;
+        $this->collAdapterPortStatussPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related PortStatus objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related PortStatus objects.
+     * @throws PropelException
+     */
+    public function countAdapterPortStatuss(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collAdapterPortStatussPartial && !$this->isNew();
+        if (null === $this->collAdapterPortStatuss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collAdapterPortStatuss) {
+                return 0;
+            }
+
+            if($partial && !$criteria) {
+                return count($this->getAdapterPortStatuss());
+            }
+            $query = PortStatusQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByAdapter($this)
+                ->count($con);
+        }
+
+        return count($this->collAdapterPortStatuss);
+    }
+
+    /**
+     * Method called to associate a PortStatus object to this object
+     * through the PortStatus foreign key attribute.
+     *
+     * @param    PortStatus $l PortStatus
+     * @return Adapter The current object (for fluent API support)
+     */
+    public function addAdapterPortStatus(PortStatus $l)
+    {
+        if ($this->collAdapterPortStatuss === null) {
+            $this->initAdapterPortStatuss();
+            $this->collAdapterPortStatussPartial = true;
+        }
+        if (!in_array($l, $this->collAdapterPortStatuss->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddAdapterPortStatus($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	AdapterPortStatus $adapterPortStatus The adapterPortStatus object to add.
+     */
+    protected function doAddAdapterPortStatus($adapterPortStatus)
+    {
+        $this->collAdapterPortStatuss[]= $adapterPortStatus;
+        $adapterPortStatus->setAdapter($this);
+    }
+
+    /**
+     * @param	AdapterPortStatus $adapterPortStatus The adapterPortStatus object to remove.
+     * @return Adapter The current object (for fluent API support)
+     */
+    public function removeAdapterPortStatus($adapterPortStatus)
+    {
+        if ($this->getAdapterPortStatuss()->contains($adapterPortStatus)) {
+            $this->collAdapterPortStatuss->remove($this->collAdapterPortStatuss->search($adapterPortStatus));
+            if (null === $this->adapterPortStatussScheduledForDeletion) {
+                $this->adapterPortStatussScheduledForDeletion = clone $this->collAdapterPortStatuss;
+                $this->adapterPortStatussScheduledForDeletion->clear();
+            }
+            $this->adapterPortStatussScheduledForDeletion[]= clone $adapterPortStatus;
+            $adapterPortStatus->setAdapter(null);
+        }
+
+        return $this;
+    }
+
+    /**
      * Clears out the collAdapterMonitors collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
@@ -2112,31 +2381,6 @@ abstract class BaseAdapter extends BaseObject implements Persistent
         }
 
         return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Adapter is new, it will return
-     * an empty collection; or if this Adapter has previously
-     * been saved, it will retrieve related AdapterMonitors from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Adapter.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Monitor[] List of Monitor objects
-     */
-    public function getAdapterMonitorsJoinDevice($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = MonitorQuery::create(null, $criteria);
-        $query->joinWith('Device', $join_behavior);
-
-        return $this->getAdapterMonitors($query, $con);
     }
 
 
@@ -2501,6 +2745,11 @@ abstract class BaseAdapter extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collAdapterPortStatuss) {
+                foreach ($this->collAdapterPortStatuss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collAdapterMonitors) {
                 foreach ($this->collAdapterMonitors as $o) {
                     $o->clearAllReferences($deep);
@@ -2525,6 +2774,10 @@ abstract class BaseAdapter extends BaseObject implements Persistent
             $this->collAdapterAdapterStatistics->clearIterator();
         }
         $this->collAdapterAdapterStatistics = null;
+        if ($this->collAdapterPortStatuss instanceof PropelCollection) {
+            $this->collAdapterPortStatuss->clearIterator();
+        }
+        $this->collAdapterPortStatuss = null;
         if ($this->collAdapterMonitors instanceof PropelCollection) {
             $this->collAdapterMonitors->clearIterator();
         }

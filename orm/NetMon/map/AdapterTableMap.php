@@ -61,6 +61,7 @@ class AdapterTableMap extends TableMap
         $this->addRelation('AdapterType', 'AdapterType', RelationMap::MANY_TO_ONE, array('AdapterTypeId' => 'AdapterTypeId', ), null, null);
         $this->addRelation('Device', 'Device', RelationMap::MANY_TO_ONE, array('DeviceId' => 'DeviceId', ), null, null);
         $this->addRelation('AdapterAdapterStatistic', 'AdapterStatistic', RelationMap::ONE_TO_MANY, array('AdapterId' => 'AdapterId', ), null, null, 'AdapterAdapterStatistics');
+        $this->addRelation('AdapterPortStatus', 'PortStatus', RelationMap::ONE_TO_MANY, array('AdapterId' => 'AdapterId', ), null, null, 'AdapterPortStatuss');
         $this->addRelation('AdapterMonitor', 'Monitor', RelationMap::ONE_TO_MANY, array('AdapterId' => 'AdapterId', ), null, null, 'AdapterMonitors');
         $this->addRelation('AdapterTrap', 'Trap', RelationMap::ONE_TO_MANY, array('AdapterId' => 'AdapterId', ), null, null, 'AdapterTraps');
     } // buildRelations()

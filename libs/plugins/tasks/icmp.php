@@ -11,15 +11,14 @@ $vars = $child->GetVariables();
 
 $command = "ping -c " . $vars["count"] . " -i " . $vars["interval"] . " -W ". $vars["timeout"] ." " . $vars["ip"] . " | grep packets | cut -d \" \" -f 4";
 
-
 exec($command, $pingsReturned);
 $percentReturned = (($pingsReturned[0] / $vars["count"]) * 100);
 $percentLoss = (100 - $percentReturned);
 
 $ret = array();
 $ret["monitorId"] = $vars["monitorId"];
-$ret['loss'] = $percentLoss;
-$ret["command"] = $command;
+$ret['percentLost'] = $percentLoss;
+
 $child->SetProcessComplete($ret);
 
 ?>

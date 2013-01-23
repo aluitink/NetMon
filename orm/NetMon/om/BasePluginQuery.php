@@ -38,6 +38,10 @@
  * @method PluginQuery rightJoinPluginPluginSetting($relationAlias = null) Adds a RIGHT JOIN clause to the query using the PluginPluginSetting relation
  * @method PluginQuery innerJoinPluginPluginSetting($relationAlias = null) Adds a INNER JOIN clause to the query using the PluginPluginSetting relation
  *
+ * @method PluginQuery leftJoinPluginPluginMeta($relationAlias = null) Adds a LEFT JOIN clause to the query using the PluginPluginMeta relation
+ * @method PluginQuery rightJoinPluginPluginMeta($relationAlias = null) Adds a RIGHT JOIN clause to the query using the PluginPluginMeta relation
+ * @method PluginQuery innerJoinPluginPluginMeta($relationAlias = null) Adds a INNER JOIN clause to the query using the PluginPluginMeta relation
+ *
  * @method Plugin findOne(PropelPDO $con = null) Return the first Plugin matching the query
  * @method Plugin findOneOrCreate(PropelPDO $con = null) Return the first Plugin matching the query, or a new Plugin object populated from the query conditions when no match is found
  *
@@ -693,6 +697,80 @@ abstract class BasePluginQuery extends ModelCriteria
         return $this
             ->joinPluginPluginSetting($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'PluginPluginSetting', 'PluginSettingQuery');
+    }
+
+    /**
+     * Filter the query by a related PluginMeta object
+     *
+     * @param   PluginMeta|PropelObjectCollection $pluginMeta  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 PluginQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByPluginPluginMeta($pluginMeta, $comparison = null)
+    {
+        if ($pluginMeta instanceof PluginMeta) {
+            return $this
+                ->addUsingAlias(PluginPeer::PLUGINID, $pluginMeta->getPluginid(), $comparison);
+        } elseif ($pluginMeta instanceof PropelObjectCollection) {
+            return $this
+                ->usePluginPluginMetaQuery()
+                ->filterByPrimaryKeys($pluginMeta->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByPluginPluginMeta() only accepts arguments of type PluginMeta or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the PluginPluginMeta relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return PluginQuery The current query, for fluid interface
+     */
+    public function joinPluginPluginMeta($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('PluginPluginMeta');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'PluginPluginMeta');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the PluginPluginMeta relation PluginMeta object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   PluginMetaQuery A secondary query class using the current class as primary query
+     */
+    public function usePluginPluginMetaQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinPluginPluginMeta($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'PluginPluginMeta', 'PluginMetaQuery');
     }
 
     /**

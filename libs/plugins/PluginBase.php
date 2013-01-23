@@ -1,4 +1,5 @@
 <?php
+namespace NetMon\Plugins;
 require_once ROOT . 'libs/MultiProcess/MultiProcessParent.php';
 
 class PluginBase
@@ -10,22 +11,29 @@ class PluginBase
     
     function __construct()
     {
+        
         $this->pluginInfo["requestList"][] = "Execute";
-        $this->multiProcessParent = new MultiProcessParent();
+        $this->multiProcessParent = new \NetMon\MultiProcess\MultiProcessParent();
     }
     
     protected function GetPlugin()
     {
-        $this->plugin = PluginQuery::create()
+        $this->plugin = \PluginQuery::create()
                 ->filterByName($this->pluginInfo["name"])
                 ->findOne();
         if(!isset($this->plugin))
         {
-            $this->plugin = new Plugin();
+            $this->plugin = new \Plugin();
             $this->SavePlugin();
         }
         
-        $this->pluginSettings = $this->plugin->getPluginPluginSettings();
+        $settings = $this->plugin->getPluginPluginSettings();
+        
+        foreach($settings as $setting)
+        {
+            $key = $setting->getKey();
+            $this->pluginSettings[$key] = $setting->getValue();
+        }
         
         $this->pluginInfo["name"] = $this->plugin->getName();
         $this->pluginInfo["description"] = $this->plugin->getDescription();
@@ -49,11 +57,66 @@ class PluginBase
     {
         foreach($this->pluginSettings as $key => $setting)
         {
-            $pluginSetting = new PluginSetting();
+            $pluginSetting = new \PluginSetting();
             $pluginSetting->setKey($key);
             $pluginSetting->setValue($setting);
             $this->plugin->addPluginPluginSetting($pluginSetting);
         }
         $this->plugin->save();
+    }
+    
+    public function FetechUpdateMeta($key)
+    {
+        $encodedKey = md5(json_encode($key));
+        $meta = \PluginMetaQuery::create()
+                ->filterByPlugin($this->plugin)
+                ->findOneByKey($encodedKey);
+        if(isset($meta))
+            return json_decode($meta->getValue(), true);
+        return null;
+    }
+    
+    public function StoreUpdateMeta($key, $value)
+    {
+        $encodedKey = md5(json_encode($key));
+        $value = json_encode($value);
+        $pluginQuery = \PluginMetaQuery::create()
+                    ->filterByPlugin($this->plugin)
+                    ->findOneByKey($encodedKey);
+        
+        //if found update
+        if(isset($pluginQuery))
+        {
+            $pluginQuery->setValue($value);    
+            $pluginQuery->save();
+            return $pluginQuery;
+        }
+        
+        $meta = new \PluginMeta();
+        $meta->setPlugin($this->plugin);
+        $meta->setKey($encodedKey);
+        $meta->setValue($value);
+        $meta->save();
+        
+        return $meta;
+    }
+    
+    public function CallbackActivePlugins($callback, $data = null)
+    {
+        $plugins = \PluginQuery::create()
+            ->filterByActive(true)
+            ->find();
+
+        foreach($plugins as $plugin)
+        {
+            $pluginName = $plugin->getName();
+            require_once ROOT . \NetMon\Config::PluginsPath . "/" . $pluginName . ".php";
+            $pluginClass = "\\NetMon\\Plugins\\" . $pluginName;
+            $p = new $pluginClass();
+            if($data == null)
+                $p->$callback();
+            else
+                $p->$callback($data);
+        }
     }
 }

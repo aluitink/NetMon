@@ -24,19 +24,16 @@ abstract class BaseMonitorPeer
     const TM_CLASS = 'MonitorTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 4;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /** the column name for the MonitorId field */
     const MONITORID = 'Monitor.MonitorId';
-
-    /** the column name for the DeviceId field */
-    const DEVICEID = 'Monitor.DeviceId';
 
     /** the column name for the PluginId field */
     const PLUGINID = 'Monitor.PluginId';
@@ -66,12 +63,12 @@ abstract class BaseMonitorPeer
      * e.g. MonitorPeer::$fieldNames[MonitorPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Monitorid', 'Deviceid', 'Pluginid', 'Adapterid', 'Snmppropertyid', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('monitorid', 'deviceid', 'pluginid', 'adapterid', 'snmppropertyid', ),
-        BasePeer::TYPE_COLNAME => array (MonitorPeer::MONITORID, MonitorPeer::DEVICEID, MonitorPeer::PLUGINID, MonitorPeer::ADAPTERID, MonitorPeer::SNMPPROPERTYID, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('MONITORID', 'DEVICEID', 'PLUGINID', 'ADAPTERID', 'SNMPPROPERTYID', ),
-        BasePeer::TYPE_FIELDNAME => array ('MonitorId', 'DeviceId', 'PluginId', 'AdapterId', 'SnmpPropertyId', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
+        BasePeer::TYPE_PHPNAME => array ('Monitorid', 'Pluginid', 'Adapterid', 'Snmppropertyid', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('monitorid', 'pluginid', 'adapterid', 'snmppropertyid', ),
+        BasePeer::TYPE_COLNAME => array (MonitorPeer::MONITORID, MonitorPeer::PLUGINID, MonitorPeer::ADAPTERID, MonitorPeer::SNMPPROPERTYID, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('MONITORID', 'PLUGINID', 'ADAPTERID', 'SNMPPROPERTYID', ),
+        BasePeer::TYPE_FIELDNAME => array ('MonitorId', 'PluginId', 'AdapterId', 'SnmpPropertyId', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
     /**
@@ -81,12 +78,12 @@ abstract class BaseMonitorPeer
      * e.g. MonitorPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Monitorid' => 0, 'Deviceid' => 1, 'Pluginid' => 2, 'Adapterid' => 3, 'Snmppropertyid' => 4, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('monitorid' => 0, 'deviceid' => 1, 'pluginid' => 2, 'adapterid' => 3, 'snmppropertyid' => 4, ),
-        BasePeer::TYPE_COLNAME => array (MonitorPeer::MONITORID => 0, MonitorPeer::DEVICEID => 1, MonitorPeer::PLUGINID => 2, MonitorPeer::ADAPTERID => 3, MonitorPeer::SNMPPROPERTYID => 4, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('MONITORID' => 0, 'DEVICEID' => 1, 'PLUGINID' => 2, 'ADAPTERID' => 3, 'SNMPPROPERTYID' => 4, ),
-        BasePeer::TYPE_FIELDNAME => array ('MonitorId' => 0, 'DeviceId' => 1, 'PluginId' => 2, 'AdapterId' => 3, 'SnmpPropertyId' => 4, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
+        BasePeer::TYPE_PHPNAME => array ('Monitorid' => 0, 'Pluginid' => 1, 'Adapterid' => 2, 'Snmppropertyid' => 3, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('monitorid' => 0, 'pluginid' => 1, 'adapterid' => 2, 'snmppropertyid' => 3, ),
+        BasePeer::TYPE_COLNAME => array (MonitorPeer::MONITORID => 0, MonitorPeer::PLUGINID => 1, MonitorPeer::ADAPTERID => 2, MonitorPeer::SNMPPROPERTYID => 3, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('MONITORID' => 0, 'PLUGINID' => 1, 'ADAPTERID' => 2, 'SNMPPROPERTYID' => 3, ),
+        BasePeer::TYPE_FIELDNAME => array ('MonitorId' => 0, 'PluginId' => 1, 'AdapterId' => 2, 'SnmpPropertyId' => 3, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
     /**
@@ -161,13 +158,11 @@ abstract class BaseMonitorPeer
     {
         if (null === $alias) {
             $criteria->addSelectColumn(MonitorPeer::MONITORID);
-            $criteria->addSelectColumn(MonitorPeer::DEVICEID);
             $criteria->addSelectColumn(MonitorPeer::PLUGINID);
             $criteria->addSelectColumn(MonitorPeer::ADAPTERID);
             $criteria->addSelectColumn(MonitorPeer::SNMPPROPERTYID);
         } else {
             $criteria->addSelectColumn($alias . '.MonitorId');
-            $criteria->addSelectColumn($alias . '.DeviceId');
             $criteria->addSelectColumn($alias . '.PluginId');
             $criteria->addSelectColumn($alias . '.AdapterId');
             $criteria->addSelectColumn($alias . '.SnmpPropertyId');
@@ -297,7 +292,7 @@ abstract class BaseMonitorPeer
     {
         if (Propel::isInstancePoolingEnabled()) {
             if ($key === null) {
-                $key = serialize(array((string) $obj->getMonitorid(), (string) $obj->getDeviceid(), (string) $obj->getPluginid(), (string) $obj->getAdapterid(), (string) $obj->getSnmppropertyid()));
+                $key = serialize(array((string) $obj->getMonitorid(), (string) $obj->getPluginid(), (string) $obj->getAdapterid(), (string) $obj->getSnmppropertyid()));
             } // if key === null
             MonitorPeer::$instances[$key] = $obj;
         }
@@ -320,10 +315,10 @@ abstract class BaseMonitorPeer
     {
         if (Propel::isInstancePoolingEnabled() && $value !== null) {
             if (is_object($value) && $value instanceof Monitor) {
-                $key = serialize(array((string) $value->getMonitorid(), (string) $value->getDeviceid(), (string) $value->getPluginid(), (string) $value->getAdapterid(), (string) $value->getSnmppropertyid()));
-            } elseif (is_array($value) && count($value) === 5) {
+                $key = serialize(array((string) $value->getMonitorid(), (string) $value->getPluginid(), (string) $value->getAdapterid(), (string) $value->getSnmppropertyid()));
+            } elseif (is_array($value) && count($value) === 4) {
                 // assume we've been passed a primary key
-                $key = serialize(array((string) $value[0], (string) $value[1], (string) $value[2], (string) $value[3], (string) $value[4]));
+                $key = serialize(array((string) $value[0], (string) $value[1], (string) $value[2], (string) $value[3]));
             } else {
                 $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or Monitor object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
                 throw $e;
@@ -392,11 +387,11 @@ abstract class BaseMonitorPeer
     public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
     {
         // If the PK cannot be derived from the row, return null.
-        if ($row[$startcol] === null && $row[$startcol + 1] === null && $row[$startcol + 2] === null && $row[$startcol + 3] === null && $row[$startcol + 4] === null) {
+        if ($row[$startcol] === null && $row[$startcol + 1] === null && $row[$startcol + 2] === null && $row[$startcol + 3] === null) {
             return null;
         }
 
-        return serialize(array((string) $row[$startcol], (string) $row[$startcol + 1], (string) $row[$startcol + 2], (string) $row[$startcol + 3], (string) $row[$startcol + 4]));
+        return serialize(array((string) $row[$startcol], (string) $row[$startcol + 1], (string) $row[$startcol + 2], (string) $row[$startcol + 3]));
     }
 
     /**
@@ -411,7 +406,7 @@ abstract class BaseMonitorPeer
     public static function getPrimaryKeyFromRow($row, $startcol = 0)
     {
 
-        return array((int) $row[$startcol], (int) $row[$startcol + 1], (int) $row[$startcol + 2], (int) $row[$startcol + 3], (int) $row[$startcol + 4]);
+        return array((int) $row[$startcol], (int) $row[$startcol + 1], (int) $row[$startcol + 2], (int) $row[$startcol + 3]);
     }
 
     /**
@@ -471,57 +466,6 @@ abstract class BaseMonitorPeer
         }
 
         return array($obj, $col);
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining the related Device table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinDevice(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(MonitorPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            MonitorPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-        // Set the correct dbName
-        $criteria->setDbName(MonitorPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(MonitorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(MonitorPeer::DEVICEID, DevicePeer::DEVICEID, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
     }
 
 
@@ -675,73 +619,6 @@ abstract class BaseMonitorPeer
         $stmt->closeCursor();
 
         return $count;
-    }
-
-
-    /**
-     * Selects a collection of Monitor objects pre-filled with their Device objects.
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Monitor objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinDevice(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(MonitorPeer::DATABASE_NAME);
-        }
-
-        MonitorPeer::addSelectColumns($criteria);
-        $startcol = MonitorPeer::NUM_HYDRATE_COLUMNS;
-        DevicePeer::addSelectColumns($criteria);
-
-        $criteria->addJoin(MonitorPeer::DEVICEID, DevicePeer::DEVICEID, $join_behavior);
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = MonitorPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = MonitorPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-
-                $cls = MonitorPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                MonitorPeer::addInstanceToPool($obj1, $key1);
-            } // if $obj1 already loaded
-
-            $key2 = DevicePeer::getPrimaryKeyHashFromRow($row, $startcol);
-            if ($key2 !== null) {
-                $obj2 = DevicePeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = DevicePeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol);
-                    DevicePeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 already loaded
-
-                // Add the $obj1 (Monitor) to $obj2 (Device)
-                $obj2->addDeviceMonitor($obj1);
-
-            } // if joined row was not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
     }
 
 
@@ -982,8 +859,6 @@ abstract class BaseMonitorPeer
             $con = Propel::getConnection(MonitorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(MonitorPeer::DEVICEID, DevicePeer::DEVICEID, $join_behavior);
-
         $criteria->addJoin(MonitorPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
 
         $criteria->addJoin(MonitorPeer::ADAPTERID, AdapterPeer::ADAPTERID, $join_behavior);
@@ -1024,19 +899,14 @@ abstract class BaseMonitorPeer
         MonitorPeer::addSelectColumns($criteria);
         $startcol2 = MonitorPeer::NUM_HYDRATE_COLUMNS;
 
-        DevicePeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + DevicePeer::NUM_HYDRATE_COLUMNS;
-
         PluginPeer::addSelectColumns($criteria);
-        $startcol4 = $startcol3 + PluginPeer::NUM_HYDRATE_COLUMNS;
+        $startcol3 = $startcol2 + PluginPeer::NUM_HYDRATE_COLUMNS;
 
         AdapterPeer::addSelectColumns($criteria);
-        $startcol5 = $startcol4 + AdapterPeer::NUM_HYDRATE_COLUMNS;
+        $startcol4 = $startcol3 + AdapterPeer::NUM_HYDRATE_COLUMNS;
 
         SnmpPropertyPeer::addSelectColumns($criteria);
-        $startcol6 = $startcol5 + SnmpPropertyPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(MonitorPeer::DEVICEID, DevicePeer::DEVICEID, $join_behavior);
+        $startcol5 = $startcol4 + SnmpPropertyPeer::NUM_HYDRATE_COLUMNS;
 
         $criteria->addJoin(MonitorPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
 
@@ -1061,76 +931,58 @@ abstract class BaseMonitorPeer
                 MonitorPeer::addInstanceToPool($obj1, $key1);
             } // if obj1 already loaded
 
-            // Add objects for joined Device rows
-
-            $key2 = DevicePeer::getPrimaryKeyHashFromRow($row, $startcol2);
-            if ($key2 !== null) {
-                $obj2 = DevicePeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = DevicePeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    DevicePeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 loaded
-
-                // Add the $obj1 (Monitor) to the collection in $obj2 (Device)
-                $obj2->addDeviceMonitor($obj1);
-            } // if joined row not null
-
             // Add objects for joined Plugin rows
 
-            $key3 = PluginPeer::getPrimaryKeyHashFromRow($row, $startcol3);
-            if ($key3 !== null) {
-                $obj3 = PluginPeer::getInstanceFromPool($key3);
-                if (!$obj3) {
+            $key2 = PluginPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+            if ($key2 !== null) {
+                $obj2 = PluginPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
 
                     $cls = PluginPeer::getOMClass();
 
-                    $obj3 = new $cls();
-                    $obj3->hydrate($row, $startcol3);
-                    PluginPeer::addInstanceToPool($obj3, $key3);
-                } // if obj3 loaded
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    PluginPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 loaded
 
-                // Add the $obj1 (Monitor) to the collection in $obj3 (Plugin)
-                $obj3->addPluginMonitor($obj1);
+                // Add the $obj1 (Monitor) to the collection in $obj2 (Plugin)
+                $obj2->addPluginMonitor($obj1);
             } // if joined row not null
 
             // Add objects for joined Adapter rows
 
-            $key4 = AdapterPeer::getPrimaryKeyHashFromRow($row, $startcol4);
-            if ($key4 !== null) {
-                $obj4 = AdapterPeer::getInstanceFromPool($key4);
-                if (!$obj4) {
+            $key3 = AdapterPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+            if ($key3 !== null) {
+                $obj3 = AdapterPeer::getInstanceFromPool($key3);
+                if (!$obj3) {
 
                     $cls = AdapterPeer::getOMClass();
 
-                    $obj4 = new $cls();
-                    $obj4->hydrate($row, $startcol4);
-                    AdapterPeer::addInstanceToPool($obj4, $key4);
-                } // if obj4 loaded
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    AdapterPeer::addInstanceToPool($obj3, $key3);
+                } // if obj3 loaded
 
-                // Add the $obj1 (Monitor) to the collection in $obj4 (Adapter)
-                $obj4->addAdapterMonitor($obj1);
+                // Add the $obj1 (Monitor) to the collection in $obj3 (Adapter)
+                $obj3->addAdapterMonitor($obj1);
             } // if joined row not null
 
             // Add objects for joined SnmpProperty rows
 
-            $key5 = SnmpPropertyPeer::getPrimaryKeyHashFromRow($row, $startcol5);
-            if ($key5 !== null) {
-                $obj5 = SnmpPropertyPeer::getInstanceFromPool($key5);
-                if (!$obj5) {
+            $key4 = SnmpPropertyPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+            if ($key4 !== null) {
+                $obj4 = SnmpPropertyPeer::getInstanceFromPool($key4);
+                if (!$obj4) {
 
                     $cls = SnmpPropertyPeer::getOMClass();
 
-                    $obj5 = new $cls();
-                    $obj5->hydrate($row, $startcol5);
-                    SnmpPropertyPeer::addInstanceToPool($obj5, $key5);
-                } // if obj5 loaded
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    SnmpPropertyPeer::addInstanceToPool($obj4, $key4);
+                } // if obj4 loaded
 
-                // Add the $obj1 (Monitor) to the collection in $obj5 (SnmpProperty)
-                $obj5->addSnmpPropertyMonitor($obj1);
+                // Add the $obj1 (Monitor) to the collection in $obj4 (SnmpProperty)
+                $obj4->addSnmpPropertyMonitor($obj1);
             } // if joined row not null
 
             $results[] = $obj1;
@@ -1138,61 +990,6 @@ abstract class BaseMonitorPeer
         $stmt->closeCursor();
 
         return $results;
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining the related Device table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinAllExceptDevice(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(MonitorPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            MonitorPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
-
-        // Set the correct dbName
-        $criteria->setDbName(MonitorPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(MonitorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(MonitorPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
-
-        $criteria->addJoin(MonitorPeer::ADAPTERID, AdapterPeer::ADAPTERID, $join_behavior);
-
-        $criteria->addJoin(MonitorPeer::SNMPPROPERTYID, SnmpPropertyPeer::SNMPPROPERTYID, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
     }
 
 
@@ -1231,8 +1028,6 @@ abstract class BaseMonitorPeer
         if ($con === null) {
             $con = Propel::getConnection(MonitorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
-
-        $criteria->addJoin(MonitorPeer::DEVICEID, DevicePeer::DEVICEID, $join_behavior);
 
         $criteria->addJoin(MonitorPeer::ADAPTERID, AdapterPeer::ADAPTERID, $join_behavior);
 
@@ -1287,8 +1082,6 @@ abstract class BaseMonitorPeer
             $con = Propel::getConnection(MonitorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(MonitorPeer::DEVICEID, DevicePeer::DEVICEID, $join_behavior);
-
         $criteria->addJoin(MonitorPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
 
         $criteria->addJoin(MonitorPeer::SNMPPROPERTYID, SnmpPropertyPeer::SNMPPROPERTYID, $join_behavior);
@@ -1342,8 +1135,6 @@ abstract class BaseMonitorPeer
             $con = Propel::getConnection(MonitorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(MonitorPeer::DEVICEID, DevicePeer::DEVICEID, $join_behavior);
-
         $criteria->addJoin(MonitorPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
 
         $criteria->addJoin(MonitorPeer::ADAPTERID, AdapterPeer::ADAPTERID, $join_behavior);
@@ -1362,7 +1153,7 @@ abstract class BaseMonitorPeer
 
 
     /**
-     * Selects a collection of Monitor objects pre-filled with all related objects except Device.
+     * Selects a collection of Monitor objects pre-filled with all related objects except Plugin.
      *
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
@@ -1371,7 +1162,203 @@ abstract class BaseMonitorPeer
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
-    public static function doSelectJoinAllExceptDevice(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doSelectJoinAllExceptPlugin(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(MonitorPeer::DATABASE_NAME);
+        }
+
+        MonitorPeer::addSelectColumns($criteria);
+        $startcol2 = MonitorPeer::NUM_HYDRATE_COLUMNS;
+
+        AdapterPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + AdapterPeer::NUM_HYDRATE_COLUMNS;
+
+        SnmpPropertyPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + SnmpPropertyPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(MonitorPeer::ADAPTERID, AdapterPeer::ADAPTERID, $join_behavior);
+
+        $criteria->addJoin(MonitorPeer::SNMPPROPERTYID, SnmpPropertyPeer::SNMPPROPERTYID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = MonitorPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = MonitorPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = MonitorPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                MonitorPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Adapter rows
+
+                $key2 = AdapterPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = AdapterPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = AdapterPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    AdapterPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (Monitor) to the collection in $obj2 (Adapter)
+                $obj2->addAdapterMonitor($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined SnmpProperty rows
+
+                $key3 = SnmpPropertyPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = SnmpPropertyPeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = SnmpPropertyPeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    SnmpPropertyPeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (Monitor) to the collection in $obj3 (SnmpProperty)
+                $obj3->addSnmpPropertyMonitor($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Monitor objects pre-filled with all related objects except Adapter.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Monitor objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptAdapter(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(MonitorPeer::DATABASE_NAME);
+        }
+
+        MonitorPeer::addSelectColumns($criteria);
+        $startcol2 = MonitorPeer::NUM_HYDRATE_COLUMNS;
+
+        PluginPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + PluginPeer::NUM_HYDRATE_COLUMNS;
+
+        SnmpPropertyPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + SnmpPropertyPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(MonitorPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
+
+        $criteria->addJoin(MonitorPeer::SNMPPROPERTYID, SnmpPropertyPeer::SNMPPROPERTYID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = MonitorPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = MonitorPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $cls = MonitorPeer::getOMClass();
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                MonitorPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Plugin rows
+
+                $key2 = PluginPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = PluginPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = PluginPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    PluginPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (Monitor) to the collection in $obj2 (Plugin)
+                $obj2->addPluginMonitor($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined SnmpProperty rows
+
+                $key3 = SnmpPropertyPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = SnmpPropertyPeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = SnmpPropertyPeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    SnmpPropertyPeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (Monitor) to the collection in $obj3 (SnmpProperty)
+                $obj3->addSnmpPropertyMonitor($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Monitor objects pre-filled with all related objects except SnmpProperty.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Monitor objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptSnmpProperty(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $criteria = clone $criteria;
 
@@ -1391,14 +1378,9 @@ abstract class BaseMonitorPeer
         AdapterPeer::addSelectColumns($criteria);
         $startcol4 = $startcol3 + AdapterPeer::NUM_HYDRATE_COLUMNS;
 
-        SnmpPropertyPeer::addSelectColumns($criteria);
-        $startcol5 = $startcol4 + SnmpPropertyPeer::NUM_HYDRATE_COLUMNS;
-
         $criteria->addJoin(MonitorPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
 
         $criteria->addJoin(MonitorPeer::ADAPTERID, AdapterPeer::ADAPTERID, $join_behavior);
-
-        $criteria->addJoin(MonitorPeer::SNMPPROPERTYID, SnmpPropertyPeer::SNMPPROPERTYID, $join_behavior);
 
 
         $stmt = BasePeer::doSelect($criteria, $con);
@@ -1453,391 +1435,6 @@ abstract class BaseMonitorPeer
 
                 // Add the $obj1 (Monitor) to the collection in $obj3 (Adapter)
                 $obj3->addAdapterMonitor($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined SnmpProperty rows
-
-                $key4 = SnmpPropertyPeer::getPrimaryKeyHashFromRow($row, $startcol4);
-                if ($key4 !== null) {
-                    $obj4 = SnmpPropertyPeer::getInstanceFromPool($key4);
-                    if (!$obj4) {
-
-                        $cls = SnmpPropertyPeer::getOMClass();
-
-                    $obj4 = new $cls();
-                    $obj4->hydrate($row, $startcol4);
-                    SnmpPropertyPeer::addInstanceToPool($obj4, $key4);
-                } // if $obj4 already loaded
-
-                // Add the $obj1 (Monitor) to the collection in $obj4 (SnmpProperty)
-                $obj4->addSnmpPropertyMonitor($obj1);
-
-            } // if joined row is not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Selects a collection of Monitor objects pre-filled with all related objects except Plugin.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Monitor objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAllExceptPlugin(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(MonitorPeer::DATABASE_NAME);
-        }
-
-        MonitorPeer::addSelectColumns($criteria);
-        $startcol2 = MonitorPeer::NUM_HYDRATE_COLUMNS;
-
-        DevicePeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + DevicePeer::NUM_HYDRATE_COLUMNS;
-
-        AdapterPeer::addSelectColumns($criteria);
-        $startcol4 = $startcol3 + AdapterPeer::NUM_HYDRATE_COLUMNS;
-
-        SnmpPropertyPeer::addSelectColumns($criteria);
-        $startcol5 = $startcol4 + SnmpPropertyPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(MonitorPeer::DEVICEID, DevicePeer::DEVICEID, $join_behavior);
-
-        $criteria->addJoin(MonitorPeer::ADAPTERID, AdapterPeer::ADAPTERID, $join_behavior);
-
-        $criteria->addJoin(MonitorPeer::SNMPPROPERTYID, SnmpPropertyPeer::SNMPPROPERTYID, $join_behavior);
-
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = MonitorPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = MonitorPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = MonitorPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                MonitorPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-                // Add objects for joined Device rows
-
-                $key2 = DevicePeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = DevicePeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
-
-                        $cls = DevicePeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    DevicePeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
-
-                // Add the $obj1 (Monitor) to the collection in $obj2 (Device)
-                $obj2->addDeviceMonitor($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined Adapter rows
-
-                $key3 = AdapterPeer::getPrimaryKeyHashFromRow($row, $startcol3);
-                if ($key3 !== null) {
-                    $obj3 = AdapterPeer::getInstanceFromPool($key3);
-                    if (!$obj3) {
-
-                        $cls = AdapterPeer::getOMClass();
-
-                    $obj3 = new $cls();
-                    $obj3->hydrate($row, $startcol3);
-                    AdapterPeer::addInstanceToPool($obj3, $key3);
-                } // if $obj3 already loaded
-
-                // Add the $obj1 (Monitor) to the collection in $obj3 (Adapter)
-                $obj3->addAdapterMonitor($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined SnmpProperty rows
-
-                $key4 = SnmpPropertyPeer::getPrimaryKeyHashFromRow($row, $startcol4);
-                if ($key4 !== null) {
-                    $obj4 = SnmpPropertyPeer::getInstanceFromPool($key4);
-                    if (!$obj4) {
-
-                        $cls = SnmpPropertyPeer::getOMClass();
-
-                    $obj4 = new $cls();
-                    $obj4->hydrate($row, $startcol4);
-                    SnmpPropertyPeer::addInstanceToPool($obj4, $key4);
-                } // if $obj4 already loaded
-
-                // Add the $obj1 (Monitor) to the collection in $obj4 (SnmpProperty)
-                $obj4->addSnmpPropertyMonitor($obj1);
-
-            } // if joined row is not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Selects a collection of Monitor objects pre-filled with all related objects except Adapter.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Monitor objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAllExceptAdapter(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(MonitorPeer::DATABASE_NAME);
-        }
-
-        MonitorPeer::addSelectColumns($criteria);
-        $startcol2 = MonitorPeer::NUM_HYDRATE_COLUMNS;
-
-        DevicePeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + DevicePeer::NUM_HYDRATE_COLUMNS;
-
-        PluginPeer::addSelectColumns($criteria);
-        $startcol4 = $startcol3 + PluginPeer::NUM_HYDRATE_COLUMNS;
-
-        SnmpPropertyPeer::addSelectColumns($criteria);
-        $startcol5 = $startcol4 + SnmpPropertyPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(MonitorPeer::DEVICEID, DevicePeer::DEVICEID, $join_behavior);
-
-        $criteria->addJoin(MonitorPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
-
-        $criteria->addJoin(MonitorPeer::SNMPPROPERTYID, SnmpPropertyPeer::SNMPPROPERTYID, $join_behavior);
-
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = MonitorPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = MonitorPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = MonitorPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                MonitorPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-                // Add objects for joined Device rows
-
-                $key2 = DevicePeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = DevicePeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
-
-                        $cls = DevicePeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    DevicePeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
-
-                // Add the $obj1 (Monitor) to the collection in $obj2 (Device)
-                $obj2->addDeviceMonitor($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined Plugin rows
-
-                $key3 = PluginPeer::getPrimaryKeyHashFromRow($row, $startcol3);
-                if ($key3 !== null) {
-                    $obj3 = PluginPeer::getInstanceFromPool($key3);
-                    if (!$obj3) {
-
-                        $cls = PluginPeer::getOMClass();
-
-                    $obj3 = new $cls();
-                    $obj3->hydrate($row, $startcol3);
-                    PluginPeer::addInstanceToPool($obj3, $key3);
-                } // if $obj3 already loaded
-
-                // Add the $obj1 (Monitor) to the collection in $obj3 (Plugin)
-                $obj3->addPluginMonitor($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined SnmpProperty rows
-
-                $key4 = SnmpPropertyPeer::getPrimaryKeyHashFromRow($row, $startcol4);
-                if ($key4 !== null) {
-                    $obj4 = SnmpPropertyPeer::getInstanceFromPool($key4);
-                    if (!$obj4) {
-
-                        $cls = SnmpPropertyPeer::getOMClass();
-
-                    $obj4 = new $cls();
-                    $obj4->hydrate($row, $startcol4);
-                    SnmpPropertyPeer::addInstanceToPool($obj4, $key4);
-                } // if $obj4 already loaded
-
-                // Add the $obj1 (Monitor) to the collection in $obj4 (SnmpProperty)
-                $obj4->addSnmpPropertyMonitor($obj1);
-
-            } // if joined row is not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Selects a collection of Monitor objects pre-filled with all related objects except SnmpProperty.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Monitor objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAllExceptSnmpProperty(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(MonitorPeer::DATABASE_NAME);
-        }
-
-        MonitorPeer::addSelectColumns($criteria);
-        $startcol2 = MonitorPeer::NUM_HYDRATE_COLUMNS;
-
-        DevicePeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + DevicePeer::NUM_HYDRATE_COLUMNS;
-
-        PluginPeer::addSelectColumns($criteria);
-        $startcol4 = $startcol3 + PluginPeer::NUM_HYDRATE_COLUMNS;
-
-        AdapterPeer::addSelectColumns($criteria);
-        $startcol5 = $startcol4 + AdapterPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(MonitorPeer::DEVICEID, DevicePeer::DEVICEID, $join_behavior);
-
-        $criteria->addJoin(MonitorPeer::PLUGINID, PluginPeer::PLUGINID, $join_behavior);
-
-        $criteria->addJoin(MonitorPeer::ADAPTERID, AdapterPeer::ADAPTERID, $join_behavior);
-
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = MonitorPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = MonitorPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = MonitorPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                MonitorPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-                // Add objects for joined Device rows
-
-                $key2 = DevicePeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = DevicePeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
-
-                        $cls = DevicePeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    DevicePeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
-
-                // Add the $obj1 (Monitor) to the collection in $obj2 (Device)
-                $obj2->addDeviceMonitor($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined Plugin rows
-
-                $key3 = PluginPeer::getPrimaryKeyHashFromRow($row, $startcol3);
-                if ($key3 !== null) {
-                    $obj3 = PluginPeer::getInstanceFromPool($key3);
-                    if (!$obj3) {
-
-                        $cls = PluginPeer::getOMClass();
-
-                    $obj3 = new $cls();
-                    $obj3->hydrate($row, $startcol3);
-                    PluginPeer::addInstanceToPool($obj3, $key3);
-                } // if $obj3 already loaded
-
-                // Add the $obj1 (Monitor) to the collection in $obj3 (Plugin)
-                $obj3->addPluginMonitor($obj1);
-
-            } // if joined row is not null
-
-                // Add objects for joined Adapter rows
-
-                $key4 = AdapterPeer::getPrimaryKeyHashFromRow($row, $startcol4);
-                if ($key4 !== null) {
-                    $obj4 = AdapterPeer::getInstanceFromPool($key4);
-                    if (!$obj4) {
-
-                        $cls = AdapterPeer::getOMClass();
-
-                    $obj4 = new $cls();
-                    $obj4->hydrate($row, $startcol4);
-                    AdapterPeer::addInstanceToPool($obj4, $key4);
-                } // if $obj4 already loaded
-
-                // Add the $obj1 (Monitor) to the collection in $obj4 (Adapter)
-                $obj4->addAdapterMonitor($obj1);
 
             } // if joined row is not null
 
@@ -1953,14 +1550,6 @@ abstract class BaseMonitorPeer
                 $selectCriteria->setPrimaryTableName(MonitorPeer::TABLE_NAME);
             }
 
-            $comparison = $criteria->getComparison(MonitorPeer::DEVICEID);
-            $value = $criteria->remove(MonitorPeer::DEVICEID);
-            if ($value) {
-                $selectCriteria->add(MonitorPeer::DEVICEID, $value, $comparison);
-            } else {
-                $selectCriteria->setPrimaryTableName(MonitorPeer::TABLE_NAME);
-            }
-
             $comparison = $criteria->getComparison(MonitorPeer::PLUGINID);
             $value = $criteria->remove(MonitorPeer::PLUGINID);
             if ($value) {
@@ -2067,10 +1656,9 @@ abstract class BaseMonitorPeer
             }
             foreach ($values as $value) {
                 $criterion = $criteria->getNewCriterion(MonitorPeer::MONITORID, $value[0]);
-                $criterion->addAnd($criteria->getNewCriterion(MonitorPeer::DEVICEID, $value[1]));
-                $criterion->addAnd($criteria->getNewCriterion(MonitorPeer::PLUGINID, $value[2]));
-                $criterion->addAnd($criteria->getNewCriterion(MonitorPeer::ADAPTERID, $value[3]));
-                $criterion->addAnd($criteria->getNewCriterion(MonitorPeer::SNMPPROPERTYID, $value[4]));
+                $criterion->addAnd($criteria->getNewCriterion(MonitorPeer::PLUGINID, $value[1]));
+                $criterion->addAnd($criteria->getNewCriterion(MonitorPeer::ADAPTERID, $value[2]));
+                $criterion->addAnd($criteria->getNewCriterion(MonitorPeer::SNMPPROPERTYID, $value[3]));
                 $criteria->addOr($criterion);
                 // we can invalidate the cache for this single PK
                 MonitorPeer::removeInstanceFromPool($value);
@@ -2138,15 +1726,14 @@ abstract class BaseMonitorPeer
     /**
      * Retrieve object using using composite pkey values.
      * @param   int $monitorid
-     * @param   int $deviceid
      * @param   int $pluginid
      * @param   int $adapterid
      * @param   int $snmppropertyid
      * @param      PropelPDO $con
      * @return   Monitor
      */
-    public static function retrieveByPK($monitorid, $deviceid, $pluginid, $adapterid, $snmppropertyid, PropelPDO $con = null) {
-        $_instancePoolKey = serialize(array((string) $monitorid, (string) $deviceid, (string) $pluginid, (string) $adapterid, (string) $snmppropertyid));
+    public static function retrieveByPK($monitorid, $pluginid, $adapterid, $snmppropertyid, PropelPDO $con = null) {
+        $_instancePoolKey = serialize(array((string) $monitorid, (string) $pluginid, (string) $adapterid, (string) $snmppropertyid));
          if (null !== ($obj = MonitorPeer::getInstanceFromPool($_instancePoolKey))) {
              return $obj;
         }
@@ -2156,7 +1743,6 @@ abstract class BaseMonitorPeer
         }
         $criteria = new Criteria(MonitorPeer::DATABASE_NAME);
         $criteria->add(MonitorPeer::MONITORID, $monitorid);
-        $criteria->add(MonitorPeer::DEVICEID, $deviceid);
         $criteria->add(MonitorPeer::PLUGINID, $pluginid);
         $criteria->add(MonitorPeer::ADAPTERID, $adapterid);
         $criteria->add(MonitorPeer::SNMPPROPERTYID, $snmppropertyid);
