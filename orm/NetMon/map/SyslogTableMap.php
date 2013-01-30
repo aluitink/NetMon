@@ -39,7 +39,7 @@ class SyslogTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('SyslogId', 'Syslogid', 'INTEGER', true, null, null);
-        $this->addForeignKey('DeviceId', 'Deviceid', 'INTEGER', 'Device', 'DeviceId', true, null, null);
+        $this->addColumn('IpAddress', 'Ipaddress', 'VARCHAR', true, 15, null);
         $this->addColumn('Facility', 'Facility', 'VARCHAR', false, 10, null);
         $this->addColumn('Priority', 'Priority', 'VARCHAR', false, 10, null);
         $this->addColumn('Level', 'Level', 'VARCHAR', false, 10, null);
@@ -58,7 +58,6 @@ class SyslogTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Device', 'Device', RelationMap::MANY_TO_ONE, array('DeviceId' => 'DeviceId', ), null, null);
     } // buildRelations()
 
 } // SyslogTableMap

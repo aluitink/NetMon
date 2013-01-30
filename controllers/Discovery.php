@@ -53,7 +53,6 @@ class Discovery extends Controller implements Interfaces\IController
             {
                 if($this->DeviceExists($host->trace->hop["ipaddr"]))
                     continue;
-                
 
                 $device = new \Device();
                 $device->setIpaddress($host->trace->hop["ipaddr"]);

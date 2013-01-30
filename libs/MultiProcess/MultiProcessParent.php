@@ -32,7 +32,6 @@ class MultiProcessParent
                 $multiThreadCache->setStatus(false);
                 $multiThreadCache->setTimelimit(\NetMon\Config::MultiProcessThreadTimeLimit);
                 $multiThreadCache->save();
-                
                 $id = $multiThreadCache->getMultiThreadCacheid();
                 exec("nohup /usr/bin/php -f " . $processes[$i]['path'] . " id=" . $id ." > /dev/null 2>&1 &");
                 $j++;

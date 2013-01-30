@@ -8,7 +8,7 @@ class Controller
 {
     protected $RequestMethod;
     
-    function __construct($method)
+    function __construct($method = "GET")
     {
         $this->RequestMethod = $method;
         $this->Logger = new \KLogger(NetMon\Config::LogPath, NetMon\Config::LogLevel);

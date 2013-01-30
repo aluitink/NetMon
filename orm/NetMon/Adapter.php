@@ -1,5 +1,5 @@
 <?php
-require_once ROOT . 'libs/plugins/PluginBase.php';
+
 
 
 /**
@@ -29,5 +29,4 @@ class Adapter extends BaseAdapter
     {
         $this->pluginBase->CallbackActivePlugins("OnAdapterUpdate", $this);
     }
-    
 }

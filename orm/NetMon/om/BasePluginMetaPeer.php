@@ -24,19 +24,22 @@ abstract class BasePluginMetaPeer
     const TM_CLASS = 'PluginMetaTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 5;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /** the column name for the PluginMetaId field */
     const PLUGINMETAID = 'PluginMeta.PluginMetaId';
 
     /** the column name for the PluginId field */
     const PLUGINID = 'PluginMeta.PluginId';
+
+    /** the column name for the Envelope field */
+    const ENVELOPE = 'PluginMeta.Envelope';
 
     /** the column name for the Key field */
     const KEY = 'PluginMeta.Key';
@@ -63,12 +66,12 @@ abstract class BasePluginMetaPeer
      * e.g. PluginMetaPeer::$fieldNames[PluginMetaPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Pluginmetaid', 'Pluginid', 'Key', 'Value', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('pluginmetaid', 'pluginid', 'key', 'value', ),
-        BasePeer::TYPE_COLNAME => array (PluginMetaPeer::PLUGINMETAID, PluginMetaPeer::PLUGINID, PluginMetaPeer::KEY, PluginMetaPeer::VALUE, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('PLUGINMETAID', 'PLUGINID', 'KEY', 'VALUE', ),
-        BasePeer::TYPE_FIELDNAME => array ('PluginMetaId', 'PluginId', 'Key', 'Value', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+        BasePeer::TYPE_PHPNAME => array ('Pluginmetaid', 'Pluginid', 'Envelope', 'Key', 'Value', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('pluginmetaid', 'pluginid', 'envelope', 'key', 'value', ),
+        BasePeer::TYPE_COLNAME => array (PluginMetaPeer::PLUGINMETAID, PluginMetaPeer::PLUGINID, PluginMetaPeer::ENVELOPE, PluginMetaPeer::KEY, PluginMetaPeer::VALUE, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('PLUGINMETAID', 'PLUGINID', 'ENVELOPE', 'KEY', 'VALUE', ),
+        BasePeer::TYPE_FIELDNAME => array ('PluginMetaId', 'PluginId', 'Envelope', 'Key', 'Value', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
     /**
@@ -78,12 +81,12 @@ abstract class BasePluginMetaPeer
      * e.g. PluginMetaPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Pluginmetaid' => 0, 'Pluginid' => 1, 'Key' => 2, 'Value' => 3, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('pluginmetaid' => 0, 'pluginid' => 1, 'key' => 2, 'value' => 3, ),
-        BasePeer::TYPE_COLNAME => array (PluginMetaPeer::PLUGINMETAID => 0, PluginMetaPeer::PLUGINID => 1, PluginMetaPeer::KEY => 2, PluginMetaPeer::VALUE => 3, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('PLUGINMETAID' => 0, 'PLUGINID' => 1, 'KEY' => 2, 'VALUE' => 3, ),
-        BasePeer::TYPE_FIELDNAME => array ('PluginMetaId' => 0, 'PluginId' => 1, 'Key' => 2, 'Value' => 3, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+        BasePeer::TYPE_PHPNAME => array ('Pluginmetaid' => 0, 'Pluginid' => 1, 'Envelope' => 2, 'Key' => 3, 'Value' => 4, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('pluginmetaid' => 0, 'pluginid' => 1, 'envelope' => 2, 'key' => 3, 'value' => 4, ),
+        BasePeer::TYPE_COLNAME => array (PluginMetaPeer::PLUGINMETAID => 0, PluginMetaPeer::PLUGINID => 1, PluginMetaPeer::ENVELOPE => 2, PluginMetaPeer::KEY => 3, PluginMetaPeer::VALUE => 4, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('PLUGINMETAID' => 0, 'PLUGINID' => 1, 'ENVELOPE' => 2, 'KEY' => 3, 'VALUE' => 4, ),
+        BasePeer::TYPE_FIELDNAME => array ('PluginMetaId' => 0, 'PluginId' => 1, 'Envelope' => 2, 'Key' => 3, 'Value' => 4, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
     /**
@@ -159,11 +162,13 @@ abstract class BasePluginMetaPeer
         if (null === $alias) {
             $criteria->addSelectColumn(PluginMetaPeer::PLUGINMETAID);
             $criteria->addSelectColumn(PluginMetaPeer::PLUGINID);
+            $criteria->addSelectColumn(PluginMetaPeer::ENVELOPE);
             $criteria->addSelectColumn(PluginMetaPeer::KEY);
             $criteria->addSelectColumn(PluginMetaPeer::VALUE);
         } else {
             $criteria->addSelectColumn($alias . '.PluginMetaId');
             $criteria->addSelectColumn($alias . '.PluginId');
+            $criteria->addSelectColumn($alias . '.Envelope');
             $criteria->addSelectColumn($alias . '.Key');
             $criteria->addSelectColumn($alias . '.Value');
         }

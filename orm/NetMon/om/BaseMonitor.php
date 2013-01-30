@@ -42,16 +42,10 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     protected $pluginid;
 
     /**
-     * The value for the adapterid field.
+     * The value for the pluginmetaid field.
      * @var        int
      */
-    protected $adapterid;
-
-    /**
-     * The value for the snmppropertyid field.
-     * @var        int
-     */
-    protected $snmppropertyid;
+    protected $pluginmetaid;
 
     /**
      * @var        Plugin
@@ -59,14 +53,9 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     protected $aPlugin;
 
     /**
-     * @var        Adapter
+     * @var        PluginMeta
      */
-    protected $aAdapter;
-
-    /**
-     * @var        SnmpProperty
-     */
-    protected $aSnmpProperty;
+    protected $aPluginMeta;
 
     /**
      * @var        PropelObjectCollection|Threshold[] Collection to store aggregation of Threshold objects.
@@ -121,23 +110,13 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [adapterid] column value.
+     * Get the [pluginmetaid] column value.
      *
      * @return int
      */
-    public function getAdapterid()
+    public function getPluginmetaid()
     {
-        return $this->adapterid;
-    }
-
-    /**
-     * Get the [snmppropertyid] column value.
-     *
-     * @return int
-     */
-    public function getSnmppropertyid()
-    {
-        return $this->snmppropertyid;
+        return $this->pluginmetaid;
     }
 
     /**
@@ -187,54 +166,29 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     } // setPluginid()
 
     /**
-     * Set the value of [adapterid] column.
+     * Set the value of [pluginmetaid] column.
      *
      * @param int $v new value
      * @return Monitor The current object (for fluent API support)
      */
-    public function setAdapterid($v)
+    public function setPluginmetaid($v)
     {
         if ($v !== null && is_numeric($v)) {
             $v = (int) $v;
         }
 
-        if ($this->adapterid !== $v) {
-            $this->adapterid = $v;
-            $this->modifiedColumns[] = MonitorPeer::ADAPTERID;
+        if ($this->pluginmetaid !== $v) {
+            $this->pluginmetaid = $v;
+            $this->modifiedColumns[] = MonitorPeer::PLUGINMETAID;
         }
 
-        if ($this->aAdapter !== null && $this->aAdapter->getAdapterid() !== $v) {
-            $this->aAdapter = null;
-        }
-
-
-        return $this;
-    } // setAdapterid()
-
-    /**
-     * Set the value of [snmppropertyid] column.
-     *
-     * @param int $v new value
-     * @return Monitor The current object (for fluent API support)
-     */
-    public function setSnmppropertyid($v)
-    {
-        if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->snmppropertyid !== $v) {
-            $this->snmppropertyid = $v;
-            $this->modifiedColumns[] = MonitorPeer::SNMPPROPERTYID;
-        }
-
-        if ($this->aSnmpProperty !== null && $this->aSnmpProperty->getSnmppropertyid() !== $v) {
-            $this->aSnmpProperty = null;
+        if ($this->aPluginMeta !== null && $this->aPluginMeta->getPluginmetaid() !== $v) {
+            $this->aPluginMeta = null;
         }
 
 
         return $this;
-    } // setSnmppropertyid()
+    } // setPluginmetaid()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -270,8 +224,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
 
             $this->monitorid = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
             $this->pluginid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->adapterid = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-            $this->snmppropertyid = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
+            $this->pluginmetaid = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -280,7 +233,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
             $this->postHydrate($row, $startcol, $rehydrate);
-            return $startcol + 4; // 4 = MonitorPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 3; // 3 = MonitorPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Monitor object", $e);
@@ -306,11 +259,8 @@ abstract class BaseMonitor extends BaseObject implements Persistent
         if ($this->aPlugin !== null && $this->pluginid !== $this->aPlugin->getPluginid()) {
             $this->aPlugin = null;
         }
-        if ($this->aAdapter !== null && $this->adapterid !== $this->aAdapter->getAdapterid()) {
-            $this->aAdapter = null;
-        }
-        if ($this->aSnmpProperty !== null && $this->snmppropertyid !== $this->aSnmpProperty->getSnmppropertyid()) {
-            $this->aSnmpProperty = null;
+        if ($this->aPluginMeta !== null && $this->pluginmetaid !== $this->aPluginMeta->getPluginmetaid()) {
+            $this->aPluginMeta = null;
         }
     } // ensureConsistency
 
@@ -352,8 +302,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
         if ($deep) {  // also de-associate any related objects?
 
             $this->aPlugin = null;
-            $this->aAdapter = null;
-            $this->aSnmpProperty = null;
+            $this->aPluginMeta = null;
             $this->collMonitorThresholds = null;
 
         } // if (deep)
@@ -481,18 +430,11 @@ abstract class BaseMonitor extends BaseObject implements Persistent
                 $this->setPlugin($this->aPlugin);
             }
 
-            if ($this->aAdapter !== null) {
-                if ($this->aAdapter->isModified() || $this->aAdapter->isNew()) {
-                    $affectedRows += $this->aAdapter->save($con);
+            if ($this->aPluginMeta !== null) {
+                if ($this->aPluginMeta->isModified() || $this->aPluginMeta->isNew()) {
+                    $affectedRows += $this->aPluginMeta->save($con);
                 }
-                $this->setAdapter($this->aAdapter);
-            }
-
-            if ($this->aSnmpProperty !== null) {
-                if ($this->aSnmpProperty->isModified() || $this->aSnmpProperty->isNew()) {
-                    $affectedRows += $this->aSnmpProperty->save($con);
-                }
-                $this->setSnmpProperty($this->aSnmpProperty);
+                $this->setPluginMeta($this->aPluginMeta);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -555,11 +497,8 @@ abstract class BaseMonitor extends BaseObject implements Persistent
         if ($this->isColumnModified(MonitorPeer::PLUGINID)) {
             $modifiedColumns[':p' . $index++]  = '`PluginId`';
         }
-        if ($this->isColumnModified(MonitorPeer::ADAPTERID)) {
-            $modifiedColumns[':p' . $index++]  = '`AdapterId`';
-        }
-        if ($this->isColumnModified(MonitorPeer::SNMPPROPERTYID)) {
-            $modifiedColumns[':p' . $index++]  = '`SnmpPropertyId`';
+        if ($this->isColumnModified(MonitorPeer::PLUGINMETAID)) {
+            $modifiedColumns[':p' . $index++]  = '`PluginMetaId`';
         }
 
         $sql = sprintf(
@@ -578,11 +517,8 @@ abstract class BaseMonitor extends BaseObject implements Persistent
                     case '`PluginId`':
                         $stmt->bindValue($identifier, $this->pluginid, PDO::PARAM_INT);
                         break;
-                    case '`AdapterId`':
-                        $stmt->bindValue($identifier, $this->adapterid, PDO::PARAM_INT);
-                        break;
-                    case '`SnmpPropertyId`':
-                        $stmt->bindValue($identifier, $this->snmppropertyid, PDO::PARAM_INT);
+                    case '`PluginMetaId`':
+                        $stmt->bindValue($identifier, $this->pluginmetaid, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -689,15 +625,9 @@ abstract class BaseMonitor extends BaseObject implements Persistent
                 }
             }
 
-            if ($this->aAdapter !== null) {
-                if (!$this->aAdapter->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aAdapter->getValidationFailures());
-                }
-            }
-
-            if ($this->aSnmpProperty !== null) {
-                if (!$this->aSnmpProperty->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aSnmpProperty->getValidationFailures());
+            if ($this->aPluginMeta !== null) {
+                if (!$this->aPluginMeta->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aPluginMeta->getValidationFailures());
                 }
             }
 
@@ -757,10 +687,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
                 return $this->getPluginid();
                 break;
             case 2:
-                return $this->getAdapterid();
-                break;
-            case 3:
-                return $this->getSnmppropertyid();
+                return $this->getPluginmetaid();
                 break;
             default:
                 return null;
@@ -793,18 +720,14 @@ abstract class BaseMonitor extends BaseObject implements Persistent
         $result = array(
             $keys[0] => $this->getMonitorid(),
             $keys[1] => $this->getPluginid(),
-            $keys[2] => $this->getAdapterid(),
-            $keys[3] => $this->getSnmppropertyid(),
+            $keys[2] => $this->getPluginmetaid(),
         );
         if ($includeForeignObjects) {
             if (null !== $this->aPlugin) {
                 $result['Plugin'] = $this->aPlugin->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->aAdapter) {
-                $result['Adapter'] = $this->aAdapter->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aSnmpProperty) {
-                $result['SnmpProperty'] = $this->aSnmpProperty->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            if (null !== $this->aPluginMeta) {
+                $result['PluginMeta'] = $this->aPluginMeta->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collMonitorThresholds) {
                 $result['MonitorThresholds'] = $this->collMonitorThresholds->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -850,10 +773,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
                 $this->setPluginid($value);
                 break;
             case 2:
-                $this->setAdapterid($value);
-                break;
-            case 3:
-                $this->setSnmppropertyid($value);
+                $this->setPluginmetaid($value);
                 break;
         } // switch()
     }
@@ -881,8 +801,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
 
         if (array_key_exists($keys[0], $arr)) $this->setMonitorid($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setPluginid($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setAdapterid($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setSnmppropertyid($arr[$keys[3]]);
+        if (array_key_exists($keys[2], $arr)) $this->setPluginmetaid($arr[$keys[2]]);
     }
 
     /**
@@ -896,8 +815,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
 
         if ($this->isColumnModified(MonitorPeer::MONITORID)) $criteria->add(MonitorPeer::MONITORID, $this->monitorid);
         if ($this->isColumnModified(MonitorPeer::PLUGINID)) $criteria->add(MonitorPeer::PLUGINID, $this->pluginid);
-        if ($this->isColumnModified(MonitorPeer::ADAPTERID)) $criteria->add(MonitorPeer::ADAPTERID, $this->adapterid);
-        if ($this->isColumnModified(MonitorPeer::SNMPPROPERTYID)) $criteria->add(MonitorPeer::SNMPPROPERTYID, $this->snmppropertyid);
+        if ($this->isColumnModified(MonitorPeer::PLUGINMETAID)) $criteria->add(MonitorPeer::PLUGINMETAID, $this->pluginmetaid);
 
         return $criteria;
     }
@@ -915,8 +833,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
         $criteria = new Criteria(MonitorPeer::DATABASE_NAME);
         $criteria->add(MonitorPeer::MONITORID, $this->monitorid);
         $criteria->add(MonitorPeer::PLUGINID, $this->pluginid);
-        $criteria->add(MonitorPeer::ADAPTERID, $this->adapterid);
-        $criteria->add(MonitorPeer::SNMPPROPERTYID, $this->snmppropertyid);
+        $criteria->add(MonitorPeer::PLUGINMETAID, $this->pluginmetaid);
 
         return $criteria;
     }
@@ -931,8 +848,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
         $pks = array();
         $pks[0] = $this->getMonitorid();
         $pks[1] = $this->getPluginid();
-        $pks[2] = $this->getAdapterid();
-        $pks[3] = $this->getSnmppropertyid();
+        $pks[2] = $this->getPluginmetaid();
 
         return $pks;
     }
@@ -947,8 +863,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     {
         $this->setMonitorid($keys[0]);
         $this->setPluginid($keys[1]);
-        $this->setAdapterid($keys[2]);
-        $this->setSnmppropertyid($keys[3]);
+        $this->setPluginmetaid($keys[2]);
     }
 
     /**
@@ -958,7 +873,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     public function isPrimaryKeyNull()
     {
 
-        return (null === $this->getMonitorid()) && (null === $this->getPluginid()) && (null === $this->getAdapterid()) && (null === $this->getSnmppropertyid());
+        return (null === $this->getMonitorid()) && (null === $this->getPluginid()) && (null === $this->getPluginmetaid());
     }
 
     /**
@@ -975,8 +890,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setPluginid($this->getPluginid());
-        $copyObj->setAdapterid($this->getAdapterid());
-        $copyObj->setSnmppropertyid($this->getSnmppropertyid());
+        $copyObj->setPluginmetaid($this->getPluginmetaid());
 
         if ($deepCopy && !$this->startCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1094,26 +1008,26 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a Adapter object.
+     * Declares an association between this object and a PluginMeta object.
      *
-     * @param             Adapter $v
+     * @param             PluginMeta $v
      * @return Monitor The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setAdapter(Adapter $v = null)
+    public function setPluginMeta(PluginMeta $v = null)
     {
         if ($v === null) {
-            $this->setAdapterid(NULL);
+            $this->setPluginmetaid(NULL);
         } else {
-            $this->setAdapterid($v->getAdapterid());
+            $this->setPluginmetaid($v->getPluginmetaid());
         }
 
-        $this->aAdapter = $v;
+        $this->aPluginMeta = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Adapter object, it will not be re-added.
+        // If this object has already been added to the PluginMeta object, it will not be re-added.
         if ($v !== null) {
-            $v->addAdapterMonitor($this);
+            $v->addPluginMetaMonitor($this);
         }
 
 
@@ -1122,79 +1036,27 @@ abstract class BaseMonitor extends BaseObject implements Persistent
 
 
     /**
-     * Get the associated Adapter object
+     * Get the associated PluginMeta object
      *
      * @param PropelPDO $con Optional Connection object.
      * @param $doQuery Executes a query to get the object if required
-     * @return Adapter The associated Adapter object.
+     * @return PluginMeta The associated PluginMeta object.
      * @throws PropelException
      */
-    public function getAdapter(PropelPDO $con = null, $doQuery = true)
+    public function getPluginMeta(PropelPDO $con = null, $doQuery = true)
     {
-        if ($this->aAdapter === null && ($this->adapterid !== null) && $doQuery) {
-            $this->aAdapter = AdapterQuery::create()->findPk($this->adapterid, $con);
+        if ($this->aPluginMeta === null && ($this->pluginmetaid !== null) && $doQuery) {
+            $this->aPluginMeta = PluginMetaQuery::create()->findPk($this->pluginmetaid, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aAdapter->addAdapterMonitors($this);
+                $this->aPluginMeta->addPluginMetaMonitors($this);
              */
         }
 
-        return $this->aAdapter;
-    }
-
-    /**
-     * Declares an association between this object and a SnmpProperty object.
-     *
-     * @param             SnmpProperty $v
-     * @return Monitor The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setSnmpProperty(SnmpProperty $v = null)
-    {
-        if ($v === null) {
-            $this->setSnmppropertyid(NULL);
-        } else {
-            $this->setSnmppropertyid($v->getSnmppropertyid());
-        }
-
-        $this->aSnmpProperty = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the SnmpProperty object, it will not be re-added.
-        if ($v !== null) {
-            $v->addSnmpPropertyMonitor($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated SnmpProperty object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return SnmpProperty The associated SnmpProperty object.
-     * @throws PropelException
-     */
-    public function getSnmpProperty(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aSnmpProperty === null && ($this->snmppropertyid !== null) && $doQuery) {
-            $this->aSnmpProperty = SnmpPropertyQuery::create()->findPk($this->snmppropertyid, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aSnmpProperty->addSnmpPropertyMonitors($this);
-             */
-        }
-
-        return $this->aSnmpProperty;
+        return $this->aPluginMeta;
     }
 
 
@@ -1463,8 +1325,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
     {
         $this->monitorid = null;
         $this->pluginid = null;
-        $this->adapterid = null;
-        $this->snmppropertyid = null;
+        $this->pluginmetaid = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;
@@ -1495,11 +1356,8 @@ abstract class BaseMonitor extends BaseObject implements Persistent
             if ($this->aPlugin instanceof Persistent) {
               $this->aPlugin->clearAllReferences($deep);
             }
-            if ($this->aAdapter instanceof Persistent) {
-              $this->aAdapter->clearAllReferences($deep);
-            }
-            if ($this->aSnmpProperty instanceof Persistent) {
-              $this->aSnmpProperty->clearAllReferences($deep);
+            if ($this->aPluginMeta instanceof Persistent) {
+              $this->aPluginMeta->clearAllReferences($deep);
             }
 
             $this->alreadyInClearAllReferencesDeep = false;
@@ -1510,8 +1368,7 @@ abstract class BaseMonitor extends BaseObject implements Persistent
         }
         $this->collMonitorThresholds = null;
         $this->aPlugin = null;
-        $this->aAdapter = null;
-        $this->aSnmpProperty = null;
+        $this->aPluginMeta = null;
     }
 
     /**

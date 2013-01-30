@@ -1,0 +1,178 @@
+
+<style type="text/css" title="currentStyle">
+    @import "css/demo_page.css";
+    @import "css/demo_table.css";
+    @import "css/themes/smoothness/style.css";
+</style>
+<script>
+    $.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnCallback, bStandingRedraw )
+    {
+        if ( typeof sNewSource != 'undefined' && sNewSource != null ) {
+            oSettings.sAjaxSource = sNewSource;
+        }
+
+        // Server-side processing should just call fnDraw
+        if ( oSettings.oFeatures.bServerSide ) {
+            this.fnDraw();
+            return;
+        }
+
+        this.oApi._fnProcessingDisplay( oSettings, true );
+        var that = this;
+        var iStart = oSettings._iDisplayStart;
+        var aData = [];
+
+        this.oApi._fnServerParams( oSettings, aData );
+
+        oSettings.fnServerData.call( oSettings.oInstance, oSettings.sAjaxSource, aData, function(json) {
+            /* Clear the old information from the table */
+            that.oApi._fnClearTable( oSettings );
+
+            /* Got the data - add it to the table */
+            var aData =  (oSettings.sAjaxDataProp !== "") ?
+                that.oApi._fnGetObjectDataFn( oSettings.sAjaxDataProp )( json ) : json;
+
+            for ( var i=0 ; i<aData.length ; i++ )
+            {
+                that.oApi._fnAddData( oSettings, aData[i] );
+            }
+
+            oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+
+            if ( typeof bStandingRedraw != 'undefined' && bStandingRedraw === true )
+            {
+                oSettings._iDisplayStart = iStart;
+                that.fnDraw( false );
+            }
+            else
+            {
+                that.fnDraw();
+            }
+
+            that.oApi._fnProcessingDisplay( oSettings, false );
+
+            /* Callback user function - for event handlers etc */
+            if ( typeof fnCallback == 'function' && fnCallback != null )
+            {
+                fnCallback( oSettings );
+            }
+        }, oSettings );
+};
+    
+   
+    
+    var timerActive;
+    var oAlarmsTable;
+    var selectedAlarmData = Array();
+    
+    $(document).ready(function() {
+            oAlarmsTable = $('#example').dataTable( {
+                "sAjaxSource": 'alarm/alarms',
+                "sPaginationType": "full_numbers",
+                "bAutoWidth": false,
+                "bStateSave": true,
+                "bJQueryUI": true,
+                "sServerMethod":"GET",
+                //Highlights the row if it was previously selected, 
+                //I don't exactly want that right now
+                /* "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
+	    		var id = aData[0];
+	    		$(nRow).attr("id",id);
+		    	$.each(selectedAlarmData, function(index, value){
+		    		if(aData[0] == value[0])
+                                    $(nRow).addClass("row_selected2");
+		    	});
+	    		return nRow;
+	    	}, */
+                "aaSorting": [[ 4, "desc" ]],
+                "aoColumns": [ 
+            /* ID */ 	{"bVisible":false},
+            /* Hostname */  {"bVisible":true,"sWidth": "13%"},
+            /* IP */  	{"bVisible":true,"sWidth": "10%"},
+            /* Name */  	{"bVisible":true,"sWidth": "12%"},
+            /* Time */  	{"bVisible":true,"sWidth": "12%"},
+            /* Alarm */  	{"bVisible":true,"sWidth": "10%"},
+            /* Threshold */ {"bVisible":true,"sWidth": "12%"},
+            /* Value */  	{"bVisible":true,"sWidth": "10%"},
+            /* Active */    {"bVisible":true,"sWidth": "10%"}
+                    ]
+        });
+        
+        function getSelected( oTableLocal )
+        {
+           var aReturn = new Array();
+           var aTrs = oTableLocal.fnGetNodes();
+
+           for ( var i=0 ; i<aTrs.length ; i++ )
+           {
+                if ( $(aTrs[i]).hasClass('row_selected') )
+                {
+                        aReturn.push( aTrs[i] );
+                }
+           }
+           return aReturn;
+        }
+        
+        
+        
+        $('#example tbody tr').live('click', function() {
+            if ( $(this).hasClass('row_selected') )
+                $(this).removeClass('row_selected');
+            else
+                $(this).addClass('row_selected');
+            
+            var selectedAlarms = getSelected(oAlarmsTable);
+            
+            for(var i = 0; i < selectedAlarms.length; i++)
+            {
+                selectedAlarmData[i] = oAlarmsTable.fnGetData(selectedAlarms[i]);
+            }
+        });
+        
+        $("#ackButton").live('click', function() {
+            var alarms = "";
+            $.each(selectedAlarmData, function(index, value){
+                        alarms += "&alarms[]=" + value[0];
+            });
+
+                $.ajax({type: "POST",
+                        url: "alarm/acknowledge",
+                        cache: false,
+                        data: "ack=true" + alarms,
+                        success: function(html){
+                                oAlarmsTable.fnReloadAjax();
+                        }
+                });
+        });
+        
+        setInterval(function() {
+            oAlarmsTable.fnReloadAjax();
+        }, 10000);
+    });
+</script>
+
+<div id="alarmsContainer">
+<table cellpadding="0" cellspacing="0" class="display" id="example">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Hostname</th>
+            <th>IP</th>
+            <th>Name</th>
+            <th>Time</th>
+            <th>Alarm</th>
+            <th>Threshold</th>
+            <th>Value</th>
+            <th>Active</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="9" class="dataTables_empty">Loading data from server</td>
+        </tr>
+    </tbody>
+</table>
+    <div class="form_settings">
+        <input type="button" id="ackButton" class="submit" value="Acknowledge">
+    </div>
+</div>

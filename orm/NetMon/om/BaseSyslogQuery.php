@@ -7,7 +7,7 @@
  *
  *
  * @method SyslogQuery orderBySyslogid($order = Criteria::ASC) Order by the SyslogId column
- * @method SyslogQuery orderByDeviceid($order = Criteria::ASC) Order by the DeviceId column
+ * @method SyslogQuery orderByIpaddress($order = Criteria::ASC) Order by the IpAddress column
  * @method SyslogQuery orderByFacility($order = Criteria::ASC) Order by the Facility column
  * @method SyslogQuery orderByPriority($order = Criteria::ASC) Order by the Priority column
  * @method SyslogQuery orderByLevel($order = Criteria::ASC) Order by the Level column
@@ -20,7 +20,7 @@
  * @method SyslogQuery orderByValue($order = Criteria::ASC) Order by the Value column
  *
  * @method SyslogQuery groupBySyslogid() Group by the SyslogId column
- * @method SyslogQuery groupByDeviceid() Group by the DeviceId column
+ * @method SyslogQuery groupByIpaddress() Group by the IpAddress column
  * @method SyslogQuery groupByFacility() Group by the Facility column
  * @method SyslogQuery groupByPriority() Group by the Priority column
  * @method SyslogQuery groupByLevel() Group by the Level column
@@ -36,14 +36,10 @@
  * @method SyslogQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method SyslogQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method SyslogQuery leftJoinDevice($relationAlias = null) Adds a LEFT JOIN clause to the query using the Device relation
- * @method SyslogQuery rightJoinDevice($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Device relation
- * @method SyslogQuery innerJoinDevice($relationAlias = null) Adds a INNER JOIN clause to the query using the Device relation
- *
  * @method Syslog findOne(PropelPDO $con = null) Return the first Syslog matching the query
  * @method Syslog findOneOrCreate(PropelPDO $con = null) Return the first Syslog matching the query, or a new Syslog object populated from the query conditions when no match is found
  *
- * @method Syslog findOneByDeviceid(int $DeviceId) Return the first Syslog filtered by the DeviceId column
+ * @method Syslog findOneByIpaddress(string $IpAddress) Return the first Syslog filtered by the IpAddress column
  * @method Syslog findOneByFacility(string $Facility) Return the first Syslog filtered by the Facility column
  * @method Syslog findOneByPriority(string $Priority) Return the first Syslog filtered by the Priority column
  * @method Syslog findOneByLevel(string $Level) Return the first Syslog filtered by the Level column
@@ -56,7 +52,7 @@
  * @method Syslog findOneByValue(int $Value) Return the first Syslog filtered by the Value column
  *
  * @method array findBySyslogid(int $SyslogId) Return Syslog objects filtered by the SyslogId column
- * @method array findByDeviceid(int $DeviceId) Return Syslog objects filtered by the DeviceId column
+ * @method array findByIpaddress(string $IpAddress) Return Syslog objects filtered by the IpAddress column
  * @method array findByFacility(string $Facility) Return Syslog objects filtered by the Facility column
  * @method array findByPriority(string $Priority) Return Syslog objects filtered by the Priority column
  * @method array findByLevel(string $Level) Return Syslog objects filtered by the Level column
@@ -170,7 +166,7 @@ abstract class BaseSyslogQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `SyslogId`, `DeviceId`, `Facility`, `Priority`, `Level`, `Tag`, `Timestamp`, `Program`, `Message`, `Sequence`, `Count`, `Value` FROM `Syslog` WHERE `SyslogId` = :p0';
+        $sql = 'SELECT `SyslogId`, `IpAddress`, `Facility`, `Priority`, `Level`, `Tag`, `Timestamp`, `Program`, `Message`, `Sequence`, `Count`, `Value` FROM `Syslog` WHERE `SyslogId` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -302,47 +298,32 @@ abstract class BaseSyslogQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the DeviceId column
+     * Filter the query on the IpAddress column
      *
      * Example usage:
      * <code>
-     * $query->filterByDeviceid(1234); // WHERE DeviceId = 1234
-     * $query->filterByDeviceid(array(12, 34)); // WHERE DeviceId IN (12, 34)
-     * $query->filterByDeviceid(array('min' => 12)); // WHERE DeviceId >= 12
-     * $query->filterByDeviceid(array('max' => 12)); // WHERE DeviceId <= 12
+     * $query->filterByIpaddress('fooValue');   // WHERE IpAddress = 'fooValue'
+     * $query->filterByIpaddress('%fooValue%'); // WHERE IpAddress LIKE '%fooValue%'
      * </code>
      *
-     * @see       filterByDevice()
-     *
-     * @param     mixed $deviceid The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $ipaddress The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return SyslogQuery The current query, for fluid interface
      */
-    public function filterByDeviceid($deviceid = null, $comparison = null)
+    public function filterByIpaddress($ipaddress = null, $comparison = null)
     {
-        if (is_array($deviceid)) {
-            $useMinMax = false;
-            if (isset($deviceid['min'])) {
-                $this->addUsingAlias(SyslogPeer::DEVICEID, $deviceid['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($deviceid['max'])) {
-                $this->addUsingAlias(SyslogPeer::DEVICEID, $deviceid['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
+        if (null === $comparison) {
+            if (is_array($ipaddress)) {
                 $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $ipaddress)) {
+                $ipaddress = str_replace('*', '%', $ipaddress);
+                $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(SyslogPeer::DEVICEID, $deviceid, $comparison);
+        return $this->addUsingAlias(SyslogPeer::IPADDRESS, $ipaddress, $comparison);
     }
 
     /**
@@ -686,82 +667,6 @@ abstract class BaseSyslogQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(SyslogPeer::VALUE, $value, $comparison);
-    }
-
-    /**
-     * Filter the query by a related Device object
-     *
-     * @param   Device|PropelObjectCollection $device The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 SyslogQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByDevice($device, $comparison = null)
-    {
-        if ($device instanceof Device) {
-            return $this
-                ->addUsingAlias(SyslogPeer::DEVICEID, $device->getDeviceid(), $comparison);
-        } elseif ($device instanceof PropelObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(SyslogPeer::DEVICEID, $device->toKeyValue('PrimaryKey', 'Deviceid'), $comparison);
-        } else {
-            throw new PropelException('filterByDevice() only accepts arguments of type Device or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Device relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return SyslogQuery The current query, for fluid interface
-     */
-    public function joinDevice($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Device');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Device');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Device relation Device object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   DeviceQuery A secondary query class using the current class as primary query
-     */
-    public function useDeviceQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinDevice($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Device', 'DeviceQuery');
     }
 
     /**

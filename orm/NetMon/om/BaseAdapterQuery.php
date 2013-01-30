@@ -52,10 +52,6 @@
  * @method AdapterQuery rightJoinAdapterPortStatus($relationAlias = null) Adds a RIGHT JOIN clause to the query using the AdapterPortStatus relation
  * @method AdapterQuery innerJoinAdapterPortStatus($relationAlias = null) Adds a INNER JOIN clause to the query using the AdapterPortStatus relation
  *
- * @method AdapterQuery leftJoinAdapterMonitor($relationAlias = null) Adds a LEFT JOIN clause to the query using the AdapterMonitor relation
- * @method AdapterQuery rightJoinAdapterMonitor($relationAlias = null) Adds a RIGHT JOIN clause to the query using the AdapterMonitor relation
- * @method AdapterQuery innerJoinAdapterMonitor($relationAlias = null) Adds a INNER JOIN clause to the query using the AdapterMonitor relation
- *
  * @method AdapterQuery leftJoinAdapterTrap($relationAlias = null) Adds a LEFT JOIN clause to the query using the AdapterTrap relation
  * @method AdapterQuery rightJoinAdapterTrap($relationAlias = null) Adds a RIGHT JOIN clause to the query using the AdapterTrap relation
  * @method AdapterQuery innerJoinAdapterTrap($relationAlias = null) Adds a INNER JOIN clause to the query using the AdapterTrap relation
@@ -988,80 +984,6 @@ abstract class BaseAdapterQuery extends ModelCriteria
         return $this
             ->joinAdapterPortStatus($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'AdapterPortStatus', 'PortStatusQuery');
-    }
-
-    /**
-     * Filter the query by a related Monitor object
-     *
-     * @param   Monitor|PropelObjectCollection $monitor  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 AdapterQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByAdapterMonitor($monitor, $comparison = null)
-    {
-        if ($monitor instanceof Monitor) {
-            return $this
-                ->addUsingAlias(AdapterPeer::ADAPTERID, $monitor->getAdapterid(), $comparison);
-        } elseif ($monitor instanceof PropelObjectCollection) {
-            return $this
-                ->useAdapterMonitorQuery()
-                ->filterByPrimaryKeys($monitor->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByAdapterMonitor() only accepts arguments of type Monitor or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the AdapterMonitor relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return AdapterQuery The current query, for fluid interface
-     */
-    public function joinAdapterMonitor($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('AdapterMonitor');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'AdapterMonitor');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the AdapterMonitor relation Monitor object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   MonitorQuery A secondary query class using the current class as primary query
-     */
-    public function useAdapterMonitorQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinAdapterMonitor($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'AdapterMonitor', 'MonitorQuery');
     }
 
     /**

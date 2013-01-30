@@ -8,11 +8,13 @@
  *
  * @method PluginMetaQuery orderByPluginmetaid($order = Criteria::ASC) Order by the PluginMetaId column
  * @method PluginMetaQuery orderByPluginid($order = Criteria::ASC) Order by the PluginId column
+ * @method PluginMetaQuery orderByEnvelope($order = Criteria::ASC) Order by the Envelope column
  * @method PluginMetaQuery orderByKey($order = Criteria::ASC) Order by the Key column
  * @method PluginMetaQuery orderByValue($order = Criteria::ASC) Order by the Value column
  *
  * @method PluginMetaQuery groupByPluginmetaid() Group by the PluginMetaId column
  * @method PluginMetaQuery groupByPluginid() Group by the PluginId column
+ * @method PluginMetaQuery groupByEnvelope() Group by the Envelope column
  * @method PluginMetaQuery groupByKey() Group by the Key column
  * @method PluginMetaQuery groupByValue() Group by the Value column
  *
@@ -24,15 +26,21 @@
  * @method PluginMetaQuery rightJoinPlugin($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Plugin relation
  * @method PluginMetaQuery innerJoinPlugin($relationAlias = null) Adds a INNER JOIN clause to the query using the Plugin relation
  *
+ * @method PluginMetaQuery leftJoinPluginMetaMonitor($relationAlias = null) Adds a LEFT JOIN clause to the query using the PluginMetaMonitor relation
+ * @method PluginMetaQuery rightJoinPluginMetaMonitor($relationAlias = null) Adds a RIGHT JOIN clause to the query using the PluginMetaMonitor relation
+ * @method PluginMetaQuery innerJoinPluginMetaMonitor($relationAlias = null) Adds a INNER JOIN clause to the query using the PluginMetaMonitor relation
+ *
  * @method PluginMeta findOne(PropelPDO $con = null) Return the first PluginMeta matching the query
  * @method PluginMeta findOneOrCreate(PropelPDO $con = null) Return the first PluginMeta matching the query, or a new PluginMeta object populated from the query conditions when no match is found
  *
  * @method PluginMeta findOneByPluginid(int $PluginId) Return the first PluginMeta filtered by the PluginId column
+ * @method PluginMeta findOneByEnvelope(string $Envelope) Return the first PluginMeta filtered by the Envelope column
  * @method PluginMeta findOneByKey(string $Key) Return the first PluginMeta filtered by the Key column
  * @method PluginMeta findOneByValue(string $Value) Return the first PluginMeta filtered by the Value column
  *
  * @method array findByPluginmetaid(int $PluginMetaId) Return PluginMeta objects filtered by the PluginMetaId column
  * @method array findByPluginid(int $PluginId) Return PluginMeta objects filtered by the PluginId column
+ * @method array findByEnvelope(string $Envelope) Return PluginMeta objects filtered by the Envelope column
  * @method array findByKey(string $Key) Return PluginMeta objects filtered by the Key column
  * @method array findByValue(string $Value) Return PluginMeta objects filtered by the Value column
  *
@@ -138,7 +146,7 @@ abstract class BasePluginMetaQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `PluginMetaId`, `PluginId`, `Key`, `Value` FROM `PluginMeta` WHERE `PluginMetaId` = :p0';
+        $sql = 'SELECT `PluginMetaId`, `PluginId`, `Envelope`, `Key`, `Value` FROM `PluginMeta` WHERE `PluginMetaId` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -314,6 +322,35 @@ abstract class BasePluginMetaQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the Envelope column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByEnvelope('fooValue');   // WHERE Envelope = 'fooValue'
+     * $query->filterByEnvelope('%fooValue%'); // WHERE Envelope LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $envelope The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return PluginMetaQuery The current query, for fluid interface
+     */
+    public function filterByEnvelope($envelope = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($envelope)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $envelope)) {
+                $envelope = str_replace('*', '%', $envelope);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(PluginMetaPeer::ENVELOPE, $envelope, $comparison);
+    }
+
+    /**
      * Filter the query on the Key column
      *
      * Example usage:
@@ -445,6 +482,80 @@ abstract class BasePluginMetaQuery extends ModelCriteria
         return $this
             ->joinPlugin($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Plugin', 'PluginQuery');
+    }
+
+    /**
+     * Filter the query by a related Monitor object
+     *
+     * @param   Monitor|PropelObjectCollection $monitor  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 PluginMetaQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByPluginMetaMonitor($monitor, $comparison = null)
+    {
+        if ($monitor instanceof Monitor) {
+            return $this
+                ->addUsingAlias(PluginMetaPeer::PLUGINMETAID, $monitor->getPluginmetaid(), $comparison);
+        } elseif ($monitor instanceof PropelObjectCollection) {
+            return $this
+                ->usePluginMetaMonitorQuery()
+                ->filterByPrimaryKeys($monitor->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByPluginMetaMonitor() only accepts arguments of type Monitor or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the PluginMetaMonitor relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return PluginMetaQuery The current query, for fluid interface
+     */
+    public function joinPluginMetaMonitor($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('PluginMetaMonitor');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'PluginMetaMonitor');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the PluginMetaMonitor relation Monitor object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   MonitorQuery A secondary query class using the current class as primary query
+     */
+    public function usePluginMetaMonitorQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinPluginMetaMonitor($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'PluginMetaMonitor', 'MonitorQuery');
     }
 
     /**

@@ -36,10 +36,10 @@ abstract class BaseSyslog extends BaseObject implements Persistent
     protected $syslogid;
 
     /**
-     * The value for the deviceid field.
-     * @var        int
+     * The value for the ipaddress field.
+     * @var        string
      */
-    protected $deviceid;
+    protected $ipaddress;
 
     /**
      * The value for the facility field.
@@ -102,11 +102,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
     protected $value;
 
     /**
-     * @var        Device
-     */
-    protected $aDevice;
-
-    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -137,13 +132,13 @@ abstract class BaseSyslog extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [deviceid] column value.
+     * Get the [ipaddress] column value.
      *
-     * @return int
+     * @return string
      */
-    public function getDeviceid()
+    public function getIpaddress()
     {
-        return $this->deviceid;
+        return $this->ipaddress;
     }
 
     /**
@@ -298,29 +293,25 @@ abstract class BaseSyslog extends BaseObject implements Persistent
     } // setSyslogid()
 
     /**
-     * Set the value of [deviceid] column.
+     * Set the value of [ipaddress] column.
      *
-     * @param int $v new value
+     * @param string $v new value
      * @return Syslog The current object (for fluent API support)
      */
-    public function setDeviceid($v)
+    public function setIpaddress($v)
     {
         if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
-        if ($this->deviceid !== $v) {
-            $this->deviceid = $v;
-            $this->modifiedColumns[] = SyslogPeer::DEVICEID;
-        }
-
-        if ($this->aDevice !== null && $this->aDevice->getDeviceid() !== $v) {
-            $this->aDevice = null;
+        if ($this->ipaddress !== $v) {
+            $this->ipaddress = $v;
+            $this->modifiedColumns[] = SyslogPeer::IPADDRESS;
         }
 
 
         return $this;
-    } // setDeviceid()
+    } // setIpaddress()
 
     /**
      * Set the value of [facility] column.
@@ -567,7 +558,7 @@ abstract class BaseSyslog extends BaseObject implements Persistent
         try {
 
             $this->syslogid = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-            $this->deviceid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+            $this->ipaddress = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
             $this->facility = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
             $this->priority = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
             $this->level = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
@@ -609,9 +600,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aDevice !== null && $this->deviceid !== $this->aDevice->getDeviceid()) {
-            $this->aDevice = null;
-        }
     } // ensureConsistency
 
     /**
@@ -651,7 +639,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aDevice = null;
         } // if (deep)
     }
 
@@ -765,18 +752,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their coresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aDevice !== null) {
-                if ($this->aDevice->isModified() || $this->aDevice->isNew()) {
-                    $affectedRows += $this->aDevice->save($con);
-                }
-                $this->setDevice($this->aDevice);
-            }
-
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -817,8 +792,8 @@ abstract class BaseSyslog extends BaseObject implements Persistent
         if ($this->isColumnModified(SyslogPeer::SYSLOGID)) {
             $modifiedColumns[':p' . $index++]  = '`SyslogId`';
         }
-        if ($this->isColumnModified(SyslogPeer::DEVICEID)) {
-            $modifiedColumns[':p' . $index++]  = '`DeviceId`';
+        if ($this->isColumnModified(SyslogPeer::IPADDRESS)) {
+            $modifiedColumns[':p' . $index++]  = '`IpAddress`';
         }
         if ($this->isColumnModified(SyslogPeer::FACILITY)) {
             $modifiedColumns[':p' . $index++]  = '`Facility`';
@@ -864,8 +839,8 @@ abstract class BaseSyslog extends BaseObject implements Persistent
                     case '`SyslogId`':
                         $stmt->bindValue($identifier, $this->syslogid, PDO::PARAM_INT);
                         break;
-                    case '`DeviceId`':
-                        $stmt->bindValue($identifier, $this->deviceid, PDO::PARAM_INT);
+                    case '`IpAddress`':
+                        $stmt->bindValue($identifier, $this->ipaddress, PDO::PARAM_STR);
                         break;
                     case '`Facility`':
                         $stmt->bindValue($identifier, $this->facility, PDO::PARAM_STR);
@@ -991,18 +966,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            // We call the validate method on the following object(s) if they
-            // were passed to this object by their coresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aDevice !== null) {
-                if (!$this->aDevice->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aDevice->getValidationFailures());
-                }
-            }
-
-
             if (($retval = SyslogPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
@@ -1047,7 +1010,7 @@ abstract class BaseSyslog extends BaseObject implements Persistent
                 return $this->getSyslogid();
                 break;
             case 1:
-                return $this->getDeviceid();
+                return $this->getIpaddress();
                 break;
             case 2:
                 return $this->getFacility();
@@ -1096,11 +1059,10 @@ abstract class BaseSyslog extends BaseObject implements Persistent
      *                    Defaults to BasePeer::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to true.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
         if (isset($alreadyDumpedObjects['Syslog'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
@@ -1109,7 +1071,7 @@ abstract class BaseSyslog extends BaseObject implements Persistent
         $keys = SyslogPeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getSyslogid(),
-            $keys[1] => $this->getDeviceid(),
+            $keys[1] => $this->getIpaddress(),
             $keys[2] => $this->getFacility(),
             $keys[3] => $this->getPriority(),
             $keys[4] => $this->getLevel(),
@@ -1121,11 +1083,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
             $keys[10] => $this->getCount(),
             $keys[11] => $this->getValue(),
         );
-        if ($includeForeignObjects) {
-            if (null !== $this->aDevice) {
-                $result['Device'] = $this->aDevice->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-        }
 
         return $result;
     }
@@ -1163,7 +1120,7 @@ abstract class BaseSyslog extends BaseObject implements Persistent
                 $this->setSyslogid($value);
                 break;
             case 1:
-                $this->setDeviceid($value);
+                $this->setIpaddress($value);
                 break;
             case 2:
                 $this->setFacility($value);
@@ -1220,7 +1177,7 @@ abstract class BaseSyslog extends BaseObject implements Persistent
         $keys = SyslogPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setSyslogid($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setDeviceid($arr[$keys[1]]);
+        if (array_key_exists($keys[1], $arr)) $this->setIpaddress($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setFacility($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setPriority($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setLevel($arr[$keys[4]]);
@@ -1243,7 +1200,7 @@ abstract class BaseSyslog extends BaseObject implements Persistent
         $criteria = new Criteria(SyslogPeer::DATABASE_NAME);
 
         if ($this->isColumnModified(SyslogPeer::SYSLOGID)) $criteria->add(SyslogPeer::SYSLOGID, $this->syslogid);
-        if ($this->isColumnModified(SyslogPeer::DEVICEID)) $criteria->add(SyslogPeer::DEVICEID, $this->deviceid);
+        if ($this->isColumnModified(SyslogPeer::IPADDRESS)) $criteria->add(SyslogPeer::IPADDRESS, $this->ipaddress);
         if ($this->isColumnModified(SyslogPeer::FACILITY)) $criteria->add(SyslogPeer::FACILITY, $this->facility);
         if ($this->isColumnModified(SyslogPeer::PRIORITY)) $criteria->add(SyslogPeer::PRIORITY, $this->priority);
         if ($this->isColumnModified(SyslogPeer::LEVEL)) $criteria->add(SyslogPeer::LEVEL, $this->level);
@@ -1317,7 +1274,7 @@ abstract class BaseSyslog extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setDeviceid($this->getDeviceid());
+        $copyObj->setIpaddress($this->getIpaddress());
         $copyObj->setFacility($this->getFacility());
         $copyObj->setPriority($this->getPriority());
         $copyObj->setLevel($this->getLevel());
@@ -1328,18 +1285,6 @@ abstract class BaseSyslog extends BaseObject implements Persistent
         $copyObj->setSequence($this->getSequence());
         $copyObj->setCount($this->getCount());
         $copyObj->setValue($this->getValue());
-
-        if ($deepCopy && !$this->startCopy) {
-            // important: temporarily setNew(false) because this affects the behavior of
-            // the getter/setter methods for fkey referrer objects.
-            $copyObj->setNew(false);
-            // store object hash to prevent cycle
-            $this->startCopy = true;
-
-            //unflag object copy
-            $this->startCopy = false;
-        } // if ($deepCopy)
-
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setSyslogid(NULL); // this is a auto-increment column, so set to default value
@@ -1387,64 +1332,12 @@ abstract class BaseSyslog extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a Device object.
-     *
-     * @param             Device $v
-     * @return Syslog The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setDevice(Device $v = null)
-    {
-        if ($v === null) {
-            $this->setDeviceid(NULL);
-        } else {
-            $this->setDeviceid($v->getDeviceid());
-        }
-
-        $this->aDevice = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Device object, it will not be re-added.
-        if ($v !== null) {
-            $v->addDeviceSyslog($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Device object
-     *
-     * @param PropelPDO $con Optional Connection object.
-     * @param $doQuery Executes a query to get the object if required
-     * @return Device The associated Device object.
-     * @throws PropelException
-     */
-    public function getDevice(PropelPDO $con = null, $doQuery = true)
-    {
-        if ($this->aDevice === null && ($this->deviceid !== null) && $doQuery) {
-            $this->aDevice = DeviceQuery::create()->findPk($this->deviceid, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aDevice->addDeviceSyslogs($this);
-             */
-        }
-
-        return $this->aDevice;
-    }
-
-    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
     {
         $this->syslogid = null;
-        $this->deviceid = null;
+        $this->ipaddress = null;
         $this->facility = null;
         $this->priority = null;
         $this->level = null;
@@ -1477,14 +1370,10 @@ abstract class BaseSyslog extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aDevice instanceof Persistent) {
-              $this->aDevice->clearAllReferences($deep);
-            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aDevice = null;
     }
 
     /**

@@ -8,13 +8,11 @@
  *
  * @method MonitorQuery orderByMonitorid($order = Criteria::ASC) Order by the MonitorId column
  * @method MonitorQuery orderByPluginid($order = Criteria::ASC) Order by the PluginId column
- * @method MonitorQuery orderByAdapterid($order = Criteria::ASC) Order by the AdapterId column
- * @method MonitorQuery orderBySnmppropertyid($order = Criteria::ASC) Order by the SnmpPropertyId column
+ * @method MonitorQuery orderByPluginmetaid($order = Criteria::ASC) Order by the PluginMetaId column
  *
  * @method MonitorQuery groupByMonitorid() Group by the MonitorId column
  * @method MonitorQuery groupByPluginid() Group by the PluginId column
- * @method MonitorQuery groupByAdapterid() Group by the AdapterId column
- * @method MonitorQuery groupBySnmppropertyid() Group by the SnmpPropertyId column
+ * @method MonitorQuery groupByPluginmetaid() Group by the PluginMetaId column
  *
  * @method MonitorQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method MonitorQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -24,13 +22,9 @@
  * @method MonitorQuery rightJoinPlugin($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Plugin relation
  * @method MonitorQuery innerJoinPlugin($relationAlias = null) Adds a INNER JOIN clause to the query using the Plugin relation
  *
- * @method MonitorQuery leftJoinAdapter($relationAlias = null) Adds a LEFT JOIN clause to the query using the Adapter relation
- * @method MonitorQuery rightJoinAdapter($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Adapter relation
- * @method MonitorQuery innerJoinAdapter($relationAlias = null) Adds a INNER JOIN clause to the query using the Adapter relation
- *
- * @method MonitorQuery leftJoinSnmpProperty($relationAlias = null) Adds a LEFT JOIN clause to the query using the SnmpProperty relation
- * @method MonitorQuery rightJoinSnmpProperty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the SnmpProperty relation
- * @method MonitorQuery innerJoinSnmpProperty($relationAlias = null) Adds a INNER JOIN clause to the query using the SnmpProperty relation
+ * @method MonitorQuery leftJoinPluginMeta($relationAlias = null) Adds a LEFT JOIN clause to the query using the PluginMeta relation
+ * @method MonitorQuery rightJoinPluginMeta($relationAlias = null) Adds a RIGHT JOIN clause to the query using the PluginMeta relation
+ * @method MonitorQuery innerJoinPluginMeta($relationAlias = null) Adds a INNER JOIN clause to the query using the PluginMeta relation
  *
  * @method MonitorQuery leftJoinMonitorThreshold($relationAlias = null) Adds a LEFT JOIN clause to the query using the MonitorThreshold relation
  * @method MonitorQuery rightJoinMonitorThreshold($relationAlias = null) Adds a RIGHT JOIN clause to the query using the MonitorThreshold relation
@@ -41,13 +35,11 @@
  *
  * @method Monitor findOneByMonitorid(int $MonitorId) Return the first Monitor filtered by the MonitorId column
  * @method Monitor findOneByPluginid(int $PluginId) Return the first Monitor filtered by the PluginId column
- * @method Monitor findOneByAdapterid(int $AdapterId) Return the first Monitor filtered by the AdapterId column
- * @method Monitor findOneBySnmppropertyid(int $SnmpPropertyId) Return the first Monitor filtered by the SnmpPropertyId column
+ * @method Monitor findOneByPluginmetaid(int $PluginMetaId) Return the first Monitor filtered by the PluginMetaId column
  *
  * @method array findByMonitorid(int $MonitorId) Return Monitor objects filtered by the MonitorId column
  * @method array findByPluginid(int $PluginId) Return Monitor objects filtered by the PluginId column
- * @method array findByAdapterid(int $AdapterId) Return Monitor objects filtered by the AdapterId column
- * @method array findBySnmppropertyid(int $SnmpPropertyId) Return Monitor objects filtered by the SnmpPropertyId column
+ * @method array findByPluginmetaid(int $PluginMetaId) Return Monitor objects filtered by the PluginMetaId column
  *
  * @package    propel.generator.NetMon.om
  */
@@ -95,11 +87,11 @@ abstract class BaseMonitorQuery extends ModelCriteria
      * Go fast if the query is untouched.
      *
      * <code>
-     * $obj = $c->findPk(array(12, 34, 56, 78), $con);
+     * $obj = $c->findPk(array(12, 34, 56), $con);
      * </code>
      *
      * @param array $key Primary key to use for the query
-                         A Primary key composition: [$MonitorId, $PluginId, $AdapterId, $SnmpPropertyId]
+                         A Primary key composition: [$MonitorId, $PluginId, $PluginMetaId]
      * @param     PropelPDO $con an optional connection object
      *
      * @return   Monitor|Monitor[]|mixed the result, formatted by the current formatter
@@ -109,7 +101,7 @@ abstract class BaseMonitorQuery extends ModelCriteria
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = MonitorPeer::getInstanceFromPool(serialize(array((string) $key[0], (string) $key[1], (string) $key[2], (string) $key[3]))))) && !$this->formatter) {
+        if ((null !== ($obj = MonitorPeer::getInstanceFromPool(serialize(array((string) $key[0], (string) $key[1], (string) $key[2]))))) && !$this->formatter) {
             // the object is alredy in the instance pool
             return $obj;
         }
@@ -138,13 +130,12 @@ abstract class BaseMonitorQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `MonitorId`, `PluginId`, `AdapterId`, `SnmpPropertyId` FROM `Monitor` WHERE `MonitorId` = :p0 AND `PluginId` = :p1 AND `AdapterId` = :p2 AND `SnmpPropertyId` = :p3';
+        $sql = 'SELECT `MonitorId`, `PluginId`, `PluginMetaId` FROM `Monitor` WHERE `MonitorId` = :p0 AND `PluginId` = :p1 AND `PluginMetaId` = :p2';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
             $stmt->bindValue(':p1', $key[1], PDO::PARAM_INT);
             $stmt->bindValue(':p2', $key[2], PDO::PARAM_INT);
-            $stmt->bindValue(':p3', $key[3], PDO::PARAM_INT);
             $stmt->execute();
         } catch (Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
@@ -154,7 +145,7 @@ abstract class BaseMonitorQuery extends ModelCriteria
         if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
             $obj = new Monitor();
             $obj->hydrate($row);
-            MonitorPeer::addInstanceToPool($obj, serialize(array((string) $key[0], (string) $key[1], (string) $key[2], (string) $key[3])));
+            MonitorPeer::addInstanceToPool($obj, serialize(array((string) $key[0], (string) $key[1], (string) $key[2])));
         }
         $stmt->closeCursor();
 
@@ -215,8 +206,7 @@ abstract class BaseMonitorQuery extends ModelCriteria
     {
         $this->addUsingAlias(MonitorPeer::MONITORID, $key[0], Criteria::EQUAL);
         $this->addUsingAlias(MonitorPeer::PLUGINID, $key[1], Criteria::EQUAL);
-        $this->addUsingAlias(MonitorPeer::ADAPTERID, $key[2], Criteria::EQUAL);
-        $this->addUsingAlias(MonitorPeer::SNMPPROPERTYID, $key[3], Criteria::EQUAL);
+        $this->addUsingAlias(MonitorPeer::PLUGINMETAID, $key[2], Criteria::EQUAL);
 
         return $this;
     }
@@ -237,10 +227,8 @@ abstract class BaseMonitorQuery extends ModelCriteria
             $cton0 = $this->getNewCriterion(MonitorPeer::MONITORID, $key[0], Criteria::EQUAL);
             $cton1 = $this->getNewCriterion(MonitorPeer::PLUGINID, $key[1], Criteria::EQUAL);
             $cton0->addAnd($cton1);
-            $cton2 = $this->getNewCriterion(MonitorPeer::ADAPTERID, $key[2], Criteria::EQUAL);
+            $cton2 = $this->getNewCriterion(MonitorPeer::PLUGINMETAID, $key[2], Criteria::EQUAL);
             $cton0->addAnd($cton2);
-            $cton3 = $this->getNewCriterion(MonitorPeer::SNMPPROPERTYID, $key[3], Criteria::EQUAL);
-            $cton0->addAnd($cton3);
             $this->addOr($cton0);
         }
 
@@ -334,19 +322,19 @@ abstract class BaseMonitorQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the AdapterId column
+     * Filter the query on the PluginMetaId column
      *
      * Example usage:
      * <code>
-     * $query->filterByAdapterid(1234); // WHERE AdapterId = 1234
-     * $query->filterByAdapterid(array(12, 34)); // WHERE AdapterId IN (12, 34)
-     * $query->filterByAdapterid(array('min' => 12)); // WHERE AdapterId >= 12
-     * $query->filterByAdapterid(array('max' => 12)); // WHERE AdapterId <= 12
+     * $query->filterByPluginmetaid(1234); // WHERE PluginMetaId = 1234
+     * $query->filterByPluginmetaid(array(12, 34)); // WHERE PluginMetaId IN (12, 34)
+     * $query->filterByPluginmetaid(array('min' => 12)); // WHERE PluginMetaId >= 12
+     * $query->filterByPluginmetaid(array('max' => 12)); // WHERE PluginMetaId <= 12
      * </code>
      *
-     * @see       filterByAdapter()
+     * @see       filterByPluginMeta()
      *
-     * @param     mixed $adapterid The value to use as filter.
+     * @param     mixed $pluginmetaid The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -354,16 +342,16 @@ abstract class BaseMonitorQuery extends ModelCriteria
      *
      * @return MonitorQuery The current query, for fluid interface
      */
-    public function filterByAdapterid($adapterid = null, $comparison = null)
+    public function filterByPluginmetaid($pluginmetaid = null, $comparison = null)
     {
-        if (is_array($adapterid)) {
+        if (is_array($pluginmetaid)) {
             $useMinMax = false;
-            if (isset($adapterid['min'])) {
-                $this->addUsingAlias(MonitorPeer::ADAPTERID, $adapterid['min'], Criteria::GREATER_EQUAL);
+            if (isset($pluginmetaid['min'])) {
+                $this->addUsingAlias(MonitorPeer::PLUGINMETAID, $pluginmetaid['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($adapterid['max'])) {
-                $this->addUsingAlias(MonitorPeer::ADAPTERID, $adapterid['max'], Criteria::LESS_EQUAL);
+            if (isset($pluginmetaid['max'])) {
+                $this->addUsingAlias(MonitorPeer::PLUGINMETAID, $pluginmetaid['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -374,51 +362,7 @@ abstract class BaseMonitorQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(MonitorPeer::ADAPTERID, $adapterid, $comparison);
-    }
-
-    /**
-     * Filter the query on the SnmpPropertyId column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterBySnmppropertyid(1234); // WHERE SnmpPropertyId = 1234
-     * $query->filterBySnmppropertyid(array(12, 34)); // WHERE SnmpPropertyId IN (12, 34)
-     * $query->filterBySnmppropertyid(array('min' => 12)); // WHERE SnmpPropertyId >= 12
-     * $query->filterBySnmppropertyid(array('max' => 12)); // WHERE SnmpPropertyId <= 12
-     * </code>
-     *
-     * @see       filterBySnmpProperty()
-     *
-     * @param     mixed $snmppropertyid The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return MonitorQuery The current query, for fluid interface
-     */
-    public function filterBySnmppropertyid($snmppropertyid = null, $comparison = null)
-    {
-        if (is_array($snmppropertyid)) {
-            $useMinMax = false;
-            if (isset($snmppropertyid['min'])) {
-                $this->addUsingAlias(MonitorPeer::SNMPPROPERTYID, $snmppropertyid['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($snmppropertyid['max'])) {
-                $this->addUsingAlias(MonitorPeer::SNMPPROPERTYID, $snmppropertyid['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(MonitorPeer::SNMPPROPERTYID, $snmppropertyid, $comparison);
+        return $this->addUsingAlias(MonitorPeer::PLUGINMETAID, $pluginmetaid, $comparison);
     }
 
     /**
@@ -498,43 +442,43 @@ abstract class BaseMonitorQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related Adapter object
+     * Filter the query by a related PluginMeta object
      *
-     * @param   Adapter|PropelObjectCollection $adapter The related object(s) to use as filter
+     * @param   PluginMeta|PropelObjectCollection $pluginMeta The related object(s) to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return                 MonitorQuery The current query, for fluid interface
      * @throws PropelException - if the provided filter is invalid.
      */
-    public function filterByAdapter($adapter, $comparison = null)
+    public function filterByPluginMeta($pluginMeta, $comparison = null)
     {
-        if ($adapter instanceof Adapter) {
+        if ($pluginMeta instanceof PluginMeta) {
             return $this
-                ->addUsingAlias(MonitorPeer::ADAPTERID, $adapter->getAdapterid(), $comparison);
-        } elseif ($adapter instanceof PropelObjectCollection) {
+                ->addUsingAlias(MonitorPeer::PLUGINMETAID, $pluginMeta->getPluginmetaid(), $comparison);
+        } elseif ($pluginMeta instanceof PropelObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(MonitorPeer::ADAPTERID, $adapter->toKeyValue('PrimaryKey', 'Adapterid'), $comparison);
+                ->addUsingAlias(MonitorPeer::PLUGINMETAID, $pluginMeta->toKeyValue('PrimaryKey', 'Pluginmetaid'), $comparison);
         } else {
-            throw new PropelException('filterByAdapter() only accepts arguments of type Adapter or PropelCollection');
+            throw new PropelException('filterByPluginMeta() only accepts arguments of type PluginMeta or PropelCollection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Adapter relation
+     * Adds a JOIN clause to the query using the PluginMeta relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return MonitorQuery The current query, for fluid interface
      */
-    public function joinAdapter($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinPluginMeta($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Adapter');
+        $relationMap = $tableMap->getRelation('PluginMeta');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -549,14 +493,14 @@ abstract class BaseMonitorQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Adapter');
+            $this->addJoinObject($join, 'PluginMeta');
         }
 
         return $this;
     }
 
     /**
-     * Use the Adapter relation Adapter object
+     * Use the PluginMeta relation PluginMeta object
      *
      * @see       useQuery()
      *
@@ -564,89 +508,13 @@ abstract class BaseMonitorQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return   AdapterQuery A secondary query class using the current class as primary query
+     * @return   PluginMetaQuery A secondary query class using the current class as primary query
      */
-    public function useAdapterQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function usePluginMetaQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinAdapter($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Adapter', 'AdapterQuery');
-    }
-
-    /**
-     * Filter the query by a related SnmpProperty object
-     *
-     * @param   SnmpProperty|PropelObjectCollection $snmpProperty The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 MonitorQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterBySnmpProperty($snmpProperty, $comparison = null)
-    {
-        if ($snmpProperty instanceof SnmpProperty) {
-            return $this
-                ->addUsingAlias(MonitorPeer::SNMPPROPERTYID, $snmpProperty->getSnmppropertyid(), $comparison);
-        } elseif ($snmpProperty instanceof PropelObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(MonitorPeer::SNMPPROPERTYID, $snmpProperty->toKeyValue('PrimaryKey', 'Snmppropertyid'), $comparison);
-        } else {
-            throw new PropelException('filterBySnmpProperty() only accepts arguments of type SnmpProperty or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the SnmpProperty relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return MonitorQuery The current query, for fluid interface
-     */
-    public function joinSnmpProperty($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('SnmpProperty');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'SnmpProperty');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the SnmpProperty relation SnmpProperty object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   SnmpPropertyQuery A secondary query class using the current class as primary query
-     */
-    public function useSnmpPropertyQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinSnmpProperty($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'SnmpProperty', 'SnmpPropertyQuery');
+            ->joinPluginMeta($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'PluginMeta', 'PluginMetaQuery');
     }
 
     /**
@@ -735,9 +603,8 @@ abstract class BaseMonitorQuery extends ModelCriteria
         if ($monitor) {
             $this->addCond('pruneCond0', $this->getAliasedColName(MonitorPeer::MONITORID), $monitor->getMonitorid(), Criteria::NOT_EQUAL);
             $this->addCond('pruneCond1', $this->getAliasedColName(MonitorPeer::PLUGINID), $monitor->getPluginid(), Criteria::NOT_EQUAL);
-            $this->addCond('pruneCond2', $this->getAliasedColName(MonitorPeer::ADAPTERID), $monitor->getAdapterid(), Criteria::NOT_EQUAL);
-            $this->addCond('pruneCond3', $this->getAliasedColName(MonitorPeer::SNMPPROPERTYID), $monitor->getSnmppropertyid(), Criteria::NOT_EQUAL);
-            $this->combine(array('pruneCond0', 'pruneCond1', 'pruneCond2', 'pruneCond3'), Criteria::LOGICAL_OR);
+            $this->addCond('pruneCond2', $this->getAliasedColName(MonitorPeer::PLUGINMETAID), $monitor->getPluginmetaid(), Criteria::NOT_EQUAL);
+            $this->combine(array('pruneCond0', 'pruneCond1', 'pruneCond2'), Criteria::LOGICAL_OR);
         }
 
         return $this;

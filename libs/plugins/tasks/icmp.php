@@ -1,5 +1,5 @@
 <?php
-require_once '../libs/Bootstrap.php';
+require_once '/var/www/localhost/htdocs/NetMon/libs/Bootstrap.php';
 require_once ROOT . 'libs/MultiProcess/MultiProcessChild.php';
 
 $app = new NetMon\Bootstrap(true);

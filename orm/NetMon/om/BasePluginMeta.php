@@ -42,6 +42,12 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
     protected $pluginid;
 
     /**
+     * The value for the envelope field.
+     * @var        string
+     */
+    protected $envelope;
+
+    /**
      * The value for the key field.
      * @var        string
      */
@@ -57,6 +63,12 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
      * @var        Plugin
      */
     protected $aPlugin;
+
+    /**
+     * @var        PropelObjectCollection|Monitor[] Collection to store aggregation of Monitor objects.
+     */
+    protected $collPluginMetaMonitors;
+    protected $collPluginMetaMonitorsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -79,6 +91,12 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
     protected $alreadyInClearAllReferencesDeep = false;
 
     /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $pluginMetaMonitorsScheduledForDeletion = null;
+
+    /**
      * Get the [pluginmetaid] column value.
      *
      * @return int
@@ -96,6 +114,16 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
     public function getPluginid()
     {
         return $this->pluginid;
+    }
+
+    /**
+     * Get the [envelope] column value.
+     *
+     * @return string
+     */
+    public function getEnvelope()
+    {
+        return $this->envelope;
     }
 
     /**
@@ -163,6 +191,27 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
 
         return $this;
     } // setPluginid()
+
+    /**
+     * Set the value of [envelope] column.
+     *
+     * @param string $v new value
+     * @return PluginMeta The current object (for fluent API support)
+     */
+    public function setEnvelope($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->envelope !== $v) {
+            $this->envelope = $v;
+            $this->modifiedColumns[] = PluginMetaPeer::ENVELOPE;
+        }
+
+
+        return $this;
+    } // setEnvelope()
 
     /**
      * Set the value of [key] column.
@@ -240,8 +289,9 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
 
             $this->pluginmetaid = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
             $this->pluginid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-            $this->key = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-            $this->value = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+            $this->envelope = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+            $this->key = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+            $this->value = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -250,7 +300,7 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
             $this->postHydrate($row, $startcol, $rehydrate);
-            return $startcol + 4; // 4 = PluginMetaPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = PluginMetaPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating PluginMeta object", $e);
@@ -316,6 +366,8 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
         if ($deep) {  // also de-associate any related objects?
 
             $this->aPlugin = null;
+            $this->collPluginMetaMonitors = null;
+
         } // if (deep)
     }
 
@@ -452,6 +504,23 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
                 $this->resetModified();
             }
 
+            if ($this->pluginMetaMonitorsScheduledForDeletion !== null) {
+                if (!$this->pluginMetaMonitorsScheduledForDeletion->isEmpty()) {
+                    MonitorQuery::create()
+                        ->filterByPrimaryKeys($this->pluginMetaMonitorsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->pluginMetaMonitorsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collPluginMetaMonitors !== null) {
+                foreach ($this->collPluginMetaMonitors as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -484,6 +553,9 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
         if ($this->isColumnModified(PluginMetaPeer::PLUGINID)) {
             $modifiedColumns[':p' . $index++]  = '`PluginId`';
         }
+        if ($this->isColumnModified(PluginMetaPeer::ENVELOPE)) {
+            $modifiedColumns[':p' . $index++]  = '`Envelope`';
+        }
         if ($this->isColumnModified(PluginMetaPeer::KEY)) {
             $modifiedColumns[':p' . $index++]  = '`Key`';
         }
@@ -506,6 +578,9 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
                         break;
                     case '`PluginId`':
                         $stmt->bindValue($identifier, $this->pluginid, PDO::PARAM_INT);
+                        break;
+                    case '`Envelope`':
+                        $stmt->bindValue($identifier, $this->envelope, PDO::PARAM_STR);
                         break;
                     case '`Key`':
                         $stmt->bindValue($identifier, $this->key, PDO::PARAM_STR);
@@ -624,6 +699,14 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
             }
 
 
+                if ($this->collPluginMetaMonitors !== null) {
+                    foreach ($this->collPluginMetaMonitors as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
 
             $this->alreadyInValidation = false;
         }
@@ -666,9 +749,12 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
                 return $this->getPluginid();
                 break;
             case 2:
-                return $this->getKey();
+                return $this->getEnvelope();
                 break;
             case 3:
+                return $this->getKey();
+                break;
+            case 4:
                 return $this->getValue();
                 break;
             default:
@@ -702,12 +788,16 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
         $result = array(
             $keys[0] => $this->getPluginmetaid(),
             $keys[1] => $this->getPluginid(),
-            $keys[2] => $this->getKey(),
-            $keys[3] => $this->getValue(),
+            $keys[2] => $this->getEnvelope(),
+            $keys[3] => $this->getKey(),
+            $keys[4] => $this->getValue(),
         );
         if ($includeForeignObjects) {
             if (null !== $this->aPlugin) {
                 $result['Plugin'] = $this->aPlugin->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collPluginMetaMonitors) {
+                $result['PluginMetaMonitors'] = $this->collPluginMetaMonitors->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -750,9 +840,12 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
                 $this->setPluginid($value);
                 break;
             case 2:
-                $this->setKey($value);
+                $this->setEnvelope($value);
                 break;
             case 3:
+                $this->setKey($value);
+                break;
+            case 4:
                 $this->setValue($value);
                 break;
         } // switch()
@@ -781,8 +874,9 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
 
         if (array_key_exists($keys[0], $arr)) $this->setPluginmetaid($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setPluginid($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setKey($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setValue($arr[$keys[3]]);
+        if (array_key_exists($keys[2], $arr)) $this->setEnvelope($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setKey($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setValue($arr[$keys[4]]);
     }
 
     /**
@@ -796,6 +890,7 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
 
         if ($this->isColumnModified(PluginMetaPeer::PLUGINMETAID)) $criteria->add(PluginMetaPeer::PLUGINMETAID, $this->pluginmetaid);
         if ($this->isColumnModified(PluginMetaPeer::PLUGINID)) $criteria->add(PluginMetaPeer::PLUGINID, $this->pluginid);
+        if ($this->isColumnModified(PluginMetaPeer::ENVELOPE)) $criteria->add(PluginMetaPeer::ENVELOPE, $this->envelope);
         if ($this->isColumnModified(PluginMetaPeer::KEY)) $criteria->add(PluginMetaPeer::KEY, $this->key);
         if ($this->isColumnModified(PluginMetaPeer::VALUE)) $criteria->add(PluginMetaPeer::VALUE, $this->value);
 
@@ -862,6 +957,7 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setPluginid($this->getPluginid());
+        $copyObj->setEnvelope($this->getEnvelope());
         $copyObj->setKey($this->getKey());
         $copyObj->setValue($this->getValue());
 
@@ -871,6 +967,12 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
             $copyObj->setNew(false);
             // store object hash to prevent cycle
             $this->startCopy = true;
+
+            foreach ($this->getPluginMetaMonitors() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addPluginMetaMonitor($relObj->copy($deepCopy));
+                }
+            }
 
             //unflag object copy
             $this->startCopy = false;
@@ -974,6 +1076,265 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
         return $this->aPlugin;
     }
 
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('PluginMetaMonitor' == $relationName) {
+            $this->initPluginMetaMonitors();
+        }
+    }
+
+    /**
+     * Clears out the collPluginMetaMonitors collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return PluginMeta The current object (for fluent API support)
+     * @see        addPluginMetaMonitors()
+     */
+    public function clearPluginMetaMonitors()
+    {
+        $this->collPluginMetaMonitors = null; // important to set this to null since that means it is uninitialized
+        $this->collPluginMetaMonitorsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collPluginMetaMonitors collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialPluginMetaMonitors($v = true)
+    {
+        $this->collPluginMetaMonitorsPartial = $v;
+    }
+
+    /**
+     * Initializes the collPluginMetaMonitors collection.
+     *
+     * By default this just sets the collPluginMetaMonitors collection to an empty array (like clearcollPluginMetaMonitors());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initPluginMetaMonitors($overrideExisting = true)
+    {
+        if (null !== $this->collPluginMetaMonitors && !$overrideExisting) {
+            return;
+        }
+        $this->collPluginMetaMonitors = new PropelObjectCollection();
+        $this->collPluginMetaMonitors->setModel('Monitor');
+    }
+
+    /**
+     * Gets an array of Monitor objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this PluginMeta is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Monitor[] List of Monitor objects
+     * @throws PropelException
+     */
+    public function getPluginMetaMonitors($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collPluginMetaMonitorsPartial && !$this->isNew();
+        if (null === $this->collPluginMetaMonitors || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collPluginMetaMonitors) {
+                // return empty collection
+                $this->initPluginMetaMonitors();
+            } else {
+                $collPluginMetaMonitors = MonitorQuery::create(null, $criteria)
+                    ->filterByPluginMeta($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collPluginMetaMonitorsPartial && count($collPluginMetaMonitors)) {
+                      $this->initPluginMetaMonitors(false);
+
+                      foreach($collPluginMetaMonitors as $obj) {
+                        if (false == $this->collPluginMetaMonitors->contains($obj)) {
+                          $this->collPluginMetaMonitors->append($obj);
+                        }
+                      }
+
+                      $this->collPluginMetaMonitorsPartial = true;
+                    }
+
+                    $collPluginMetaMonitors->getInternalIterator()->rewind();
+                    return $collPluginMetaMonitors;
+                }
+
+                if($partial && $this->collPluginMetaMonitors) {
+                    foreach($this->collPluginMetaMonitors as $obj) {
+                        if($obj->isNew()) {
+                            $collPluginMetaMonitors[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collPluginMetaMonitors = $collPluginMetaMonitors;
+                $this->collPluginMetaMonitorsPartial = false;
+            }
+        }
+
+        return $this->collPluginMetaMonitors;
+    }
+
+    /**
+     * Sets a collection of PluginMetaMonitor objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $pluginMetaMonitors A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return PluginMeta The current object (for fluent API support)
+     */
+    public function setPluginMetaMonitors(PropelCollection $pluginMetaMonitors, PropelPDO $con = null)
+    {
+        $pluginMetaMonitorsToDelete = $this->getPluginMetaMonitors(new Criteria(), $con)->diff($pluginMetaMonitors);
+
+        $this->pluginMetaMonitorsScheduledForDeletion = unserialize(serialize($pluginMetaMonitorsToDelete));
+
+        foreach ($pluginMetaMonitorsToDelete as $pluginMetaMonitorRemoved) {
+            $pluginMetaMonitorRemoved->setPluginMeta(null);
+        }
+
+        $this->collPluginMetaMonitors = null;
+        foreach ($pluginMetaMonitors as $pluginMetaMonitor) {
+            $this->addPluginMetaMonitor($pluginMetaMonitor);
+        }
+
+        $this->collPluginMetaMonitors = $pluginMetaMonitors;
+        $this->collPluginMetaMonitorsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Monitor objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Monitor objects.
+     * @throws PropelException
+     */
+    public function countPluginMetaMonitors(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collPluginMetaMonitorsPartial && !$this->isNew();
+        if (null === $this->collPluginMetaMonitors || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collPluginMetaMonitors) {
+                return 0;
+            }
+
+            if($partial && !$criteria) {
+                return count($this->getPluginMetaMonitors());
+            }
+            $query = MonitorQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByPluginMeta($this)
+                ->count($con);
+        }
+
+        return count($this->collPluginMetaMonitors);
+    }
+
+    /**
+     * Method called to associate a Monitor object to this object
+     * through the Monitor foreign key attribute.
+     *
+     * @param    Monitor $l Monitor
+     * @return PluginMeta The current object (for fluent API support)
+     */
+    public function addPluginMetaMonitor(Monitor $l)
+    {
+        if ($this->collPluginMetaMonitors === null) {
+            $this->initPluginMetaMonitors();
+            $this->collPluginMetaMonitorsPartial = true;
+        }
+        if (!in_array($l, $this->collPluginMetaMonitors->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddPluginMetaMonitor($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	PluginMetaMonitor $pluginMetaMonitor The pluginMetaMonitor object to add.
+     */
+    protected function doAddPluginMetaMonitor($pluginMetaMonitor)
+    {
+        $this->collPluginMetaMonitors[]= $pluginMetaMonitor;
+        $pluginMetaMonitor->setPluginMeta($this);
+    }
+
+    /**
+     * @param	PluginMetaMonitor $pluginMetaMonitor The pluginMetaMonitor object to remove.
+     * @return PluginMeta The current object (for fluent API support)
+     */
+    public function removePluginMetaMonitor($pluginMetaMonitor)
+    {
+        if ($this->getPluginMetaMonitors()->contains($pluginMetaMonitor)) {
+            $this->collPluginMetaMonitors->remove($this->collPluginMetaMonitors->search($pluginMetaMonitor));
+            if (null === $this->pluginMetaMonitorsScheduledForDeletion) {
+                $this->pluginMetaMonitorsScheduledForDeletion = clone $this->collPluginMetaMonitors;
+                $this->pluginMetaMonitorsScheduledForDeletion->clear();
+            }
+            $this->pluginMetaMonitorsScheduledForDeletion[]= clone $pluginMetaMonitor;
+            $pluginMetaMonitor->setPluginMeta(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this PluginMeta is new, it will return
+     * an empty collection; or if this PluginMeta has previously
+     * been saved, it will retrieve related PluginMetaMonitors from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in PluginMeta.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Monitor[] List of Monitor objects
+     */
+    public function getPluginMetaMonitorsJoinPlugin($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = MonitorQuery::create(null, $criteria);
+        $query->joinWith('Plugin', $join_behavior);
+
+        return $this->getPluginMetaMonitors($query, $con);
+    }
+
     /**
      * Clears the current object and sets all attributes to their default values
      */
@@ -981,6 +1342,7 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
     {
         $this->pluginmetaid = null;
         $this->pluginid = null;
+        $this->envelope = null;
         $this->key = null;
         $this->value = null;
         $this->alreadyInSave = false;
@@ -1005,6 +1367,11 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->collPluginMetaMonitors) {
+                foreach ($this->collPluginMetaMonitors as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->aPlugin instanceof Persistent) {
               $this->aPlugin->clearAllReferences($deep);
             }
@@ -1012,6 +1379,10 @@ abstract class BasePluginMeta extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
+        if ($this->collPluginMetaMonitors instanceof PropelCollection) {
+            $this->collPluginMetaMonitors->clearIterator();
+        }
+        $this->collPluginMetaMonitors = null;
         $this->aPlugin = null;
     }
 

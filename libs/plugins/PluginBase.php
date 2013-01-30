@@ -6,8 +6,8 @@ class PluginBase
 {
     public $pluginInfo;
     public $pluginSettings;
-    public $plugin;
-    public $multiProcessParent;
+    protected $plugin;
+    protected $multiProcessParent;
     
     function __construct()
     {
@@ -34,7 +34,6 @@ class PluginBase
             $key = $setting->getKey();
             $this->pluginSettings[$key] = $setting->getValue();
         }
-        
         $this->pluginInfo["name"] = $this->plugin->getName();
         $this->pluginInfo["description"] = $this->plugin->getDescription();
         $this->pluginInfo["requestList"] = json_decode($this->plugin->getRequests(), true);
@@ -50,50 +49,157 @@ class PluginBase
             $this->plugin->setRequests(json_encode($this->pluginInfo["requestList"]));
         
         $this->plugin->save();
-        $this->SavePluginSettings();
+        $this->StoreUpdatePluginSettings();
     }
    
-    protected function SavePluginSettings()
+    protected function StoreUpdatePluginSettings()
     {
         foreach($this->pluginSettings as $key => $setting)
         {
-            $pluginSetting = new \PluginSetting();
-            $pluginSetting->setKey($key);
-            $pluginSetting->setValue($setting);
-            $this->plugin->addPluginPluginSetting($pluginSetting);
+            $pluginSettingQuery = \PluginSettingQuery::create()
+                                ->findOneByKey($key);
+            
+            if(isset($pluginSettingQuery))
+            {
+                $pluginSettingQuery->setValue($setting);
+                $pluginSettingQuery->save();
+                continue;
+            }
+            else
+            {
+                $pluginSetting = new \PluginSetting();
+                $pluginSetting->setKey($key);
+                $pluginSetting->setValue($setting);
+                $this->plugin->addPluginPluginSetting($pluginSetting);
+            }
         }
         $this->plugin->save();
     }
     
-    public function FetechUpdateMeta($key)
+    protected function GetOrCreateAlarm($threshold)
     {
-        $encodedKey = md5(json_encode($key));
-        $meta = \PluginMetaQuery::create()
-                ->filterByPlugin($this->plugin)
-                ->findOneByKey($encodedKey);
-        if(isset($meta))
-            return json_decode($meta->getValue(), true);
-        return null;
+        $alarmQuery = \AlarmQuery::create()
+                        ->filterByThreshold($threshold)
+                        ->findOne();
+        
+        if(!isset($alarmQuery))
+        {
+            $alarm = new \Alarm();
+            $alarm->setThreshold($threshold);
+            $alarm->save();
+            return $alarm;
+        }
+        return $alarmQuery;
     }
     
-    public function StoreUpdateMeta($key, $value)
+    protected function UpdateAlarm($alarm, $active, $ack)
+    {
+        $alarm->setTimestamp("now");
+        $alarm->setActive($active);
+        $alarm->setAcknowledged($ack);
+        $alarm->save();
+        return $alarm;
+    }
+    
+    protected function GetOrCreateMonitor($key, $value)
+    {
+        $pluginMeta = $this->StoreUpdateMeta("Monitor", $key, $value);
+        $monitorQuery = \MonitorQuery::create()
+                        ->filterByPlugin($this->plugin)
+                        ->filterByPluginMeta($pluginMeta)
+                        ->findOne();
+        
+        if(!isset($monitorQuery))
+        {
+            $monitor = new \Monitor();
+            $monitor->setPlugin($this->plugin);
+            $monitor->setPluginMeta($pluginMeta);
+            $monitor->save();
+            return $monitor;
+        }
+        return $monitorQuery;
+    }
+    
+    protected function CreateOrUpdateThreshold($monitor, $value, $greater)
+    {
+        $thresholdQuery = \ThresholdQuery::create()
+                            ->filterByPlugin($this->plugin)
+                            ->filterByMonitor($monitor)
+                            ->findOne();
+        
+        if(!isset($thresholdQuery))
+        {
+            $threshold = new \Threshold();
+            $threshold->setPlugin($this->plugin);
+            $threshold->setMonitor($monitor);
+            $threshold->setValue($value);
+            $threshold->setGreaterthan($greater);
+            $threshold->save();
+            return $threshold;
+        }
+        else
+        {
+            $thresholdQuery->setValue($value);
+            $thresholdQuery->setGreaterthan($greater);
+            $thresholdQuery->save();
+            return $thresholdQuery;
+        }
+    }
+    
+    public function GetResultByMonitor($monitorId)
+    {
+        return $this->FetchMeta("Result", $monitorId);
+    }
+    
+    protected function SetResultByMonitor($monitorId, $value)
+    {
+        $this->StoreUpdateMeta("Result", $monitorId, $value);
+    }
+    
+    public function FetchMeta($envelope, $key = null)
+    {
+        if(isset($key))
+        {
+            $encodedKey = md5(json_encode($key));
+            $meta = \PluginMetaQuery::create()
+                ->filterByPlugin($this->plugin)
+                ->filterByEnvelope($envelope)
+                ->filterByKey($encodedKey)
+                ->findOne();
+            
+            if(isset($meta))
+                return json_decode($meta->getValue(), true);
+        }
+        else
+        {
+            $meta = \PluginMetaQuery::create()
+                ->filterByPlugin($this->plugin)
+                ->filterByEnvelope($envelope)
+                ->find();
+            return $meta;
+        }
+    }
+    
+    public function StoreUpdateMeta($envelope, $key, $value)
     {
         $encodedKey = md5(json_encode($key));
         $value = json_encode($value);
-        $pluginQuery = \PluginMetaQuery::create()
-                    ->filterByPlugin($this->plugin)
-                    ->findOneByKey($encodedKey);
         
-        //if found update
-        if(isset($pluginQuery))
+        $pluginMetaQuery = \PluginMetaQuery::create()
+                            ->filterByPlugin($this->plugin)
+                            ->filterByEnvelope($envelope)
+                            ->findOneByKey($encodedKey);
+        
+        if(isset($pluginMetaQuery))
         {
-            $pluginQuery->setValue($value);    
-            $pluginQuery->save();
-            return $pluginQuery;
+            $pluginMetaQuery->setValue($value);
+            $pluginMetaQuery->save();
+            return $pluginMetaQuery;
         }
         
         $meta = new \PluginMeta();
         $meta->setPlugin($this->plugin);
+        $meta->setEnvelope($envelope);
         $meta->setKey($encodedKey);
         $meta->setValue($value);
         $meta->save();

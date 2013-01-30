@@ -124,12 +124,6 @@ abstract class BaseAdapter extends BaseObject implements Persistent
     protected $collAdapterPortStatussPartial;
 
     /**
-     * @var        PropelObjectCollection|Monitor[] Collection to store aggregation of Monitor objects.
-     */
-    protected $collAdapterMonitors;
-    protected $collAdapterMonitorsPartial;
-
-    /**
      * @var        PropelObjectCollection|Trap[] Collection to store aggregation of Trap objects.
      */
     protected $collAdapterTraps;
@@ -166,12 +160,6 @@ abstract class BaseAdapter extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $adapterPortStatussScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $adapterMonitorsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -709,8 +697,6 @@ abstract class BaseAdapter extends BaseObject implements Persistent
 
             $this->collAdapterPortStatuss = null;
 
-            $this->collAdapterMonitors = null;
-
             $this->collAdapterTraps = null;
 
         } // if (deep)
@@ -884,23 +870,6 @@ abstract class BaseAdapter extends BaseObject implements Persistent
 
             if ($this->collAdapterPortStatuss !== null) {
                 foreach ($this->collAdapterPortStatuss as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->adapterMonitorsScheduledForDeletion !== null) {
-                if (!$this->adapterMonitorsScheduledForDeletion->isEmpty()) {
-                    MonitorQuery::create()
-                        ->filterByPrimaryKeys($this->adapterMonitorsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->adapterMonitorsScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collAdapterMonitors !== null) {
-                foreach ($this->collAdapterMonitors as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1167,14 +1136,6 @@ abstract class BaseAdapter extends BaseObject implements Persistent
                     }
                 }
 
-                if ($this->collAdapterMonitors !== null) {
-                    foreach ($this->collAdapterMonitors as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
                 if ($this->collAdapterTraps !== null) {
                     foreach ($this->collAdapterTraps as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -1308,9 +1269,6 @@ abstract class BaseAdapter extends BaseObject implements Persistent
             }
             if (null !== $this->collAdapterPortStatuss) {
                 $result['AdapterPortStatuss'] = $this->collAdapterPortStatuss->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collAdapterMonitors) {
-                $result['AdapterMonitors'] = $this->collAdapterMonitors->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collAdapterTraps) {
                 $result['AdapterTraps'] = $this->collAdapterTraps->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1538,12 +1496,6 @@ abstract class BaseAdapter extends BaseObject implements Persistent
                 }
             }
 
-            foreach ($this->getAdapterMonitors() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addAdapterMonitor($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getAdapterTraps() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addAdapterTrap($relObj->copy($deepCopy));
@@ -1720,9 +1672,6 @@ abstract class BaseAdapter extends BaseObject implements Persistent
         }
         if ('AdapterPortStatus' == $relationName) {
             $this->initAdapterPortStatuss();
-        }
-        if ('AdapterMonitor' == $relationName) {
-            $this->initAdapterMonitors();
         }
         if ('AdapterTrap' == $relationName) {
             $this->initAdapterTraps();
@@ -2166,274 +2115,6 @@ abstract class BaseAdapter extends BaseObject implements Persistent
     }
 
     /**
-     * Clears out the collAdapterMonitors collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return Adapter The current object (for fluent API support)
-     * @see        addAdapterMonitors()
-     */
-    public function clearAdapterMonitors()
-    {
-        $this->collAdapterMonitors = null; // important to set this to null since that means it is uninitialized
-        $this->collAdapterMonitorsPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collAdapterMonitors collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialAdapterMonitors($v = true)
-    {
-        $this->collAdapterMonitorsPartial = $v;
-    }
-
-    /**
-     * Initializes the collAdapterMonitors collection.
-     *
-     * By default this just sets the collAdapterMonitors collection to an empty array (like clearcollAdapterMonitors());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initAdapterMonitors($overrideExisting = true)
-    {
-        if (null !== $this->collAdapterMonitors && !$overrideExisting) {
-            return;
-        }
-        $this->collAdapterMonitors = new PropelObjectCollection();
-        $this->collAdapterMonitors->setModel('Monitor');
-    }
-
-    /**
-     * Gets an array of Monitor objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this Adapter is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Monitor[] List of Monitor objects
-     * @throws PropelException
-     */
-    public function getAdapterMonitors($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collAdapterMonitorsPartial && !$this->isNew();
-        if (null === $this->collAdapterMonitors || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collAdapterMonitors) {
-                // return empty collection
-                $this->initAdapterMonitors();
-            } else {
-                $collAdapterMonitors = MonitorQuery::create(null, $criteria)
-                    ->filterByAdapter($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collAdapterMonitorsPartial && count($collAdapterMonitors)) {
-                      $this->initAdapterMonitors(false);
-
-                      foreach($collAdapterMonitors as $obj) {
-                        if (false == $this->collAdapterMonitors->contains($obj)) {
-                          $this->collAdapterMonitors->append($obj);
-                        }
-                      }
-
-                      $this->collAdapterMonitorsPartial = true;
-                    }
-
-                    $collAdapterMonitors->getInternalIterator()->rewind();
-                    return $collAdapterMonitors;
-                }
-
-                if($partial && $this->collAdapterMonitors) {
-                    foreach($this->collAdapterMonitors as $obj) {
-                        if($obj->isNew()) {
-                            $collAdapterMonitors[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collAdapterMonitors = $collAdapterMonitors;
-                $this->collAdapterMonitorsPartial = false;
-            }
-        }
-
-        return $this->collAdapterMonitors;
-    }
-
-    /**
-     * Sets a collection of AdapterMonitor objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $adapterMonitors A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return Adapter The current object (for fluent API support)
-     */
-    public function setAdapterMonitors(PropelCollection $adapterMonitors, PropelPDO $con = null)
-    {
-        $adapterMonitorsToDelete = $this->getAdapterMonitors(new Criteria(), $con)->diff($adapterMonitors);
-
-        $this->adapterMonitorsScheduledForDeletion = unserialize(serialize($adapterMonitorsToDelete));
-
-        foreach ($adapterMonitorsToDelete as $adapterMonitorRemoved) {
-            $adapterMonitorRemoved->setAdapter(null);
-        }
-
-        $this->collAdapterMonitors = null;
-        foreach ($adapterMonitors as $adapterMonitor) {
-            $this->addAdapterMonitor($adapterMonitor);
-        }
-
-        $this->collAdapterMonitors = $adapterMonitors;
-        $this->collAdapterMonitorsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Monitor objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related Monitor objects.
-     * @throws PropelException
-     */
-    public function countAdapterMonitors(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collAdapterMonitorsPartial && !$this->isNew();
-        if (null === $this->collAdapterMonitors || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collAdapterMonitors) {
-                return 0;
-            }
-
-            if($partial && !$criteria) {
-                return count($this->getAdapterMonitors());
-            }
-            $query = MonitorQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByAdapter($this)
-                ->count($con);
-        }
-
-        return count($this->collAdapterMonitors);
-    }
-
-    /**
-     * Method called to associate a Monitor object to this object
-     * through the Monitor foreign key attribute.
-     *
-     * @param    Monitor $l Monitor
-     * @return Adapter The current object (for fluent API support)
-     */
-    public function addAdapterMonitor(Monitor $l)
-    {
-        if ($this->collAdapterMonitors === null) {
-            $this->initAdapterMonitors();
-            $this->collAdapterMonitorsPartial = true;
-        }
-        if (!in_array($l, $this->collAdapterMonitors->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddAdapterMonitor($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	AdapterMonitor $adapterMonitor The adapterMonitor object to add.
-     */
-    protected function doAddAdapterMonitor($adapterMonitor)
-    {
-        $this->collAdapterMonitors[]= $adapterMonitor;
-        $adapterMonitor->setAdapter($this);
-    }
-
-    /**
-     * @param	AdapterMonitor $adapterMonitor The adapterMonitor object to remove.
-     * @return Adapter The current object (for fluent API support)
-     */
-    public function removeAdapterMonitor($adapterMonitor)
-    {
-        if ($this->getAdapterMonitors()->contains($adapterMonitor)) {
-            $this->collAdapterMonitors->remove($this->collAdapterMonitors->search($adapterMonitor));
-            if (null === $this->adapterMonitorsScheduledForDeletion) {
-                $this->adapterMonitorsScheduledForDeletion = clone $this->collAdapterMonitors;
-                $this->adapterMonitorsScheduledForDeletion->clear();
-            }
-            $this->adapterMonitorsScheduledForDeletion[]= clone $adapterMonitor;
-            $adapterMonitor->setAdapter(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Adapter is new, it will return
-     * an empty collection; or if this Adapter has previously
-     * been saved, it will retrieve related AdapterMonitors from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Adapter.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Monitor[] List of Monitor objects
-     */
-    public function getAdapterMonitorsJoinPlugin($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = MonitorQuery::create(null, $criteria);
-        $query->joinWith('Plugin', $join_behavior);
-
-        return $this->getAdapterMonitors($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Adapter is new, it will return
-     * an empty collection; or if this Adapter has previously
-     * been saved, it will retrieve related AdapterMonitors from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Adapter.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Monitor[] List of Monitor objects
-     */
-    public function getAdapterMonitorsJoinSnmpProperty($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = MonitorQuery::create(null, $criteria);
-        $query->joinWith('SnmpProperty', $join_behavior);
-
-        return $this->getAdapterMonitors($query, $con);
-    }
-
-    /**
      * Clears out the collAdapterTraps collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
@@ -2750,11 +2431,6 @@ abstract class BaseAdapter extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collAdapterMonitors) {
-                foreach ($this->collAdapterMonitors as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collAdapterTraps) {
                 foreach ($this->collAdapterTraps as $o) {
                     $o->clearAllReferences($deep);
@@ -2778,10 +2454,6 @@ abstract class BaseAdapter extends BaseObject implements Persistent
             $this->collAdapterPortStatuss->clearIterator();
         }
         $this->collAdapterPortStatuss = null;
-        if ($this->collAdapterMonitors instanceof PropelCollection) {
-            $this->collAdapterMonitors->clearIterator();
-        }
-        $this->collAdapterMonitors = null;
         if ($this->collAdapterTraps instanceof PropelCollection) {
             $this->collAdapterTraps->clearIterator();
         }

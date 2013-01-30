@@ -1,27 +1,12 @@
+#!/usr/bin/php
 <?php
-require_once '../libs/Bootstrap.php';
-require_once ROOT. 'libs/MultiProcess/MultiProcessParent.php';
+require_once '/var/www/localhost/htdocs/NetMon/libs/Bootstrap.php';
 
 $app = new NetMon\Bootstrap(true);
-$plugins = \PluginQuery::create()
-            ->filterByActive(true)
-            ->find();
+$app->Logger->LogDebug("Cron Execute");
 
-foreach($plugins as $plugin)
-{
-    $thresholds = \ThresholdQuery::create()
-                    ->filterByPluginid($plugin->getPluginid())
-                    ->find();
-    
-    $pluginName = $plugin->getName();
-    require_once ROOT . NetMon\Config::PluginsPath . "/" . $pluginName . ".php";
-    $ns = "\\NetMon\\Plugins\\";
-    $class = $ns . $pluginName;
-    $p = new $class();
-    $p->Execute();
-    $p->ProcessThresholds($thresholds);
-}
-
-
+$app->CallbackPlugins("Execute");
+$app->CallbackPlugins("ProcessThresholds");
 
 ?>
+

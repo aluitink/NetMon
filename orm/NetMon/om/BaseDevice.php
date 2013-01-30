@@ -95,12 +95,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
     protected $collDevicePollsPartial;
 
     /**
-     * @var        PropelObjectCollection|Syslog[] Collection to store aggregation of Syslog objects.
-     */
-    protected $collDeviceSyslogs;
-    protected $collDeviceSyslogsPartial;
-
-    /**
      * @var        PropelObjectCollection|Trap[] Collection to store aggregation of Trap objects.
      */
     protected $collDeviceTraps;
@@ -137,12 +131,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $devicePollsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $deviceSyslogsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -600,8 +588,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
 
             $this->collDevicePolls = null;
 
-            $this->collDeviceSyslogs = null;
-
             $this->collDeviceTraps = null;
 
         } // if (deep)
@@ -768,23 +754,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
 
             if ($this->collDevicePolls !== null) {
                 foreach ($this->collDevicePolls as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->deviceSyslogsScheduledForDeletion !== null) {
-                if (!$this->deviceSyslogsScheduledForDeletion->isEmpty()) {
-                    SyslogQuery::create()
-                        ->filterByPrimaryKeys($this->deviceSyslogsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->deviceSyslogsScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collDeviceSyslogs !== null) {
-                foreach ($this->collDeviceSyslogs as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1021,14 +990,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
                     }
                 }
 
-                if ($this->collDeviceSyslogs !== null) {
-                    foreach ($this->collDeviceSyslogs as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
                 if ($this->collDeviceTraps !== null) {
                     foreach ($this->collDeviceTraps as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -1143,9 +1104,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
             }
             if (null !== $this->collDevicePolls) {
                 $result['DevicePolls'] = $this->collDevicePolls->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collDeviceSyslogs) {
-                $result['DeviceSyslogs'] = $this->collDeviceSyslogs->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collDeviceTraps) {
                 $result['DeviceTraps'] = $this->collDeviceTraps->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1349,12 +1307,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
                 }
             }
 
-            foreach ($this->getDeviceSyslogs() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addDeviceSyslog($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getDeviceTraps() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addDeviceTrap($relObj->copy($deepCopy));
@@ -1479,9 +1431,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
         }
         if ('DevicePoll' == $relationName) {
             $this->initDevicePolls();
-        }
-        if ('DeviceSyslog' == $relationName) {
-            $this->initDeviceSyslogs();
         }
         if ('DeviceTrap' == $relationName) {
             $this->initDeviceTraps();
@@ -2000,224 +1949,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
     }
 
     /**
-     * Clears out the collDeviceSyslogs collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return Device The current object (for fluent API support)
-     * @see        addDeviceSyslogs()
-     */
-    public function clearDeviceSyslogs()
-    {
-        $this->collDeviceSyslogs = null; // important to set this to null since that means it is uninitialized
-        $this->collDeviceSyslogsPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collDeviceSyslogs collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialDeviceSyslogs($v = true)
-    {
-        $this->collDeviceSyslogsPartial = $v;
-    }
-
-    /**
-     * Initializes the collDeviceSyslogs collection.
-     *
-     * By default this just sets the collDeviceSyslogs collection to an empty array (like clearcollDeviceSyslogs());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initDeviceSyslogs($overrideExisting = true)
-    {
-        if (null !== $this->collDeviceSyslogs && !$overrideExisting) {
-            return;
-        }
-        $this->collDeviceSyslogs = new PropelObjectCollection();
-        $this->collDeviceSyslogs->setModel('Syslog');
-    }
-
-    /**
-     * Gets an array of Syslog objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this Device is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Syslog[] List of Syslog objects
-     * @throws PropelException
-     */
-    public function getDeviceSyslogs($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collDeviceSyslogsPartial && !$this->isNew();
-        if (null === $this->collDeviceSyslogs || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collDeviceSyslogs) {
-                // return empty collection
-                $this->initDeviceSyslogs();
-            } else {
-                $collDeviceSyslogs = SyslogQuery::create(null, $criteria)
-                    ->filterByDevice($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collDeviceSyslogsPartial && count($collDeviceSyslogs)) {
-                      $this->initDeviceSyslogs(false);
-
-                      foreach($collDeviceSyslogs as $obj) {
-                        if (false == $this->collDeviceSyslogs->contains($obj)) {
-                          $this->collDeviceSyslogs->append($obj);
-                        }
-                      }
-
-                      $this->collDeviceSyslogsPartial = true;
-                    }
-
-                    $collDeviceSyslogs->getInternalIterator()->rewind();
-                    return $collDeviceSyslogs;
-                }
-
-                if($partial && $this->collDeviceSyslogs) {
-                    foreach($this->collDeviceSyslogs as $obj) {
-                        if($obj->isNew()) {
-                            $collDeviceSyslogs[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collDeviceSyslogs = $collDeviceSyslogs;
-                $this->collDeviceSyslogsPartial = false;
-            }
-        }
-
-        return $this->collDeviceSyslogs;
-    }
-
-    /**
-     * Sets a collection of DeviceSyslog objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $deviceSyslogs A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return Device The current object (for fluent API support)
-     */
-    public function setDeviceSyslogs(PropelCollection $deviceSyslogs, PropelPDO $con = null)
-    {
-        $deviceSyslogsToDelete = $this->getDeviceSyslogs(new Criteria(), $con)->diff($deviceSyslogs);
-
-        $this->deviceSyslogsScheduledForDeletion = unserialize(serialize($deviceSyslogsToDelete));
-
-        foreach ($deviceSyslogsToDelete as $deviceSyslogRemoved) {
-            $deviceSyslogRemoved->setDevice(null);
-        }
-
-        $this->collDeviceSyslogs = null;
-        foreach ($deviceSyslogs as $deviceSyslog) {
-            $this->addDeviceSyslog($deviceSyslog);
-        }
-
-        $this->collDeviceSyslogs = $deviceSyslogs;
-        $this->collDeviceSyslogsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Syslog objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related Syslog objects.
-     * @throws PropelException
-     */
-    public function countDeviceSyslogs(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collDeviceSyslogsPartial && !$this->isNew();
-        if (null === $this->collDeviceSyslogs || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collDeviceSyslogs) {
-                return 0;
-            }
-
-            if($partial && !$criteria) {
-                return count($this->getDeviceSyslogs());
-            }
-            $query = SyslogQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByDevice($this)
-                ->count($con);
-        }
-
-        return count($this->collDeviceSyslogs);
-    }
-
-    /**
-     * Method called to associate a Syslog object to this object
-     * through the Syslog foreign key attribute.
-     *
-     * @param    Syslog $l Syslog
-     * @return Device The current object (for fluent API support)
-     */
-    public function addDeviceSyslog(Syslog $l)
-    {
-        if ($this->collDeviceSyslogs === null) {
-            $this->initDeviceSyslogs();
-            $this->collDeviceSyslogsPartial = true;
-        }
-        if (!in_array($l, $this->collDeviceSyslogs->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddDeviceSyslog($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	DeviceSyslog $deviceSyslog The deviceSyslog object to add.
-     */
-    protected function doAddDeviceSyslog($deviceSyslog)
-    {
-        $this->collDeviceSyslogs[]= $deviceSyslog;
-        $deviceSyslog->setDevice($this);
-    }
-
-    /**
-     * @param	DeviceSyslog $deviceSyslog The deviceSyslog object to remove.
-     * @return Device The current object (for fluent API support)
-     */
-    public function removeDeviceSyslog($deviceSyslog)
-    {
-        if ($this->getDeviceSyslogs()->contains($deviceSyslog)) {
-            $this->collDeviceSyslogs->remove($this->collDeviceSyslogs->search($deviceSyslog));
-            if (null === $this->deviceSyslogsScheduledForDeletion) {
-                $this->deviceSyslogsScheduledForDeletion = clone $this->collDeviceSyslogs;
-                $this->deviceSyslogsScheduledForDeletion->clear();
-            }
-            $this->deviceSyslogsScheduledForDeletion[]= clone $deviceSyslog;
-            $deviceSyslog->setDevice(null);
-        }
-
-        return $this;
-    }
-
-    /**
      * Clears out the collDeviceTraps collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
@@ -2530,11 +2261,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collDeviceSyslogs) {
-                foreach ($this->collDeviceSyslogs as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collDeviceTraps) {
                 foreach ($this->collDeviceTraps as $o) {
                     $o->clearAllReferences($deep);
@@ -2555,10 +2281,6 @@ abstract class BaseDevice extends BaseObject implements Persistent
             $this->collDevicePolls->clearIterator();
         }
         $this->collDevicePolls = null;
-        if ($this->collDeviceSyslogs instanceof PropelCollection) {
-            $this->collDeviceSyslogs->clearIterator();
-        }
-        $this->collDeviceSyslogs = null;
         if ($this->collDeviceTraps instanceof PropelCollection) {
             $this->collDeviceTraps->clearIterator();
         }

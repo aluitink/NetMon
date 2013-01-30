@@ -1,7 +1,7 @@
 <?php
-require_once '../libs/Bootstrap.php';
 
-$app = new NetMon\Bootstrap(true);
+require_once '/var/www/localhost/htdocs/NetMon/libs/Bootstrap.php';
+
 require_once ROOT . 'controllers/Discovery.php';
 require_once ROOT . 'libs/plugins/Icmp.php';
 
@@ -9,10 +9,6 @@ $discovery = new \NetMon\Controllers\Discovery("POST");
 $discovery->Scan("192.168.1.1");
 
 
-require_once ROOT . 'controllers/Threshold.php';
-
-$thresholdController = new \NetMon\Controllers\Threshold("GET");
-$thresholdController->DefaultView();
 
 require_once ROOT . 'scripts/netmon_cron.php';
 

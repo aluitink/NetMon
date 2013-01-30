@@ -57,7 +57,6 @@ class DeviceTableMap extends TableMap
         $this->addRelation('DeviceType', 'DeviceType', RelationMap::MANY_TO_ONE, array('DeviceTypeId' => 'DeviceTypeId', ), null, null);
         $this->addRelation('DeviceAdapter', 'Adapter', RelationMap::ONE_TO_MANY, array('DeviceId' => 'DeviceId', ), null, null, 'DeviceAdapters');
         $this->addRelation('DevicePoll', 'Poll', RelationMap::ONE_TO_MANY, array('DeviceId' => 'DeviceId', ), null, null, 'DevicePolls');
-        $this->addRelation('DeviceSyslog', 'Syslog', RelationMap::ONE_TO_MANY, array('DeviceId' => 'DeviceId', ), null, null, 'DeviceSyslogs');
         $this->addRelation('DeviceTrap', 'Trap', RelationMap::ONE_TO_MANY, array('DeviceId' => 'DeviceId', ), null, null, 'DeviceTraps');
     } // buildRelations()
 

@@ -41,8 +41,8 @@ class AlarmTableMap extends TableMap
         $this->addPrimaryKey('AlarmId', 'Alarmid', 'INTEGER', true, null, null);
         $this->addForeignKey('ThresholdId', 'Thresholdid', 'INTEGER', 'Threshold', 'ThresholdId', true, null, null);
         $this->addColumn('Timestamp', 'Timestamp', 'TIMESTAMP', true, null, null);
-        $this->addColumn('Active', 'Active', 'BOOLEAN', false, 1, null);
-        $this->addColumn('Acknowledged', 'Acknowledged', 'BOOLEAN', false, 1, null);
+        $this->addColumn('Active', 'Active', 'BOOLEAN', true, 1, false);
+        $this->addColumn('Acknowledged', 'Acknowledged', 'BOOLEAN', true, 1, false);
         // validators
     } // initialize()
 

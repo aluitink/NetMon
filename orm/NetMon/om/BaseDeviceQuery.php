@@ -40,10 +40,6 @@
  * @method DeviceQuery rightJoinDevicePoll($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DevicePoll relation
  * @method DeviceQuery innerJoinDevicePoll($relationAlias = null) Adds a INNER JOIN clause to the query using the DevicePoll relation
  *
- * @method DeviceQuery leftJoinDeviceSyslog($relationAlias = null) Adds a LEFT JOIN clause to the query using the DeviceSyslog relation
- * @method DeviceQuery rightJoinDeviceSyslog($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DeviceSyslog relation
- * @method DeviceQuery innerJoinDeviceSyslog($relationAlias = null) Adds a INNER JOIN clause to the query using the DeviceSyslog relation
- *
  * @method DeviceQuery leftJoinDeviceTrap($relationAlias = null) Adds a LEFT JOIN clause to the query using the DeviceTrap relation
  * @method DeviceQuery rightJoinDeviceTrap($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DeviceTrap relation
  * @method DeviceQuery innerJoinDeviceTrap($relationAlias = null) Adds a INNER JOIN clause to the query using the DeviceTrap relation
@@ -765,80 +761,6 @@ abstract class BaseDeviceQuery extends ModelCriteria
         return $this
             ->joinDevicePoll($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'DevicePoll', 'PollQuery');
-    }
-
-    /**
-     * Filter the query by a related Syslog object
-     *
-     * @param   Syslog|PropelObjectCollection $syslog  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 DeviceQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterByDeviceSyslog($syslog, $comparison = null)
-    {
-        if ($syslog instanceof Syslog) {
-            return $this
-                ->addUsingAlias(DevicePeer::DEVICEID, $syslog->getDeviceid(), $comparison);
-        } elseif ($syslog instanceof PropelObjectCollection) {
-            return $this
-                ->useDeviceSyslogQuery()
-                ->filterByPrimaryKeys($syslog->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByDeviceSyslog() only accepts arguments of type Syslog or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the DeviceSyslog relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return DeviceQuery The current query, for fluid interface
-     */
-    public function joinDeviceSyslog($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('DeviceSyslog');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'DeviceSyslog');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the DeviceSyslog relation Syslog object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   SyslogQuery A secondary query class using the current class as primary query
-     */
-    public function useDeviceSyslogQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinDeviceSyslog($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'DeviceSyslog', 'SyslogQuery');
     }
 
     /**

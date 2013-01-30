@@ -40,8 +40,7 @@ class MonitorTableMap extends TableMap
         // columns
         $this->addPrimaryKey('MonitorId', 'Monitorid', 'INTEGER', true, null, null);
         $this->addForeignPrimaryKey('PluginId', 'Pluginid', 'INTEGER' , 'Plugin', 'PluginId', true, null, null);
-        $this->addForeignPrimaryKey('AdapterId', 'Adapterid', 'INTEGER' , 'Adapter', 'AdapterId', true, null, null);
-        $this->addForeignPrimaryKey('SnmpPropertyId', 'Snmppropertyid', 'INTEGER' , 'SnmpProperty', 'SnmpPropertyId', true, null, null);
+        $this->addForeignPrimaryKey('PluginMetaId', 'Pluginmetaid', 'INTEGER' , 'PluginMeta', 'PluginMetaId', true, null, null);
         // validators
     } // initialize()
 
@@ -51,8 +50,7 @@ class MonitorTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('Plugin', 'Plugin', RelationMap::MANY_TO_ONE, array('PluginId' => 'PluginId', ), null, null);
-        $this->addRelation('Adapter', 'Adapter', RelationMap::MANY_TO_ONE, array('AdapterId' => 'AdapterId', ), null, null);
-        $this->addRelation('SnmpProperty', 'SnmpProperty', RelationMap::MANY_TO_ONE, array('SnmpPropertyId' => 'SnmpPropertyId', ), null, null);
+        $this->addRelation('PluginMeta', 'PluginMeta', RelationMap::MANY_TO_ONE, array('PluginMetaId' => 'PluginMetaId', ), null, null);
         $this->addRelation('MonitorThreshold', 'Threshold', RelationMap::ONE_TO_MANY, array('MonitorId' => 'MonitorId', ), null, null, 'MonitorThresholds');
     } // buildRelations()
 

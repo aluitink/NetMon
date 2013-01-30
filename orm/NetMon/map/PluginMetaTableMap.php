@@ -40,6 +40,7 @@ class PluginMetaTableMap extends TableMap
         // columns
         $this->addPrimaryKey('PluginMetaId', 'Pluginmetaid', 'INTEGER', true, null, null);
         $this->addForeignKey('PluginId', 'Pluginid', 'INTEGER', 'Plugin', 'PluginId', true, null, null);
+        $this->addColumn('Envelope', 'Envelope', 'VARCHAR', true, 255, null);
         $this->addColumn('Key', 'Key', 'VARCHAR', true, 32, null);
         $this->addColumn('Value', 'Value', 'LONGVARCHAR', false, null, null);
         // validators
@@ -51,6 +52,7 @@ class PluginMetaTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('Plugin', 'Plugin', RelationMap::MANY_TO_ONE, array('PluginId' => 'PluginId', ), null, null);
+        $this->addRelation('PluginMetaMonitor', 'Monitor', RelationMap::ONE_TO_MANY, array('PluginMetaId' => 'PluginMetaId', ), null, null, 'PluginMetaMonitors');
     } // buildRelations()
 
 } // PluginMetaTableMap

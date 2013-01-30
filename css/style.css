@@ -258,10 +258,10 @@ nav {
 
 .content { 
   text-align: left;
-  width: 630px;
+  width: 100%;
   margin: 0 0 15px 0;
   float: left;
-  font-size: 120%;
+  font-size: 85%;
   padding: 14px 0 0 0;
 }
   
@@ -378,9 +378,12 @@ footer a:hover {
   margin: 0 0 20px 0;
 }
   
+
 table { 
-  margin: 10px 0 30px 0;
+  /*margin: 10px 0 30px 0;*/
+  width: 100%;
 }
+
 
 table tr th, table tr td { 
   background: #70D4E6;
@@ -523,4 +526,20 @@ ul#nav li a:hover,ul#nav li a:focus {
 ul#nav ul li a:hover,ul#nav ul li a:focus { 
   color: #222;
   text-shadow: none;
+}
+
+
+table.display tr.even.row_selected td {
+	background-color: #B0BED9;
+}
+
+table.display tr.odd.row_selected td {
+	background-color: #9FAFD1;
+}
+
+.critical { background-color: red; color: black; text-decoration: blink;}
+
+#ackButton
+{
+    float: right;
 }

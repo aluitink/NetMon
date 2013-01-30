@@ -28,10 +28,6 @@
  * @method SnmpPropertyQuery rightJoinSnmpPropertyPoll($relationAlias = null) Adds a RIGHT JOIN clause to the query using the SnmpPropertyPoll relation
  * @method SnmpPropertyQuery innerJoinSnmpPropertyPoll($relationAlias = null) Adds a INNER JOIN clause to the query using the SnmpPropertyPoll relation
  *
- * @method SnmpPropertyQuery leftJoinSnmpPropertyMonitor($relationAlias = null) Adds a LEFT JOIN clause to the query using the SnmpPropertyMonitor relation
- * @method SnmpPropertyQuery rightJoinSnmpPropertyMonitor($relationAlias = null) Adds a RIGHT JOIN clause to the query using the SnmpPropertyMonitor relation
- * @method SnmpPropertyQuery innerJoinSnmpPropertyMonitor($relationAlias = null) Adds a INNER JOIN clause to the query using the SnmpPropertyMonitor relation
- *
  * @method SnmpPropertyQuery leftJoinSnmpPropertyTrap($relationAlias = null) Adds a LEFT JOIN clause to the query using the SnmpPropertyTrap relation
  * @method SnmpPropertyQuery rightJoinSnmpPropertyTrap($relationAlias = null) Adds a RIGHT JOIN clause to the query using the SnmpPropertyTrap relation
  * @method SnmpPropertyQuery innerJoinSnmpPropertyTrap($relationAlias = null) Adds a INNER JOIN clause to the query using the SnmpPropertyTrap relation
@@ -531,80 +527,6 @@ abstract class BaseSnmpPropertyQuery extends ModelCriteria
         return $this
             ->joinSnmpPropertyPoll($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'SnmpPropertyPoll', 'PollQuery');
-    }
-
-    /**
-     * Filter the query by a related Monitor object
-     *
-     * @param   Monitor|PropelObjectCollection $monitor  the related object to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return                 SnmpPropertyQuery The current query, for fluid interface
-     * @throws PropelException - if the provided filter is invalid.
-     */
-    public function filterBySnmpPropertyMonitor($monitor, $comparison = null)
-    {
-        if ($monitor instanceof Monitor) {
-            return $this
-                ->addUsingAlias(SnmpPropertyPeer::SNMPPROPERTYID, $monitor->getSnmppropertyid(), $comparison);
-        } elseif ($monitor instanceof PropelObjectCollection) {
-            return $this
-                ->useSnmpPropertyMonitorQuery()
-                ->filterByPrimaryKeys($monitor->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterBySnmpPropertyMonitor() only accepts arguments of type Monitor or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the SnmpPropertyMonitor relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return SnmpPropertyQuery The current query, for fluid interface
-     */
-    public function joinSnmpPropertyMonitor($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('SnmpPropertyMonitor');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'SnmpPropertyMonitor');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the SnmpPropertyMonitor relation Monitor object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   MonitorQuery A secondary query class using the current class as primary query
-     */
-    public function useSnmpPropertyMonitorQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinSnmpPropertyMonitor($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'SnmpPropertyMonitor', 'MonitorQuery');
     }
 
     /**

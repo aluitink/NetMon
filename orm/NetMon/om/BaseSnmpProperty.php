@@ -65,12 +65,6 @@ abstract class BaseSnmpProperty extends BaseObject implements Persistent
     protected $collSnmpPropertyPollsPartial;
 
     /**
-     * @var        PropelObjectCollection|Monitor[] Collection to store aggregation of Monitor objects.
-     */
-    protected $collSnmpPropertyMonitors;
-    protected $collSnmpPropertyMonitorsPartial;
-
-    /**
      * @var        PropelObjectCollection|Trap[] Collection to store aggregation of Trap objects.
      */
     protected $collSnmpPropertyTraps;
@@ -101,12 +95,6 @@ abstract class BaseSnmpProperty extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $snmpPropertyPollsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $snmpPropertyMonitorsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -354,8 +342,6 @@ abstract class BaseSnmpProperty extends BaseObject implements Persistent
             $this->aSnmpNamespace = null;
             $this->collSnmpPropertyPolls = null;
 
-            $this->collSnmpPropertyMonitors = null;
-
             $this->collSnmpPropertyTraps = null;
 
         } // if (deep)
@@ -505,23 +491,6 @@ abstract class BaseSnmpProperty extends BaseObject implements Persistent
 
             if ($this->collSnmpPropertyPolls !== null) {
                 foreach ($this->collSnmpPropertyPolls as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->snmpPropertyMonitorsScheduledForDeletion !== null) {
-                if (!$this->snmpPropertyMonitorsScheduledForDeletion->isEmpty()) {
-                    MonitorQuery::create()
-                        ->filterByPrimaryKeys($this->snmpPropertyMonitorsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->snmpPropertyMonitorsScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collSnmpPropertyMonitors !== null) {
-                foreach ($this->collSnmpPropertyMonitors as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -726,14 +695,6 @@ abstract class BaseSnmpProperty extends BaseObject implements Persistent
                     }
                 }
 
-                if ($this->collSnmpPropertyMonitors !== null) {
-                    foreach ($this->collSnmpPropertyMonitors as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
                 if ($this->collSnmpPropertyTraps !== null) {
                     foreach ($this->collSnmpPropertyTraps as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -829,9 +790,6 @@ abstract class BaseSnmpProperty extends BaseObject implements Persistent
             }
             if (null !== $this->collSnmpPropertyPolls) {
                 $result['SnmpPropertyPolls'] = $this->collSnmpPropertyPolls->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collSnmpPropertyMonitors) {
-                $result['SnmpPropertyMonitors'] = $this->collSnmpPropertyMonitors->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collSnmpPropertyTraps) {
                 $result['SnmpPropertyTraps'] = $this->collSnmpPropertyTraps->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1005,12 +963,6 @@ abstract class BaseSnmpProperty extends BaseObject implements Persistent
                 }
             }
 
-            foreach ($this->getSnmpPropertyMonitors() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addSnmpPropertyMonitor($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getSnmpPropertyTraps() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addSnmpPropertyTrap($relObj->copy($deepCopy));
@@ -1132,9 +1084,6 @@ abstract class BaseSnmpProperty extends BaseObject implements Persistent
     {
         if ('SnmpPropertyPoll' == $relationName) {
             $this->initSnmpPropertyPolls();
-        }
-        if ('SnmpPropertyMonitor' == $relationName) {
-            $this->initSnmpPropertyMonitors();
         }
         if ('SnmpPropertyTrap' == $relationName) {
             $this->initSnmpPropertyTraps();
@@ -1407,274 +1356,6 @@ abstract class BaseSnmpProperty extends BaseObject implements Persistent
         $query->joinWith('Plugin', $join_behavior);
 
         return $this->getSnmpPropertyPolls($query, $con);
-    }
-
-    /**
-     * Clears out the collSnmpPropertyMonitors collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return SnmpProperty The current object (for fluent API support)
-     * @see        addSnmpPropertyMonitors()
-     */
-    public function clearSnmpPropertyMonitors()
-    {
-        $this->collSnmpPropertyMonitors = null; // important to set this to null since that means it is uninitialized
-        $this->collSnmpPropertyMonitorsPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collSnmpPropertyMonitors collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialSnmpPropertyMonitors($v = true)
-    {
-        $this->collSnmpPropertyMonitorsPartial = $v;
-    }
-
-    /**
-     * Initializes the collSnmpPropertyMonitors collection.
-     *
-     * By default this just sets the collSnmpPropertyMonitors collection to an empty array (like clearcollSnmpPropertyMonitors());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initSnmpPropertyMonitors($overrideExisting = true)
-    {
-        if (null !== $this->collSnmpPropertyMonitors && !$overrideExisting) {
-            return;
-        }
-        $this->collSnmpPropertyMonitors = new PropelObjectCollection();
-        $this->collSnmpPropertyMonitors->setModel('Monitor');
-    }
-
-    /**
-     * Gets an array of Monitor objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this SnmpProperty is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|Monitor[] List of Monitor objects
-     * @throws PropelException
-     */
-    public function getSnmpPropertyMonitors($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collSnmpPropertyMonitorsPartial && !$this->isNew();
-        if (null === $this->collSnmpPropertyMonitors || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collSnmpPropertyMonitors) {
-                // return empty collection
-                $this->initSnmpPropertyMonitors();
-            } else {
-                $collSnmpPropertyMonitors = MonitorQuery::create(null, $criteria)
-                    ->filterBySnmpProperty($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collSnmpPropertyMonitorsPartial && count($collSnmpPropertyMonitors)) {
-                      $this->initSnmpPropertyMonitors(false);
-
-                      foreach($collSnmpPropertyMonitors as $obj) {
-                        if (false == $this->collSnmpPropertyMonitors->contains($obj)) {
-                          $this->collSnmpPropertyMonitors->append($obj);
-                        }
-                      }
-
-                      $this->collSnmpPropertyMonitorsPartial = true;
-                    }
-
-                    $collSnmpPropertyMonitors->getInternalIterator()->rewind();
-                    return $collSnmpPropertyMonitors;
-                }
-
-                if($partial && $this->collSnmpPropertyMonitors) {
-                    foreach($this->collSnmpPropertyMonitors as $obj) {
-                        if($obj->isNew()) {
-                            $collSnmpPropertyMonitors[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collSnmpPropertyMonitors = $collSnmpPropertyMonitors;
-                $this->collSnmpPropertyMonitorsPartial = false;
-            }
-        }
-
-        return $this->collSnmpPropertyMonitors;
-    }
-
-    /**
-     * Sets a collection of SnmpPropertyMonitor objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $snmpPropertyMonitors A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return SnmpProperty The current object (for fluent API support)
-     */
-    public function setSnmpPropertyMonitors(PropelCollection $snmpPropertyMonitors, PropelPDO $con = null)
-    {
-        $snmpPropertyMonitorsToDelete = $this->getSnmpPropertyMonitors(new Criteria(), $con)->diff($snmpPropertyMonitors);
-
-        $this->snmpPropertyMonitorsScheduledForDeletion = unserialize(serialize($snmpPropertyMonitorsToDelete));
-
-        foreach ($snmpPropertyMonitorsToDelete as $snmpPropertyMonitorRemoved) {
-            $snmpPropertyMonitorRemoved->setSnmpProperty(null);
-        }
-
-        $this->collSnmpPropertyMonitors = null;
-        foreach ($snmpPropertyMonitors as $snmpPropertyMonitor) {
-            $this->addSnmpPropertyMonitor($snmpPropertyMonitor);
-        }
-
-        $this->collSnmpPropertyMonitors = $snmpPropertyMonitors;
-        $this->collSnmpPropertyMonitorsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Monitor objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related Monitor objects.
-     * @throws PropelException
-     */
-    public function countSnmpPropertyMonitors(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collSnmpPropertyMonitorsPartial && !$this->isNew();
-        if (null === $this->collSnmpPropertyMonitors || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collSnmpPropertyMonitors) {
-                return 0;
-            }
-
-            if($partial && !$criteria) {
-                return count($this->getSnmpPropertyMonitors());
-            }
-            $query = MonitorQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterBySnmpProperty($this)
-                ->count($con);
-        }
-
-        return count($this->collSnmpPropertyMonitors);
-    }
-
-    /**
-     * Method called to associate a Monitor object to this object
-     * through the Monitor foreign key attribute.
-     *
-     * @param    Monitor $l Monitor
-     * @return SnmpProperty The current object (for fluent API support)
-     */
-    public function addSnmpPropertyMonitor(Monitor $l)
-    {
-        if ($this->collSnmpPropertyMonitors === null) {
-            $this->initSnmpPropertyMonitors();
-            $this->collSnmpPropertyMonitorsPartial = true;
-        }
-        if (!in_array($l, $this->collSnmpPropertyMonitors->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddSnmpPropertyMonitor($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	SnmpPropertyMonitor $snmpPropertyMonitor The snmpPropertyMonitor object to add.
-     */
-    protected function doAddSnmpPropertyMonitor($snmpPropertyMonitor)
-    {
-        $this->collSnmpPropertyMonitors[]= $snmpPropertyMonitor;
-        $snmpPropertyMonitor->setSnmpProperty($this);
-    }
-
-    /**
-     * @param	SnmpPropertyMonitor $snmpPropertyMonitor The snmpPropertyMonitor object to remove.
-     * @return SnmpProperty The current object (for fluent API support)
-     */
-    public function removeSnmpPropertyMonitor($snmpPropertyMonitor)
-    {
-        if ($this->getSnmpPropertyMonitors()->contains($snmpPropertyMonitor)) {
-            $this->collSnmpPropertyMonitors->remove($this->collSnmpPropertyMonitors->search($snmpPropertyMonitor));
-            if (null === $this->snmpPropertyMonitorsScheduledForDeletion) {
-                $this->snmpPropertyMonitorsScheduledForDeletion = clone $this->collSnmpPropertyMonitors;
-                $this->snmpPropertyMonitorsScheduledForDeletion->clear();
-            }
-            $this->snmpPropertyMonitorsScheduledForDeletion[]= clone $snmpPropertyMonitor;
-            $snmpPropertyMonitor->setSnmpProperty(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this SnmpProperty is new, it will return
-     * an empty collection; or if this SnmpProperty has previously
-     * been saved, it will retrieve related SnmpPropertyMonitors from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in SnmpProperty.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Monitor[] List of Monitor objects
-     */
-    public function getSnmpPropertyMonitorsJoinPlugin($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = MonitorQuery::create(null, $criteria);
-        $query->joinWith('Plugin', $join_behavior);
-
-        return $this->getSnmpPropertyMonitors($query, $con);
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this SnmpProperty is new, it will return
-     * an empty collection; or if this SnmpProperty has previously
-     * been saved, it will retrieve related SnmpPropertyMonitors from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in SnmpProperty.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return PropelObjectCollection|Monitor[] List of Monitor objects
-     */
-    public function getSnmpPropertyMonitorsJoinAdapter($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $query = MonitorQuery::create(null, $criteria);
-        $query->joinWith('Adapter', $join_behavior);
-
-        return $this->getSnmpPropertyMonitors($query, $con);
     }
 
     /**
@@ -1981,11 +1662,6 @@ abstract class BaseSnmpProperty extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collSnmpPropertyMonitors) {
-                foreach ($this->collSnmpPropertyMonitors as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collSnmpPropertyTraps) {
                 foreach ($this->collSnmpPropertyTraps as $o) {
                     $o->clearAllReferences($deep);
@@ -2002,10 +1678,6 @@ abstract class BaseSnmpProperty extends BaseObject implements Persistent
             $this->collSnmpPropertyPolls->clearIterator();
         }
         $this->collSnmpPropertyPolls = null;
-        if ($this->collSnmpPropertyMonitors instanceof PropelCollection) {
-            $this->collSnmpPropertyMonitors->clearIterator();
-        }
-        $this->collSnmpPropertyMonitors = null;
         if ($this->collSnmpPropertyTraps instanceof PropelCollection) {
             $this->collSnmpPropertyTraps->clearIterator();
         }

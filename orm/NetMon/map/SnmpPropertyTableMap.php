@@ -52,7 +52,6 @@ class SnmpPropertyTableMap extends TableMap
     {
         $this->addRelation('SnmpNamespace', 'SnmpNamespace', RelationMap::MANY_TO_ONE, array('SnmpNamespaceId' => 'SnmpNamespaceId', ), null, null);
         $this->addRelation('SnmpPropertyPoll', 'Poll', RelationMap::ONE_TO_MANY, array('SnmpPropertyId' => 'SnmpPropertyId', ), null, null, 'SnmpPropertyPolls');
-        $this->addRelation('SnmpPropertyMonitor', 'Monitor', RelationMap::ONE_TO_MANY, array('SnmpPropertyId' => 'SnmpPropertyId', ), null, null, 'SnmpPropertyMonitors');
         $this->addRelation('SnmpPropertyTrap', 'Trap', RelationMap::ONE_TO_MANY, array('SnmpPropertyId' => 'SnmpPropertyId', ), null, null, 'SnmpPropertyTraps');
     } // buildRelations()
 

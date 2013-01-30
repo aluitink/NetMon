@@ -11,6 +11,7 @@ class Icmp extends PluginBase
         $this->pluginInfo["task"] = ROOT. "libs/plugins/tasks/icmp.php";
         $this->pluginInfo["active"] = true;
         $this->pluginInfo["description"] = "Icmp monitoring plugin.";
+        $this->pluginInfo["requestList"][] = "ProcessThresholds";
         $this->pluginInfo["requestList"][] = "OnDeviceAdd";
         $this->pluginInfo["requestList"][] = "OnDeviceChange";
         $this->pluginInfo["requestList"][] = "OnDeviceRemove";
@@ -19,7 +20,8 @@ class Icmp extends PluginBase
         $this->pluginInfo["requestList"][] = "OnAdapterRemove";
         $this->pluginInfo["requestList"][] = "OnBeforeUpdateAlarms";
         
-        $this->pluginSettings["lossAmount"] = 30;
+        $this->pluginSettings["defaultLoss"] = 30;
+        $this->pluginSettings["defaultGreaterThan"] = true;
         $this->pluginSettings["autoAdd"] = true;
         $this->pluginSettings["enableThrottle"] = true;
         $this->pluginSettings["threadTimeLimit"] = 10;
@@ -34,14 +36,22 @@ class Icmp extends PluginBase
         $monitors = \MonitorQuery::create()
                 ->filterByPlugin($this->plugin)
                 ->find();
+        
         $tasks = array();
         foreach($monitors as $monitor)
         {
-            $adapter = $monitor->getAdapter();
+            $pluginMeta = $monitor->getPluginmeta();
+            $adapterId = $pluginMeta->getValue();
+            $adapter = \AdapterQuery::create()
+                        ->findOneByAdapterid($adapterId);
+            
+            if(!isset($adapter))
+                throw new \Exception("Adapater Not Found");
+            
             $vars["monitorId"] = $monitor->getMonitorid();
             $vars["count"] = 10;
             $vars["interval"] = .2;
-            $vars["timeout"] = .2;
+            $vars["timeout"] = 1;
             $vars["ip"] = $adapter->getIpAddress();
             $tasks[] = array("path" => $this->pluginInfo["task"],
                              "variables" => $vars);
@@ -56,79 +66,79 @@ class Icmp extends PluginBase
         {
             $monitorId = $monitorResult["monitorId"];
             $percentLost = $monitorResult["percentLost"];
-            $this->StoreUpdateMeta($monitorId, $percentLost);
+            $this->SetResultByMonitor($monitorId, $percentLost);
         }
         
         $this->multiProcessParent->Cleanup();
     }
     
-    public function ProcessThresholds($thresholds = null)
+    public function ProcessThresholds()
     {
+        $thresholds = \ThresholdQuery::create()
+                            ->filterByPluginid($this->plugin->getPluginid())
+                            ->find();
         if(!isset($thresholds)) return;
         
         foreach($thresholds as $threshold)
         {
             $monitor = $threshold->getMonitor();
             $monitorId = $monitor->getMonitorId();
-            $monitorValue = $this->FetechUpdateMeta($monitorId);
+            $alarm = $this->GetOrCreateAlarm($threshold);
+            
+            
+            $monitorValue = $this->GetResultByMonitor($monitorId);
 
+            $oldStatus = $alarm->getActive();
+            $oldAck = $alarm->getAcknowledged();
+            
             $greaterThan = $threshold->getGreaterThan();
             $thresholdValue = $threshold->getValue();
             if($greaterThan)
             {
                 if($monitorValue > $thresholdValue)
-                    $this->SetAlarmValue ($threshold, true);
+                {
+                    if(!$oldStatus)
+                        $this->UpdateAlarm($alarm, true, false);
+                }
                 else
-                    $this->SetAlarmValue ($threshold, false);
+                {
+                    if($oldStatus)
+                        $this->UpdateAlarm($alarm, false, false);
+                }
             }
             else
             {
                 if($monitorValue < $thresholdValue)
-                    $this->SetAlarmValue ($threshold, true);
+                {
+                    if(!$oldStatus)
+                        $this->UpdateAlarm($alarm, true, false);
+                }
                 else
-                    $this->SetAlarmValue ($threshold, false);
+                {
+                    if($oldStatus)
+                        $this->UpdateAlarm ($alarm, false, false);
+                }
+                    
             }
         }
     }
 
-    private function SetAlarmValue($threshold, $active)
+    private function SetAdapterThreshold($adapter, $value, $greater)
     {
-        $queryAlarm = \AlarmQuery::create()
-                        ->filterByThreshold($threshold)
-                        ->findOne();
-        
-        if(isset($queryAlarm))
-        {
-            $oldStatus = $queryAlarm->getActive();
-            $oldAck = $queryAlarm->getAcknowledged();
-            
-            if($oldStatus != $active)
-            {
-                $queryAlarm->setActive ($active);
-                $queryAlarm->setAcknowledged(false);
-                $queryAlarm->setTimestamp("now");
-                $queryAlarm->save();
-            }
-        }
-        else
-        {
-            $alarm = new \Alarm();
-            $alarm->setThreshold($threshold);
-            $alarm->setTimestamp("now");
-            $alarm->setActive($active);
-            $alarm->save();
-        }
+        $adapterId = $adapter->getAdapterid();
+        $monitor = $this->GetOrCreateMonitor($adapterId, $adapterId);
+        $threshold = $this->CreateOrUpdateThreshold($monitor, $value, $greater);
+        return $threshold;
     }
     
     public function OnAdapterAdd($adapter = null)
     {
         if(!isset($adapter)) return;
         if($this->pluginSettings["autoAdd"])
-        {   
-            $monitor = new \Monitor();
-            $monitor->setPlugin($this->plugin);
-            $monitor->setAdapter($adapter);
-            $monitor->save();
+        {
+            $this->SetAdapterThreshold($adapter, 
+                    $this->pluginSettings["defaultLoss"], 
+                    $this->pluginSettings["defaultGreaterThan"]);
         }
     }
     

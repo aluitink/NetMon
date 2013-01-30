@@ -35,8 +35,8 @@ abstract class BaseSyslogPeer
     /** the column name for the SyslogId field */
     const SYSLOGID = 'Syslog.SyslogId';
 
-    /** the column name for the DeviceId field */
-    const DEVICEID = 'Syslog.DeviceId';
+    /** the column name for the IpAddress field */
+    const IPADDRESS = 'Syslog.IpAddress';
 
     /** the column name for the Facility field */
     const FACILITY = 'Syslog.Facility';
@@ -87,11 +87,11 @@ abstract class BaseSyslogPeer
      * e.g. SyslogPeer::$fieldNames[SyslogPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Syslogid', 'Deviceid', 'Facility', 'Priority', 'Level', 'Tag', 'Timestamp', 'Program', 'Message', 'Sequence', 'Count', 'Value', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('syslogid', 'deviceid', 'facility', 'priority', 'level', 'tag', 'timestamp', 'program', 'message', 'sequence', 'count', 'value', ),
-        BasePeer::TYPE_COLNAME => array (SyslogPeer::SYSLOGID, SyslogPeer::DEVICEID, SyslogPeer::FACILITY, SyslogPeer::PRIORITY, SyslogPeer::LEVEL, SyslogPeer::TAG, SyslogPeer::TIMESTAMP, SyslogPeer::PROGRAM, SyslogPeer::MESSAGE, SyslogPeer::SEQUENCE, SyslogPeer::COUNT, SyslogPeer::VALUE, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('SYSLOGID', 'DEVICEID', 'FACILITY', 'PRIORITY', 'LEVEL', 'TAG', 'TIMESTAMP', 'PROGRAM', 'MESSAGE', 'SEQUENCE', 'COUNT', 'VALUE', ),
-        BasePeer::TYPE_FIELDNAME => array ('SyslogId', 'DeviceId', 'Facility', 'Priority', 'Level', 'Tag', 'Timestamp', 'Program', 'Message', 'Sequence', 'Count', 'Value', ),
+        BasePeer::TYPE_PHPNAME => array ('Syslogid', 'Ipaddress', 'Facility', 'Priority', 'Level', 'Tag', 'Timestamp', 'Program', 'Message', 'Sequence', 'Count', 'Value', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('syslogid', 'ipaddress', 'facility', 'priority', 'level', 'tag', 'timestamp', 'program', 'message', 'sequence', 'count', 'value', ),
+        BasePeer::TYPE_COLNAME => array (SyslogPeer::SYSLOGID, SyslogPeer::IPADDRESS, SyslogPeer::FACILITY, SyslogPeer::PRIORITY, SyslogPeer::LEVEL, SyslogPeer::TAG, SyslogPeer::TIMESTAMP, SyslogPeer::PROGRAM, SyslogPeer::MESSAGE, SyslogPeer::SEQUENCE, SyslogPeer::COUNT, SyslogPeer::VALUE, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('SYSLOGID', 'IPADDRESS', 'FACILITY', 'PRIORITY', 'LEVEL', 'TAG', 'TIMESTAMP', 'PROGRAM', 'MESSAGE', 'SEQUENCE', 'COUNT', 'VALUE', ),
+        BasePeer::TYPE_FIELDNAME => array ('SyslogId', 'IpAddress', 'Facility', 'Priority', 'Level', 'Tag', 'Timestamp', 'Program', 'Message', 'Sequence', 'Count', 'Value', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
     );
 
@@ -102,11 +102,11 @@ abstract class BaseSyslogPeer
      * e.g. SyslogPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Syslogid' => 0, 'Deviceid' => 1, 'Facility' => 2, 'Priority' => 3, 'Level' => 4, 'Tag' => 5, 'Timestamp' => 6, 'Program' => 7, 'Message' => 8, 'Sequence' => 9, 'Count' => 10, 'Value' => 11, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('syslogid' => 0, 'deviceid' => 1, 'facility' => 2, 'priority' => 3, 'level' => 4, 'tag' => 5, 'timestamp' => 6, 'program' => 7, 'message' => 8, 'sequence' => 9, 'count' => 10, 'value' => 11, ),
-        BasePeer::TYPE_COLNAME => array (SyslogPeer::SYSLOGID => 0, SyslogPeer::DEVICEID => 1, SyslogPeer::FACILITY => 2, SyslogPeer::PRIORITY => 3, SyslogPeer::LEVEL => 4, SyslogPeer::TAG => 5, SyslogPeer::TIMESTAMP => 6, SyslogPeer::PROGRAM => 7, SyslogPeer::MESSAGE => 8, SyslogPeer::SEQUENCE => 9, SyslogPeer::COUNT => 10, SyslogPeer::VALUE => 11, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('SYSLOGID' => 0, 'DEVICEID' => 1, 'FACILITY' => 2, 'PRIORITY' => 3, 'LEVEL' => 4, 'TAG' => 5, 'TIMESTAMP' => 6, 'PROGRAM' => 7, 'MESSAGE' => 8, 'SEQUENCE' => 9, 'COUNT' => 10, 'VALUE' => 11, ),
-        BasePeer::TYPE_FIELDNAME => array ('SyslogId' => 0, 'DeviceId' => 1, 'Facility' => 2, 'Priority' => 3, 'Level' => 4, 'Tag' => 5, 'Timestamp' => 6, 'Program' => 7, 'Message' => 8, 'Sequence' => 9, 'Count' => 10, 'Value' => 11, ),
+        BasePeer::TYPE_PHPNAME => array ('Syslogid' => 0, 'Ipaddress' => 1, 'Facility' => 2, 'Priority' => 3, 'Level' => 4, 'Tag' => 5, 'Timestamp' => 6, 'Program' => 7, 'Message' => 8, 'Sequence' => 9, 'Count' => 10, 'Value' => 11, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('syslogid' => 0, 'ipaddress' => 1, 'facility' => 2, 'priority' => 3, 'level' => 4, 'tag' => 5, 'timestamp' => 6, 'program' => 7, 'message' => 8, 'sequence' => 9, 'count' => 10, 'value' => 11, ),
+        BasePeer::TYPE_COLNAME => array (SyslogPeer::SYSLOGID => 0, SyslogPeer::IPADDRESS => 1, SyslogPeer::FACILITY => 2, SyslogPeer::PRIORITY => 3, SyslogPeer::LEVEL => 4, SyslogPeer::TAG => 5, SyslogPeer::TIMESTAMP => 6, SyslogPeer::PROGRAM => 7, SyslogPeer::MESSAGE => 8, SyslogPeer::SEQUENCE => 9, SyslogPeer::COUNT => 10, SyslogPeer::VALUE => 11, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('SYSLOGID' => 0, 'IPADDRESS' => 1, 'FACILITY' => 2, 'PRIORITY' => 3, 'LEVEL' => 4, 'TAG' => 5, 'TIMESTAMP' => 6, 'PROGRAM' => 7, 'MESSAGE' => 8, 'SEQUENCE' => 9, 'COUNT' => 10, 'VALUE' => 11, ),
+        BasePeer::TYPE_FIELDNAME => array ('SyslogId' => 0, 'IpAddress' => 1, 'Facility' => 2, 'Priority' => 3, 'Level' => 4, 'Tag' => 5, 'Timestamp' => 6, 'Program' => 7, 'Message' => 8, 'Sequence' => 9, 'Count' => 10, 'Value' => 11, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
     );
 
@@ -182,7 +182,7 @@ abstract class BaseSyslogPeer
     {
         if (null === $alias) {
             $criteria->addSelectColumn(SyslogPeer::SYSLOGID);
-            $criteria->addSelectColumn(SyslogPeer::DEVICEID);
+            $criteria->addSelectColumn(SyslogPeer::IPADDRESS);
             $criteria->addSelectColumn(SyslogPeer::FACILITY);
             $criteria->addSelectColumn(SyslogPeer::PRIORITY);
             $criteria->addSelectColumn(SyslogPeer::LEVEL);
@@ -195,7 +195,7 @@ abstract class BaseSyslogPeer
             $criteria->addSelectColumn(SyslogPeer::VALUE);
         } else {
             $criteria->addSelectColumn($alias . '.SyslogId');
-            $criteria->addSelectColumn($alias . '.DeviceId');
+            $criteria->addSelectColumn($alias . '.IpAddress');
             $criteria->addSelectColumn($alias . '.Facility');
             $criteria->addSelectColumn($alias . '.Priority');
             $criteria->addSelectColumn($alias . '.Level');
@@ -506,244 +506,6 @@ abstract class BaseSyslogPeer
         }
 
         return array($obj, $col);
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining the related Device table
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinDevice(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(SyslogPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            SyslogPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-        // Set the correct dbName
-        $criteria->setDbName(SyslogPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(SyslogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(SyslogPeer::DEVICEID, DevicePeer::DEVICEID, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
-    }
-
-
-    /**
-     * Selects a collection of Syslog objects pre-filled with their Device objects.
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Syslog objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinDevice(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(SyslogPeer::DATABASE_NAME);
-        }
-
-        SyslogPeer::addSelectColumns($criteria);
-        $startcol = SyslogPeer::NUM_HYDRATE_COLUMNS;
-        DevicePeer::addSelectColumns($criteria);
-
-        $criteria->addJoin(SyslogPeer::DEVICEID, DevicePeer::DEVICEID, $join_behavior);
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = SyslogPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = SyslogPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-
-                $cls = SyslogPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                SyslogPeer::addInstanceToPool($obj1, $key1);
-            } // if $obj1 already loaded
-
-            $key2 = DevicePeer::getPrimaryKeyHashFromRow($row, $startcol);
-            if ($key2 !== null) {
-                $obj2 = DevicePeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = DevicePeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol);
-                    DevicePeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 already loaded
-
-                // Add the $obj1 (Syslog) to $obj2 (Device)
-                $obj2->addDeviceSyslog($obj1);
-
-            } // if joined row was not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Returns the number of rows matching criteria, joining all related tables
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return int Number of matching rows.
-     */
-    public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        // we're going to modify criteria, so copy it first
-        $criteria = clone $criteria;
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(SyslogPeer::TABLE_NAME);
-
-        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->setDistinct();
-        }
-
-        if (!$criteria->hasSelectClause()) {
-            SyslogPeer::addSelectColumns($criteria);
-        }
-
-        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-        // Set the correct dbName
-        $criteria->setDbName(SyslogPeer::DATABASE_NAME);
-
-        if ($con === null) {
-            $con = Propel::getConnection(SyslogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $criteria->addJoin(SyslogPeer::DEVICEID, DevicePeer::DEVICEID, $join_behavior);
-
-        $stmt = BasePeer::doCount($criteria, $con);
-
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
-        } else {
-            $count = 0; // no rows returned; we infer that means 0 matches.
-        }
-        $stmt->closeCursor();
-
-        return $count;
-    }
-
-    /**
-     * Selects a collection of Syslog objects pre-filled with all related objects.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of Syslog objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAll(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(SyslogPeer::DATABASE_NAME);
-        }
-
-        SyslogPeer::addSelectColumns($criteria);
-        $startcol2 = SyslogPeer::NUM_HYDRATE_COLUMNS;
-
-        DevicePeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + DevicePeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(SyslogPeer::DEVICEID, DevicePeer::DEVICEID, $join_behavior);
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = SyslogPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = SyslogPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $cls = SyslogPeer::getOMClass();
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                SyslogPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-            // Add objects for joined Device rows
-
-            $key2 = DevicePeer::getPrimaryKeyHashFromRow($row, $startcol2);
-            if ($key2 !== null) {
-                $obj2 = DevicePeer::getInstanceFromPool($key2);
-                if (!$obj2) {
-
-                    $cls = DevicePeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    DevicePeer::addInstanceToPool($obj2, $key2);
-                } // if obj2 loaded
-
-                // Add the $obj1 (Syslog) to the collection in $obj2 (Device)
-                $obj2->addDeviceSyslog($obj1);
-            } // if joined row not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
     }
 
     /**
