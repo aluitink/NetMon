@@ -40,10 +40,9 @@ class Icmp extends PluginBase
         $tasks = array();
         foreach($monitors as $monitor)
         {
-            $pluginMeta = $monitor->getPluginmeta();
-            $adapterId = $pluginMeta->getValue();
+            $meta = $this->GetMonitorPluginMetaValue($monitor);
             $adapter = \AdapterQuery::create()
-                        ->findOneByAdapterid($adapterId);
+                        ->findOneByAdapterid($meta["AdapterId"]);
             
             if(!isset($adapter))
                 throw new \Exception("Adapater Not Found");
@@ -125,8 +124,8 @@ class Icmp extends PluginBase
 
     private function SetAdapterThreshold($adapter, $value, $greater)
     {
-        $adapterId = $adapter->getAdapterid();
-        $monitor = $this->GetOrCreateMonitor($adapterId, $adapterId);
+        $meta["AdapterId"] = $adapter->getAdapterid();
+        $monitor = $this->GetOrCreateMonitor($meta, $meta);
         $threshold = $this->CreateOrUpdateThreshold($monitor, $value, $greater);
         return $threshold;
     }

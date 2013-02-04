@@ -7,6 +7,11 @@ class Config
     const DatabaseUser = "netmon";
     const DatabasePass = "wYqFBT5U93pzZVAf";
     
+    const DefaultSnmpCommunity = "habathcx";
+    const DefaultSnmpVersion = "2c";
+    const DefaultUptimeOid = "sysUpTime.0";
+    
+    
     const PropelModels = "orm";
     const PropelConfig = "orm/NetMon-conf.php";
     

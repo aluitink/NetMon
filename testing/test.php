@@ -4,18 +4,17 @@ require_once '/var/www/localhost/htdocs/NetMon/libs/Bootstrap.php';
 
 require_once ROOT . 'controllers/Discovery.php';
 require_once ROOT . 'libs/plugins/Icmp.php';
+require_once ROOT . 'libs/plugins/Snmp.php';
 
 $discovery = new \NetMon\Controllers\Discovery("POST");
-$discovery->Scan("192.168.1.1");
+$discovery->SnmpScan("192.168.1.201", "2c", null, "habathcx");
+$discovery->Scan("192.168.1.0/24");
+//echo "scanning";
 
+//require_once ROOT . 'scripts/netmon_cron.php';
+    //var_dump($xml);
 
-
-require_once ROOT . 'scripts/netmon_cron.php';
-
-
-//    //var_dump($xml);
-//
-//    //nmap
+    //nmap
 //    echo "scanner: " . $xml["scanner"] . "\r\n";
 //    //nmap -T4 -A -p 1-1000 -oX - 192.168.1.0/24
 //    echo "args: " . $xml["args"] . "\r\n";

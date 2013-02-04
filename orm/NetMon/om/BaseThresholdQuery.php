@@ -40,13 +40,13 @@
  * @method Threshold findOneByPluginid(int $PluginId) Return the first Threshold filtered by the PluginId column
  * @method Threshold findOneByMonitorid(int $MonitorId) Return the first Threshold filtered by the MonitorId column
  * @method Threshold findOneByGreaterthan(boolean $GreaterThan) Return the first Threshold filtered by the GreaterThan column
- * @method Threshold findOneByValue(int $Value) Return the first Threshold filtered by the Value column
+ * @method Threshold findOneByValue(string $Value) Return the first Threshold filtered by the Value column
  *
  * @method array findByThresholdid(int $ThresholdId) Return Threshold objects filtered by the ThresholdId column
  * @method array findByPluginid(int $PluginId) Return Threshold objects filtered by the PluginId column
  * @method array findByMonitorid(int $MonitorId) Return Threshold objects filtered by the MonitorId column
  * @method array findByGreaterthan(boolean $GreaterThan) Return Threshold objects filtered by the GreaterThan column
- * @method array findByValue(int $Value) Return Threshold objects filtered by the Value column
+ * @method array findByValue(string $Value) Return Threshold objects filtered by the Value column
  *
  * @package    propel.generator.NetMon.om
  */

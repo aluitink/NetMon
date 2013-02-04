@@ -42,7 +42,7 @@ class ThresholdTableMap extends TableMap
         $this->addForeignKey('PluginId', 'Pluginid', 'INTEGER', 'Plugin', 'PluginId', true, null, null);
         $this->addForeignKey('MonitorId', 'Monitorid', 'INTEGER', 'Monitor', 'MonitorId', true, null, null);
         $this->addColumn('GreaterThan', 'Greaterthan', 'BOOLEAN', true, 1, null);
-        $this->addColumn('Value', 'Value', 'INTEGER', true, null, null);
+        $this->addColumn('Value', 'Value', 'BIGINT', true, null, null);
         // validators
     } // initialize()
 

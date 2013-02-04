@@ -40,8 +40,8 @@ class SnmpPropertyTableMap extends TableMap
         // columns
         $this->addPrimaryKey('SnmpPropertyId', 'Snmppropertyid', 'INTEGER', true, null, null);
         $this->addForeignKey('SnmpNamespaceId', 'Snmpnamespaceid', 'INTEGER', 'SnmpNamespace', 'SnmpNamespaceId', true, null, null);
-        $this->addColumn('Name', 'Name', 'VARCHAR', false, 25, null);
-        $this->addColumn('Property', 'Property', 'VARCHAR', false, 100, null);
+        $this->addColumn('Name', 'Name', 'VARCHAR', false, 100, null);
+        $this->addColumn('Property', 'Property', 'VARCHAR', false, 255, null);
         // validators
     } // initialize()
 

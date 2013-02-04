@@ -75,15 +75,15 @@
                 "sServerMethod":"GET",
                 //Highlights the row if it was previously selected, 
                 //I don't exactly want that right now
-                /* "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
+                "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
 	    		var id = aData[0];
 	    		$(nRow).attr("id",id);
 		    	$.each(selectedAlarmData, function(index, value){
 		    		if(aData[0] == value[0])
-                                    $(nRow).addClass("row_selected2");
+                                    $(nRow).addClass("row_selected");
 		    	});
 	    		return nRow;
-	    	}, */
+	    	}, 
                 "aaSorting": [[ 4, "desc" ]],
                 "aoColumns": [ 
             /* ID */ 	{"bVisible":false},

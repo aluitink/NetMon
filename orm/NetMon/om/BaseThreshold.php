@@ -55,7 +55,7 @@ abstract class BaseThreshold extends BaseObject implements Persistent
 
     /**
      * The value for the value field.
-     * @var        int
+     * @var        string
      */
     protected $value;
 
@@ -144,7 +144,7 @@ abstract class BaseThreshold extends BaseObject implements Persistent
     /**
      * Get the [value] column value.
      *
-     * @return int
+     * @return string
      */
     public function getValue()
     {
@@ -254,13 +254,13 @@ abstract class BaseThreshold extends BaseObject implements Persistent
     /**
      * Set the value of [value] column.
      *
-     * @param int $v new value
+     * @param string $v new value
      * @return Threshold The current object (for fluent API support)
      */
     public function setValue($v)
     {
         if ($v !== null && is_numeric($v)) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
         if ($this->value !== $v) {
@@ -308,7 +308,7 @@ abstract class BaseThreshold extends BaseObject implements Persistent
             $this->pluginid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
             $this->monitorid = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
             $this->greaterthan = ($row[$startcol + 3] !== null) ? (boolean) $row[$startcol + 3] : null;
-            $this->value = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
+            $this->value = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -614,7 +614,7 @@ abstract class BaseThreshold extends BaseObject implements Persistent
                         $stmt->bindValue($identifier, (int) $this->greaterthan, PDO::PARAM_INT);
                         break;
                     case '`Value`':
-                        $stmt->bindValue($identifier, $this->value, PDO::PARAM_INT);
+                        $stmt->bindValue($identifier, $this->value, PDO::PARAM_STR);
                         break;
                 }
             }

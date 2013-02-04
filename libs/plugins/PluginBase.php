@@ -85,6 +85,7 @@ class PluginBase
         if(!isset($alarmQuery))
         {
             $alarm = new \Alarm();
+            $alarm->setTimestamp("now");
             $alarm->setThreshold($threshold);
             $alarm->save();
             return $alarm;
@@ -120,6 +121,25 @@ class PluginBase
         return $monitorQuery;
     }
     
+    protected function GetMonitorPluginMetaValue($monitor)
+    {
+        $pluginMeta = $monitor->getPluginmeta();
+        if(isset($pluginMeta))
+            return json_decode($pluginMeta->getValue(), true);
+        return null;
+    }
+    
+    protected function CreateThreshold($monitor, $value, $greater)
+    {
+        $threshold = new \Threshold();
+        $threshold->setPlugin($this->plugin);
+        $threshold->setMonitor($monitor);
+        $threshold->setValue($value);
+        $threshold->setGreaterthan($greater);
+        $threshold->save();
+        return $threshold;
+    }
+    
     protected function CreateOrUpdateThreshold($monitor, $value, $greater)
     {
         $thresholdQuery = \ThresholdQuery::create()
@@ -129,13 +149,7 @@ class PluginBase
         
         if(!isset($thresholdQuery))
         {
-            $threshold = new \Threshold();
-            $threshold->setPlugin($this->plugin);
-            $threshold->setMonitor($monitor);
-            $threshold->setValue($value);
-            $threshold->setGreaterthan($greater);
-            $threshold->save();
-            return $threshold;
+            return $this->CreateThreshold($monitor, $value, $greater);
         }
         else
         {
@@ -215,6 +229,10 @@ class PluginBase
 
         foreach($plugins as $plugin)
         {
+            $requests = json_decode($plugin->getRequests(), true);
+            if(!in_array($callback, $requests))
+                continue;
+            
             $pluginName = $plugin->getName();
             require_once ROOT . \NetMon\Config::PluginsPath . "/" . $pluginName . ".php";
             $pluginClass = "\\NetMon\\Plugins\\" . $pluginName;

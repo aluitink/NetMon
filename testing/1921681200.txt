@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 6.01 scan initiated Thu Jan 31 22:21:58 2013 as: nmap -T4 -A -p 1-1000 -oX - 192.168.1.200 -->
+<nmaprun scanner="nmap" args="nmap -T4 -A -p 1-1000 -oX - 192.168.1.200" start="1359692518" startstr="Thu Jan 31 22:21:58 2013" version="6.01" xmloutputversion="1.04">
+<scaninfo type="syn" protocol="tcp" numservices="1000" services="1-1000"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1359692518" endtime="1359692554"><status state="up" reason="localhost-response"/>
+<address addr="192.168.1.200" addrtype="ipv4"/>
+<hostnames>
+<hostname name="customer_a-v.hab.ath.cx" type="PTR"/>
+</hostnames>
+<ports><extraports state="closed" count="996">
+<extrareasons reason="resets" count="996"/>
+</extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ssh" product="OpenSSH" version="5.9p1-hpn13v11" extrainfo="protocol 2.0" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:5.9p1-hpn13v11</cpe></service></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="Apache httpd" method="probed" conf="10"><cpe>cpe:/a:apache:http_server</cpe></service></port>
+<port protocol="tcp" portid="199"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="smux" product="Linux SNMP multiplexer" ostype="Linux" method="probed" conf="10"><cpe>cpe:/o:linux:kernel</cpe></service></port>
+<port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="Apache httpd" tunnel="ssl" method="probed" conf="10"><cpe>cpe:/a:apache:http_server</cpe></service></port>
+</ports>
+<os><portused state="open" proto="tcp" portid="22"/>
+<portused state="closed" proto="tcp" portid="1"/>
+<portused state="closed" proto="udp" portid="44052"/>
+<osfingerprint fingerprint="OS:SCAN(V=6.01%E=4%D=1/31%OT=22%CT=1%CU=44052%PV=Y%DS=0%DC=L%G=Y%TM=510B430&#xa;OS:A%P=i486-pc-linux-gnu)SEQ(SP=101%GCD=1%ISR=10B%TI=Z%CI=Z%II=I%TS=A)OPS(O&#xa;OS:1=M400CST11NW6%O2=M400CST11NW6%O3=M400CNNT11NW6%O4=M400CST11NW6%O5=M400C&#xa;OS:ST11NW6%O6=M400CST11)WIN(W1=8000%W2=8000%W3=8000%W4=8000%W5=8000%W6=8000&#xa;OS:)ECN(R=Y%DF=Y%T=41%W=8018%O=M400CNNSNW6%CC=Y%Q=)T1(R=Y%DF=Y%T=41%S=O%A=S&#xa;OS:+%F=AS%RD=0%Q=)T2(R=N)T3(R=N)T4(R=Y%DF=Y%T=41%W=0%S=A%A=Z%F=R%O=%RD=0%Q=&#xa;OS:)T5(R=Y%DF=Y%T=41%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)T6(R=Y%DF=Y%T=41%W=0%S=A%&#xa;OS:A=Z%F=R%O=%RD=0%Q=)T7(R=Y%DF=Y%T=41%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)U1(R=Y%&#xa;OS:DF=N%T=41%IPL=164%UN=0%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUD=G)IE(R=Y%DFI=N%T=&#xa;OS:41%CD=S)&#xa;"/>
+</os>
+<uptime seconds="1562860" lastboot="Sun Jan 13 20:14:54 2013"/>
+<distance value="0"/>
+<tcpsequence index="257" difficulty="Good luck!" values="D01AA93B,BB519E0,EE7234DE,A7C3A0B6,3890C9E2,710D366E"/>
+<ipidsequence class="All zeros" values="0,0,0,0,0,0"/>
+<tcptssequence class="1000HZ" values="5D27543A,5D27549F,5D275504,5D275569,5D2755CF,5D275635"/>
+<times srtt="66" rttvar="31" to="100000"/>
+</host>
+<runstats><finished time="1359692554" timestr="Thu Jan 31 22:22:34 2013" elapsed="38.05" summary="Nmap done at Thu Jan 31 22:22:34 2013; 1 IP address (1 host up) scanned in 38.05 seconds" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

@@ -15,4 +15,14 @@
  */
 class Device extends BaseDevice
 {
+    private $pluginBase;
+
+    function __construct()
+    {
+        $this->pluginBase = new \NetMon\Plugins\PluginBase();
+    }
+    public function postInsert(\PropelPDO $con = NULL)
+    {
+        $this->pluginBase->CallbackActivePlugins("OnDeviceAdd", $this);
+    }
 }

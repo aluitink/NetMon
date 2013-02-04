@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 6.01 scan initiated Thu Jan 31 22:21:44 2013 as: nmap -T4 -A -p 1-1000 -oX - 192.168.1.1 -->
+<nmaprun scanner="nmap" args="nmap -T4 -A -p 1-1000 -oX - 192.168.1.1" start="1359692504" startstr="Thu Jan 31 22:21:44 2013" version="6.01" xmloutputversion="1.04">
+<scaninfo type="syn" protocol="tcp" numservices="1000" services="1-1000"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1359692504" endtime="1359692529"><status state="up" reason="arp-response"/>
+<address addr="192.168.1.1" addrtype="ipv4"/>
+<address addr="58:6D:8F:ED:C6:B6" addrtype="mac" vendor="Cisco-Linksys"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="closed" count="995">
+<extrareasons reason="resets" count="995"/>
+</extraports>
+<port protocol="tcp" portid="53"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="domain" product="dnsmasq" version="2.55" method="probed" conf="10"><cpe>cpe:/a:thekelleys:dnsmasq:2.55</cpe></service></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="lighttpd" version="1.4.28" method="probed" conf="10"/></port>
+<port protocol="tcp" portid="139"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="netbios-ssn" product="Samba smbd" version="3.X" extrainfo="workgroup: WORKGROUP" method="probed" conf="10"/></port>
+<port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="lighttpd" version="1.4.28" tunnel="ssl" method="probed" conf="10"/></port>
+<port protocol="tcp" portid="445"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="netbios-ssn" product="Samba smbd" version="3.X" extrainfo="workgroup: WORKGROUP" method="probed" conf="10"/></port>
+</ports>
+<os><portused state="open" proto="tcp" portid="53"/>
+<portused state="closed" proto="tcp" portid="1"/>
+<portused state="closed" proto="udp" portid="42695"/>
+<osmatch name="Linux 2.6.19 - 2.6.35" accuracy="100" line="33470">
+<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="2.6.X" accuracy="100"><cpe>cpe:/o:linux:kernel:2.6</cpe></osclass>
+</osmatch>
+</os>
+<uptime seconds="10214545" lastboot="Fri Oct  5 17:59:45 2012"/>
+<distance value="1"/>
+<tcpsequence index="201" difficulty="Good luck!" values="F0928B5C,F06DDC04,F0F1EA98,F0DC9EA5,F15F1E37,F0E01D43"/>
+<ipidsequence class="All zeros" values="0,0,0,0,0,0"/>
+<tcptssequence class="100HZ" values="3CE2283D,3CE22847,3CE22851,3CE2285B,3CE22865,3CE2286F"/>
+<trace>
+<hop ttl="1" ipaddr="192.168.1.1" rtt="1.02"/>
+</trace>
+<times srtt="1021" rttvar="606" to="100000"/>
+</host>
+<runstats><finished time="1359692530" timestr="Thu Jan 31 22:22:10 2013" elapsed="28.35" summary="Nmap done at Thu Jan 31 22:22:10 2013; 1 IP address (1 host up) scanned in 28.35 seconds" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

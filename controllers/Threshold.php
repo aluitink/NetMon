@@ -14,19 +14,7 @@ class Threshold extends Controller implements Interfaces\IController
     
     public function DefaultView()
     {
-        $monitors = \MonitorQuery::create()
-                    ->find();
-        
-        foreach($monitors as $monitor)
-        {
-            $plugin = $monitor->getPlugin();
-            $threshold = new \Threshold();
-            $threshold->setMonitor($monitor);
-            $threshold->setPlugin($plugin);
-            $threshold->setValue("30");
-            $threshold->setGreaterthan(true);
-            $threshold->save();
-        }
+
     }
 }
 

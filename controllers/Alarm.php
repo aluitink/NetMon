@@ -57,8 +57,6 @@ class Alarm extends Controller implements Interfaces\IController
     
     private function getAlarms()
     {
-        
-
         $app = new \NetMon\Bootstrap(true);
 
         //http://datatables.net/usage/server-side
@@ -79,10 +77,20 @@ class Alarm extends Controller implements Interfaces\IController
             
             $monitor = $threshold->getMonitor();
             $pluginMeta = $monitor->getPluginmeta();
+            $data = json_decode($pluginMeta->getValue(), true);
             
-            $adapterId = $pluginMeta->getValue();
-            $adapter = \AdapterQuery::create()
-                        ->findOneByAdapterid($adapterId);
+            $adapter = null;
+            
+            if(isset($data["AdapterId"]))
+            {
+                $adapter = \AdapterQuery::create()
+                        ->findOneByAdapterid($data["AdapterId"]);
+            }
+            else if(isset($data["DeviceId"]))
+            {
+                $adapter = \AdapterQuery::create()
+                         ->findOneByDeviceid($data["DeviceId"]);
+            }
             
             $device = $adapter->getDevice();
             
