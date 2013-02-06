@@ -7,8 +7,8 @@ require_once ROOT . 'libs/plugins/Icmp.php';
 require_once ROOT . 'libs/plugins/Snmp.php';
 
 $discovery = new \NetMon\Controllers\Discovery("POST");
-$discovery->SnmpScan("192.168.1.201", "2c", null, "habathcx");
-$discovery->Scan("192.168.1.0/24");
+//$discovery->SnmpScan("192.168.1.201", "2c", null, "habathcx");
+$discovery->Scan("192.168.1.201");
 //echo "scanning";
 
 //require_once ROOT . 'scripts/netmon_cron.php';

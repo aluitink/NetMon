@@ -5,8 +5,6 @@ require_once '/var/www/localhost/htdocs/NetMon/libs/Bootstrap.php';
 $app = new NetMon\Bootstrap(true);
 $app->Logger->LogDebug("Cron Execute");
 
-$app->CallbackPlugins("Execute");
-$app->CallbackPlugins("ProcessThresholds");
-
+$app->ExecutePlugins();
+$app->RefreshDevices();
 ?>
-

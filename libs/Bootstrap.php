@@ -63,6 +63,29 @@ class Bootstrap
         }
     }
 
+    public function ExecutePlugins()
+    {
+        $this->CallbackPlugins("Execute");
+        $this->CallbackPlugins("ProcessThresholds");
+    }
+    
+    public function RefreshDevices()
+    {
+        $devices = \DeviceQuery::create()
+                    ->filterByModified(true)
+                    ->find();
+        if(!isset($devices))
+            return;
+        
+        $this->CallbackPlugins("RefreshDevices", $devices);
+        
+        foreach($devices as $device)
+        {
+            $device->setModified(false);
+            $device->save();
+        }
+    }
+    
     public function LoadPlugin($pluginId)
     {
         $plugin = \PluginQuery::create()

@@ -129,6 +129,17 @@ class PluginBase
         return null;
     }
     
+    protected function GetModifiedDevices()
+    {
+        $devices = \DeviceQuery::create()
+                    ->filterByModified(1)
+                    ->find();
+        
+        if(isset($devices))
+            return $devices;
+        return null;
+    }
+    
     protected function CreateThreshold($monitor, $value, $greater)
     {
         $threshold = new \Threshold();
