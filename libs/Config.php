@@ -5,9 +5,9 @@ class Config
 {
     const DatabaseDsn = "mysql:host=localhost;dbname=NetMon";
     const DatabaseUser = "netmon";
-    const DatabasePass = "wYqFBT5U93pzZVAf";
+    const DatabasePass = "";
     
-    const DefaultSnmpCommunity = "habathcx";
+    const DefaultSnmpCommunity = "";
     const DefaultSnmpVersion = "2c";
     const DefaultUptimeOid = "sysUpTime.0";
     
@@ -25,7 +25,7 @@ class Config
     const PluginsPath = "libs/plugins";
     
     const NmapPath = "/usr/bin/nmap";
-    const RootPassword = "Romance252";
+    const RootPassword = "";
     const LogPath = "/archive/log/website/netmon.log";
     const LogLevel = 1;
 }
